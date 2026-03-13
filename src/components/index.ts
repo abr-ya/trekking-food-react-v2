@@ -5,3 +5,6 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/t
 export { Skeleton } from "./ui/skeleton";
 
 export { Layout } from "./layout/layout";
+
+// Forms
+export { CreateProductForm } from "./forms/create-product-form";
