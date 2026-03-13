@@ -2,12 +2,13 @@ import { createAuthClient } from "better-auth/react";
 import { setAuthToken } from "./auth-token";
 
 const envUrl = import.meta.env.VITE_API_URL as string | undefined;
-const baseURL =
-  typeof envUrl === "string" && (envUrl.startsWith("http://") || envUrl.startsWith("https://"))
-    ? envUrl.replace(/\/$/, "")
-    : typeof window !== "undefined"
-      ? window.location.origin
-      : "";
+const baseURL = envUrl?.replace(/\/$/, "");
+  // todo: what about this check?
+  // typeof envUrl === "string" && (envUrl.startsWith("http://") || envUrl.startsWith("https://"))
+  //   ? envUrl.replace(/\/$/, "")
+  //   : typeof window !== "undefined"
+  //     ? window.location.origin
+  //     : "";
 
 /**
  * Better Auth client. Uses VITE_API_URL when it's a full URL;
