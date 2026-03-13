@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 // import { useTheme } from "@/hooks/use-theme";
 import { HeaderAuth } from "./header-auth";
 import { ThemeToggle } from "./theme-toggle";
+import { TopMenu } from "./top-menu";
 
 export const Header = () => {
   // const { theme } = useTheme();
@@ -17,6 +18,8 @@ export const Header = () => {
             className="h-14"
           /> */}
         </Link>
+
+        <TopMenu />
 
         <div className="flex items-center gap-4">
           <HeaderAuth />
