@@ -1,7 +1,9 @@
 import { CreateProductForm, ProductsList } from "@/components";
 import { useAuth } from "@/providers/auth-provider";
+
 export const ProductsPage = () => {
   const { isAuthenticated } = useAuth();
+
   return (
     <div className="space-y-2">
       <h1 className="text-xl font-bold">Products Page</h1>
