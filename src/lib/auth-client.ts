@@ -1,7 +1,9 @@
 import { createAuthClient } from "better-auth/react";
 import { setAuthToken } from "./auth-token";
 
-const envUrl = import.meta.env.VITE_API_URL as string | undefined;
+const envUrl =
+  (import.meta.env.VITE_AUTH_URL as string | undefined) ??
+  (import.meta.env.VITE_API_URL as string | undefined);
 const baseURL = envUrl?.replace(/\/$/, "");
   // todo: what about this check?
   // typeof envUrl === "string" && (envUrl.startsWith("http://") || envUrl.startsWith("https://"))
