@@ -81,7 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const displayError =
-    error ?? (sessionError ? { code: "SESSION", message: (sessionError as { message?: string }).message || "Session error" } : null);
+    error ??
+    (sessionError
+      ? { code: "SESSION", message: (sessionError as { message?: string }).message || "Session error" }
+      : null);
 
   const value: AuthContextValue = {
     user,

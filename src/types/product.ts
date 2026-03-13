@@ -9,3 +9,9 @@ export type CreateProductPayload = {
   productCategoryId: string;
   isCommon: boolean;
 };
+
+export type Product = CreateProductPayload & {
+  id: string;
+  createdAt?: string;
+  updatedAt?: string;
+};

@@ -8,3 +8,6 @@ export { Layout } from "./layout/layout";
 
 // Forms
 export { CreateProductForm } from "./forms/create-product-form";
+
+// Lists
+export { ProductsList } from "./lists/products-list";
