@@ -1,4 +1,5 @@
 import { authClient } from "@/lib/auth-client";
+import { clearAuthToken } from "@/lib/auth-token";
 import type { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 
@@ -71,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setError(null);
+    clearAuthToken();
     void authClient.signOut();
   }, []);
 
