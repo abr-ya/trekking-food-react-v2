@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { HomePage, ProductsPage } from "./pages";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
@@ -23,6 +24,7 @@ const App = () => {
           </ThemeProvider>
         </AuthProvider>
       </BrowserRouter>
+      <ToastContainer theme="dark" />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
