@@ -4,7 +4,9 @@ export { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
 export { Skeleton } from "./ui/skeleton";
 
+// Layout
 export { Layout } from "./layout/layout";
+export { PageColumn, ColumnsWrapper } from "./layout/page-column";
 
 // Forms
 export { CreateProductForm } from "./forms/create-product-form";

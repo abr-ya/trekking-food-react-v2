@@ -34,11 +34,12 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
       body: body != null ? JSON.stringify(body) : undefined,
     });
   } catch (err) {
-    const message = err instanceof TypeError && err.message === "Failed to fetch"
-      ? "Network error. Check your connection and try again."
-      : err instanceof Error
-        ? err.message
-        : "Network error";
+    const message =
+      err instanceof TypeError && err.message === "Failed to fetch"
+        ? "Network error. Check your connection and try again."
+        : err instanceof Error
+          ? err.message
+          : "Network error";
     showNetworkErrorToast(message);
     throw err;
   }
