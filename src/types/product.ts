@@ -10,6 +10,9 @@ export type CreateProductPayload = {
   isCommon: boolean;
 };
 
+/** Fields allowed on `PATCH /products/:id` (server may accept a subset). */
+export type UpdateProductPayload = Partial<CreateProductPayload>;
+
 export type Product = CreateProductPayload & {
   id: string;
   createdAt?: string;

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProducts, postProduct } from "@/api/products";
-import type { CreateProductPayload } from "@/types/product";
+import { deleteProduct, getProducts, patchProduct, postProduct } from "@/api/products";
+import type { CreateProductPayload, UpdateProductPayload } from "@/types/product";
 
 /** TanStack Query keys for product API. */
 export const productQueryKeys = {
@@ -30,6 +30,30 @@ export const useCreateProduct = () => {
 
   return useMutation({
     mutationFn: (payload: CreateProductPayload) => postProduct(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: productQueryKeys.all }),
+  });
+};
+
+/**
+ * Update a product (`PATCH /products/:id`). On success, invalidates product list queries.
+ */
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateProductPayload }) => patchProduct(id, payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: productQueryKeys.all }),
+  });
+};
+
+/**
+ * Delete a product (`DELETE /products/:id`). On success, invalidates product list queries.
+ */
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: productQueryKeys.all }),
   });
 };

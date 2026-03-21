@@ -1,5 +1,11 @@
 import { apiFetch } from "@/lib/api-client";
-import type { CreateProductPayload, Product, ProductsListResponse, ProductsMeta } from "@/types/product";
+import type {
+  CreateProductPayload,
+  Product,
+  ProductsListResponse,
+  ProductsMeta,
+  UpdateProductPayload,
+} from "@/types/product";
 
 function metaFromListLength(length: number): ProductsMeta {
   return {
@@ -29,5 +35,18 @@ export async function postProduct(payload: CreateProductPayload): Promise<unknow
   return apiFetch("/products", {
     method: "POST",
     body: payload,
+  });
+}
+
+export async function patchProduct(id: string, payload: UpdateProductPayload): Promise<unknown> {
+  return apiFetch(`/products/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export async function deleteProduct(id: string): Promise<unknown> {
+  return apiFetch(`/products/${encodeURIComponent(id)}`, {
+    method: "DELETE",
   });
 }
