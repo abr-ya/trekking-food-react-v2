@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { HomePage, ProductsPage } from "./pages";
+import { HomePage, ProductsPage, RecipesPage } from "./pages";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -19,6 +19,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/products/" element={<ProductsPage />} />
+                <Route path="/recipes" element={<RecipesPage />} />
               </Routes>
             </Layout>
           </ThemeProvider>

@@ -9,6 +9,9 @@ export const TopMenu = () => {
       <Link to={"/products"} className="hover:underline">
         Products
       </Link>
+      <Link to={"/recipes"} className="hover:underline">
+        Recipes
+      </Link>
     </div>
   );
 };
