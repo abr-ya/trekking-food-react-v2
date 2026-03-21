@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FormProvider, useForm, type SubmitErrorHandler, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateProduct } from "@/hooks";
+import { useCreateProduct, useProductCategories } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { createProductSchema, type CreateProductFormData } from "@/schemas/product";
-import { RHFInput } from "../rhf";
+import { RHFInput, RHFSelect } from "../rhf";
 
 const defaultFormValues: CreateProductFormData = {
   name: "",
@@ -14,7 +14,7 @@ const defaultFormValues: CreateProductFormData = {
   carbohydrates: 0,
   price: 0,
   isVegetarian: false,
-  productCategoryId: "test",
+  productCategoryId: "",
   isCommon: false,
 };
 
@@ -32,6 +32,12 @@ const TEST_MODE = false;
 
 const CreateProductFormFields = ({ onCreated }: { onCreated: () => void }) => {
   const createProduct = useCreateProduct();
+  const { data: categoriesData, isLoading: categoriesLoading, error: categoriesError } = useProductCategories();
+
+  const categoryOptions = useMemo(
+    () => (categoriesData?.data ?? []).map((c) => ({ label: c.name, value: c.id })),
+    [categoriesData?.data],
+  );
 
   const form = useForm<CreateProductFormData>({
     resolver: zodResolver(createProductSchema),
@@ -40,7 +46,7 @@ const CreateProductFormFields = ({ onCreated }: { onCreated: () => void }) => {
     reValidateMode: "onChange",
   });
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const { handleSubmit } = form;
 
@@ -94,13 +100,27 @@ const CreateProductFormFields = ({ onCreated }: { onCreated: () => void }) => {
             valueAsNumber
           />
         </div>
-        <RHFInput<CreateProductFormData>
-          name="productCategoryId"
-          label="Category ID"
-          type="text"
-          id="productCategoryId"
-          placeholder="e.g. c2d6b4d1-1b47-4a24-9e7a-4b9c8c9b6c1e"
-        />
+        <div className="grid gap-2">
+          <span className="text-sm font-medium">Category</span>
+          {categoriesLoading ? (
+            <p className="text-muted-foreground text-sm">Loading categories…</p>
+          ) : categoriesError ? (
+            <p className="text-destructive text-sm">
+              Failed to load categories{categoriesError instanceof Error ? `: ${categoriesError.message}` : ""}.
+            </p>
+          ) : categoryOptions.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No categories yet. Add one on the Categories page.</p>
+          ) : (
+            <RHFSelect<CreateProductFormData>
+              name="productCategoryId"
+              options={categoryOptions}
+              placeholder="Select a category"
+            />
+          )}
+          {errors.productCategoryId ? (
+            <p className="text-destructive text-sm">{errors.productCategoryId.message}</p>
+          ) : null}
+        </div>
         <div className="flex flex-wrap gap-6">
           <label className="flex cursor-pointer items-center gap-2">
             <input type="checkbox" {...form.register("isVegetarian")} className="size-4 rounded border-input" />
