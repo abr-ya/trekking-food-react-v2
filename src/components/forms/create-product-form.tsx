@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateProduct } from "@/hooks";
@@ -8,43 +9,68 @@ import { cn } from "@/lib/utils";
 const inputClass =
   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
+const defaultFormValues: CreateProductFormData = {
+  name: "",
+  kkal: 0,
+  proteins: 0,
+  fats: 0,
+  carbohydrates: 0,
+  price: 0,
+  isVegetarian: false,
+  productCategoryId: "test",
+  isCommon: false,
+};
+
+/**
+ * Wrapper bumps `key` after a successful create so the inner form remounts with a fresh
+ * `useForm` instance. That avoids RHF + zodResolver leaving stale `errors` after `reset()`.
+ */
 export const CreateProductForm = () => {
+  const [formKey, setFormKey] = useState(0);
+
+  return (
+    <CreateProductFormFields key={formKey} onCreated={() => setFormKey((k) => k + 1)} />
+  );
+};
+
+const CreateProductFormFields = ({ onCreated }: { onCreated: () => void }) => {
   const createProduct = useCreateProduct();
 
   const form = useForm<CreateProductFormData>({
     resolver: zodResolver(createProductSchema),
-    defaultValues: {
-      name: "",
-      kkal: 0,
-      proteins: 0,
-      fats: 0,
-      carbohydrates: 0,
-      price: 0,
-      isVegetarian: false,
-      productCategoryId: "test",
-      isCommon: false,
-    },
+    defaultValues: defaultFormValues,
+    mode: "onSubmit",
+    reValidateMode: "onChange",
   });
+
+  // Subscribe to formState (Proxy); use `errors` here so UI updates
+  const {
+    errors,
+    isSubmitting,
+  } = form.formState;
 
   const onSubmit = (data: CreateProductFormData) => {
     createProduct.mutate(data, {
-      onSuccess: () => form.reset(),
+      onSuccess: () => {
+        onCreated();
+      },
     });
   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="grid max-w-md gap-4">
       <div className="grid gap-2">
-        <label htmlFor="name" className="text-sm font-medium">
+        <label htmlFor="product-name" className="text-sm font-medium">
           Name
         </label>
         <input
-          id="name"
+          id="product-name"
+          autoComplete="off"
           {...form.register("name")}
           placeholder="Product name"
-          className={cn(inputClass, form.formState.errors.name && "border-destructive")}
+          className={cn(inputClass, errors.name && "border-destructive")}
         />
-        {form.formState.errors.name && <p className="text-destructive text-sm">{form.formState.errors.name.message}</p>}
+        {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
@@ -56,11 +82,9 @@ export const CreateProductForm = () => {
             type="number"
             step="any"
             {...form.register("kkal", { valueAsNumber: true })}
-            className={cn(inputClass, form.formState.errors.kkal && "border-destructive")}
+            className={cn(inputClass, errors.kkal && "border-destructive")}
           />
-          {form.formState.errors.kkal && (
-            <p className="text-destructive text-sm">{form.formState.errors.kkal.message}</p>
-          )}
+          {errors.kkal && <p className="text-destructive text-sm">{errors.kkal.message}</p>}
         </div>
         <div className="grid gap-2">
           <label htmlFor="price" className="text-sm font-medium">
@@ -71,11 +95,9 @@ export const CreateProductForm = () => {
             type="number"
             step="any"
             {...form.register("price", { valueAsNumber: true })}
-            className={cn(inputClass, form.formState.errors.price && "border-destructive")}
+            className={cn(inputClass, errors.price && "border-destructive")}
           />
-          {form.formState.errors.price && (
-            <p className="text-destructive text-sm">{form.formState.errors.price.message}</p>
-          )}
+          {errors.price && <p className="text-destructive text-sm">{errors.price.message}</p>}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
@@ -88,10 +110,10 @@ export const CreateProductForm = () => {
             type="number"
             step="any"
             {...form.register("proteins", { valueAsNumber: true })}
-            className={cn(inputClass, form.formState.errors.proteins && "border-destructive")}
+            className={cn(inputClass, errors.proteins && "border-destructive")}
           />
-          {form.formState.errors.proteins && (
-            <p className="text-destructive text-sm">{form.formState.errors.proteins.message}</p>
+          {errors.proteins && (
+            <p className="text-destructive text-sm">{errors.proteins.message}</p>
           )}
         </div>
         <div className="grid gap-2">
@@ -103,11 +125,9 @@ export const CreateProductForm = () => {
             type="number"
             step="any"
             {...form.register("fats", { valueAsNumber: true })}
-            className={cn(inputClass, form.formState.errors.fats && "border-destructive")}
+            className={cn(inputClass, errors.fats && "border-destructive")}
           />
-          {form.formState.errors.fats && (
-            <p className="text-destructive text-sm">{form.formState.errors.fats.message}</p>
-          )}
+          {errors.fats && <p className="text-destructive text-sm">{errors.fats.message}</p>}
         </div>
         <div className="grid gap-2">
           <label htmlFor="carbohydrates" className="text-sm font-medium">
@@ -118,10 +138,10 @@ export const CreateProductForm = () => {
             type="number"
             step="any"
             {...form.register("carbohydrates", { valueAsNumber: true })}
-            className={cn(inputClass, form.formState.errors.carbohydrates && "border-destructive")}
+            className={cn(inputClass, errors.carbohydrates && "border-destructive")}
           />
-          {form.formState.errors.carbohydrates && (
-            <p className="text-destructive text-sm">{form.formState.errors.carbohydrates.message}</p>
+          {errors.carbohydrates && (
+            <p className="text-destructive text-sm">{errors.carbohydrates.message}</p>
           )}
         </div>
       </div>
@@ -133,10 +153,10 @@ export const CreateProductForm = () => {
           id="productCategoryId"
           {...form.register("productCategoryId")}
           placeholder="e.g. c2d6b4d1-1b47-4a24-9e7a-4b9c8c9b6c1e"
-          className={cn(inputClass, form.formState.errors.productCategoryId && "border-destructive")}
+          className={cn(inputClass, errors.productCategoryId && "border-destructive")}
         />
-        {form.formState.errors.productCategoryId && (
-          <p className="text-destructive text-sm">{form.formState.errors.productCategoryId.message}</p>
+        {errors.productCategoryId && (
+          <p className="text-destructive text-sm">{errors.productCategoryId.message}</p>
         )}
       </div>
       <div className="flex flex-wrap gap-6">
@@ -149,9 +169,9 @@ export const CreateProductForm = () => {
           <span className="text-sm font-medium">Common</span>
         </label>
       </div>
-      <Button type="submit" disabled={createProduct.isPending}>
+      <Button type="submit" disabled={createProduct.isPending || isSubmitting}>
         {createProduct.isPending ? "Creating…" : "Create product"}
       </Button>
     </form>
   );
-};
+}
