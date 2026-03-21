@@ -77,7 +77,7 @@ function Profile() {
 
 ## API & TanStack Query
 
-- **Products:** `GET /products`, `POST /products` (with auth token).
+- **Products:** `GET /products`, `POST /products` (with auth token). List response shape: `{ data: Product[], meta: { total, page, limit, totalPages } }`. Plain arrays from older APIs are normalized to that shape in `getProducts`.
 - **Hooks (TanStack Query):** `useProducts()` (`useQuery` → `GET /products`) and `useCreateProduct()` (`useMutation` → `POST /products`) from `@/hooks`.
 - **Query keys:** `productQueryKeys.all` (`["products"]`), `productQueryKeys.list()` (`["products","list"]`). Legacy alias: `productsQueryKey` (same as `all`).
 
@@ -107,7 +107,9 @@ TanStack Query decides refetches from **stale vs fresh** data and a few flags. H
 import { useProducts, useCreateProduct } from "@/hooks";
 
 function Products() {
-  const { data: products, isLoading, error } = useProducts();
+  const { data, isLoading, error } = useProducts();
+  const products = data?.data;
+  const meta = data?.meta;
   const createProduct = useCreateProduct();
 
   if (isLoading) return <div>Loading…</div>;
@@ -115,6 +117,11 @@ function Products() {
 
   return (
     <div>
+      {meta && (
+        <p className="text-sm text-muted-foreground">
+          {meta.total} products · page {meta.page}/{meta.totalPages}
+        </p>
+      )}
       <ul>
         {products?.map((p) => <li key={p.id}>{p.name}</li>)}
       </ul>

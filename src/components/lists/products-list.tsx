@@ -3,7 +3,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProductCard } from "./product-card";
 
 export const ProductsList = () => {
-  const { data: products, isLoading, error } = useProducts();
+  const { data, isLoading, error } = useProducts();
+  const products = data?.data;
+  const meta = data?.meta;
 
   if (isLoading) {
     return (
@@ -28,12 +30,19 @@ export const ProductsList = () => {
   }
 
   return (
-    <ul className="space-y-2 list-none p-0 m-0">
-      {products.map((product) => (
-        <li key={product.id}>
-          <ProductCard product={product} />
-        </li>
-      ))}
-    </ul>
+    <div className="space-y-3">
+      <ul className="space-y-2 list-none p-0 m-0">
+        {products.map((product) => (
+          <li key={product.id}>
+            <ProductCard product={product} />
+          </li>
+        ))}
+      </ul>
+      {meta != null && (
+        <p className="text-muted-foreground text-xs">
+          Page {meta.page} of {meta.totalPages} · {meta.total} total · {meta.limit} per page
+        </p>
+      )}
+    </div>
   );
 };

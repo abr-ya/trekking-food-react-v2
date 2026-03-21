@@ -15,3 +15,16 @@ export type Product = CreateProductPayload & {
   createdAt?: string;
   updatedAt?: string;
 };
+
+/** Pagination / totals from `GET /products` when the API returns `{ data, meta }`. */
+export type ProductsMeta = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export type ProductsListResponse = {
+  data: Product[];
+  meta: ProductsMeta;
+};
