@@ -1,8 +1,13 @@
 import { useProductCategories } from "@/hooks";
+import type { ProductCategory } from "@/types/category";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CategoryCard } from "./category-card";
 
-export const CategoriesList = () => {
+type CategoriesListProps = {
+  onEditCategory?: (category: ProductCategory) => void;
+};
+
+export const CategoriesList = ({ onEditCategory }: CategoriesListProps) => {
   const { data, isLoading, error } = useProductCategories();
   const categories = data?.data;
 
@@ -31,7 +36,7 @@ export const CategoriesList = () => {
   return (
     <div className="space-y-3">
       {categories.map((category) => (
-        <CategoryCard key={category.id} category={category} />
+        <CategoryCard key={category.id} category={category} onEdit={onEditCategory} />
       ))}
     </div>
   );

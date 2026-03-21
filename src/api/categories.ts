@@ -13,3 +13,21 @@ export async function getProductCategories(): Promise<CategoriesListResponse> {
   }
   return { data: raw.data ?? [] };
 }
+
+export type SaveCategoryNamePayload = { name: string };
+
+export async function postProductCategory(payload: SaveCategoryNamePayload): Promise<unknown> {
+  return apiFetch("/product-categories", { method: "POST", body: payload });
+}
+
+export async function patchProductCategory(id: string, payload: SaveCategoryNamePayload): Promise<unknown> {
+  return apiFetch(`/product-categories/${encodeURIComponent(id)}`, { method: "PATCH", body: payload });
+}
+
+export async function postRecipeCategory(payload: SaveCategoryNamePayload): Promise<unknown> {
+  return apiFetch("/recipe-categories", { method: "POST", body: payload });
+}
+
+export async function patchRecipeCategory(id: string, payload: SaveCategoryNamePayload): Promise<unknown> {
+  return apiFetch(`/recipe-categories/${encodeURIComponent(id)}`, { method: "PATCH", body: payload });
+}

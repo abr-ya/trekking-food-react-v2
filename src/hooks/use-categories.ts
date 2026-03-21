@@ -6,6 +6,11 @@ export const categoryQueryKeys = {
   list: () => [...categoryQueryKeys.all, "list"] as const,
 };
 
+export const recipeCategoryQueryKeys = {
+  all: ["recipe-categories"] as const,
+  list: () => [...recipeCategoryQueryKeys.all, "list"] as const,
+};
+
 const CATEGORIES_STALE_TIME_MS = 2 * 60 * 1000;
 
 export const useProductCategories = () =>
