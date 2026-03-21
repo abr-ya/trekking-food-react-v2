@@ -3,7 +3,7 @@ import { Controller, type FieldValues, type Path, useFormContext } from "react-h
 import { withMask } from "use-mask-input";
 
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field-cursor";
-import { Input } from "@/components/ui/input-corsor";
+import { Input } from "@/components/ui/input-cursor";
 import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
