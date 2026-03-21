@@ -1,10 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  patchProductCategory,
-  patchRecipeCategory,
-  postProductCategory,
-  postRecipeCategory,
-} from "@/api/categories";
+import { patchProductCategory, patchRecipeCategory, postProductCategory, postRecipeCategory } from "@/api/categories";
 import { categoryQueryKeys, recipeCategoryQueryKeys } from "./use-categories";
 
 export const useCreateProductCategory = () => {

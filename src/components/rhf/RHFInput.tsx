@@ -11,7 +11,10 @@ type Props<T extends FieldValues> = {
   name: Path<T>;
   label: string;
   helpText?: string;
+  /** Masked digit input (e.g. small integers). Mutually exclusive with `valueAsNumber`. */
   isNumber?: boolean;
+  /** Coerce to number for Zod `z.number()` fields; use with `type="number"` and optional `step`. */
+  valueAsNumber?: boolean;
 } & ComponentProps<"input">;
 
 export function RHFInput<T extends FieldValues>({
@@ -19,12 +22,13 @@ export function RHFInput<T extends FieldValues>({
   label,
   helpText,
   isNumber,
+  valueAsNumber,
   id: idProp,
   className,
   ...props
 }: Props<T>) {
   const { control } = useFormContext();
-  const maskRef = isNumber ? withMask("9[99]") : undefined;
+  const maskRef = isNumber && !valueAsNumber ? withMask("9[99]") : undefined;
   const autoId = useId();
   const inputId = idProp ?? autoId;
 
@@ -34,11 +38,28 @@ export function RHFInput<T extends FieldValues>({
       control={control}
       render={({ field, fieldState: { error } }) => {
         const changeHandler = (e: SyntheticEvent) => {
-          const value = (e.target as HTMLInputElement).value.replace("_", "");
+          const el = e.target as HTMLInputElement;
+          if (valueAsNumber) {
+            const raw = el.value;
+            if (raw === "") {
+              field.onChange(0);
+              return;
+            }
+            const n = Number(raw);
+            field.onChange(Number.isNaN(n) ? 0 : n);
+            return;
+          }
+          const value = el.value.replace("_", "");
           field.onChange(isNumber && value ? Number(value) : value);
         };
 
         const { ref: fieldRef, ...fieldRest } = field;
+
+        const displayValue = valueAsNumber
+          ? field.value === undefined || field.value === null || Number.isNaN(field.value as number)
+            ? ""
+            : field.value
+          : (field.value ?? "");
 
         return (
           <Field>
@@ -48,7 +69,7 @@ export function RHFInput<T extends FieldValues>({
               {...fieldRest}
               id={inputId}
               ref={mergeRefs(fieldRef, maskRef)}
-              value={field.value ?? ""}
+              value={displayValue as string | number}
               onChange={changeHandler}
               aria-invalid={!!error || !!props["aria-invalid"]}
               className={cn(error && "border-destructive", className)}
