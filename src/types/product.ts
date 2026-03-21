@@ -19,6 +19,8 @@ export type Product = CreateProductPayload & {
   updatedAt?: string;
 };
 
+export type ProductPreview = Pick<Product, "id" | "name">;
+
 /** Pagination / totals from `GET /products` when the API returns `{ data, meta }`. */
 export type ProductsMeta = {
   total: number;

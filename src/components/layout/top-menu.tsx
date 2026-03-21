@@ -12,6 +12,9 @@ export const TopMenu = () => {
       <Link to={"/recipes"} className="hover:underline">
         Recipes
       </Link>
+      <Link to={"/categories"} className="hover:underline">
+        Categories
+      </Link>
     </div>
   );
 };

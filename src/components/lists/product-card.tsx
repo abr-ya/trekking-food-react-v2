@@ -4,14 +4,7 @@ import { useDeleteProduct } from "@/hooks";
 import type { Product } from "@/types/product";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 
 export const ProductCard = ({ product }: { product: Product }) => {
   const [removeOpen, setRemoveOpen] = useState(false);
