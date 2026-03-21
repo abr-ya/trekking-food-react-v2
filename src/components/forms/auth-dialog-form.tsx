@@ -1,116 +1,128 @@
-import { Alert, AlertDescription, Button } from "..";
+import { useEffect } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/hooks";
+import { Alert, AlertDescription, Button } from "@/components";
+import { RHFInput } from "@/components/rhf";
+import { authDialogSchema, type AuthDialogFormData } from "@/schemas/auth-dialog";
 import { DialogFooter } from "../ui/dialog";
-import { cn } from "@/lib/utils";
 
-const inputClass =
-  "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+type AuthMode = "sign-in" | "sign-up";
 
-interface AuthDialogFormProps {
-  mode: "sign-in" | "sign-up";
-  email: string;
-  password: string;
-  name: string;
-  error: {
-    code: string;
-    message: string;
-  } | null;
-  submitting: boolean;
-  setEmail: (email: string) => void;
-  setPassword: (password: string) => void;
-  setName: (name: string) => void;
-  setMode: (mode: "sign-in" | "sign-up") => void;
-  clearError: () => void;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-}
+type AuthDialogFormProps = {
+  mode: AuthMode;
+  setMode: (mode: AuthMode) => void;
+  open: boolean;
+  onSuccess: () => void;
+};
 
-export const AuthDialogForm = ({
-  mode,
-  email,
-  password,
-  name,
-  error,
-  submitting,
-  setEmail,
-  setPassword,
-  setName,
-  setMode,
-  clearError,
-  handleSubmit,
-}: AuthDialogFormProps) => {
+export const AuthDialogForm = ({ mode, setMode, open, onSuccess }: AuthDialogFormProps) => {
+  const { login, register, error, clearError } = useAuth();
+
+  const form = useForm<AuthDialogFormData>({
+    resolver: zodResolver(authDialogSchema),
+    defaultValues: { email: "", password: "", name: "" },
+    mode: "onSubmit",
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    setError,
+    setValue,
+    clearErrors,
+    formState: { isSubmitting },
+  } = form;
+
+  useEffect(() => {
+    if (!open) {
+      reset({ email: "", password: "", name: "" });
+    }
+  }, [open, reset]);
+
+  const onSubmit = handleSubmit(async (data) => {
+    clearError();
+    if (mode === "sign-up" && !data.name.trim()) {
+      setError("name", { message: "Name is required" });
+      return;
+    }
+
+    const ok =
+      mode === "sign-up"
+        ? await register({
+            email: data.email,
+            password: data.password,
+            name: data.name.trim() || undefined,
+          })
+        : await login({ email: data.email, password: data.password });
+
+    if (ok) {
+      reset({ email: "", password: "", name: "" });
+      onSuccess();
+    }
+  });
+
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error.message}</AlertDescription>
-        </Alert>
-      )}
-      {mode === "sign-up" && (
-        <div className="grid gap-2">
-          <label htmlFor="auth-name" className="text-sm font-medium">
-            Name
-          </label>
-          <input
-            id="auth-name"
+    <FormProvider {...form}>
+      <form onSubmit={onSubmit} className="grid gap-4" noValidate>
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        )}
+        {mode === "sign-up" && (
+          <RHFInput<AuthDialogFormData>
+            name="name"
+            label="Name"
             type="text"
             autoComplete="name"
             placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={cn(inputClass)}
+            id="auth-name"
           />
-        </div>
-      )}
-      <div className="grid gap-2">
-        <label htmlFor="auth-email" className="text-sm font-medium">
-          Email
-        </label>
-        <input
-          id="auth-email"
+        )}
+        <RHFInput<AuthDialogFormData>
+          name="email"
+          label="Email"
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={cn(inputClass)}
-          required
+          id="auth-email"
         />
-      </div>
-      <div className="grid gap-2">
-        <label htmlFor="auth-password" className="text-sm font-medium">
-          Password
-        </label>
-        <input
-          id="auth-password"
+        <RHFInput<AuthDialogFormData>
+          name="password"
+          label="Password"
           type="password"
           autoComplete={mode === "sign-up" ? "new-password" : "current-password"}
           placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={cn(inputClass)}
-          required
+          id="auth-password"
         />
-      </div>
-      <DialogFooter className="flex-col gap-2 sm:flex-col">
-        <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
-          {submitting
-            ? mode === "sign-up"
-              ? "Creating account…"
-              : "Signing in…"
-            : mode === "sign-up"
-              ? "Sign up"
-              : "Sign in"}
-        </Button>
-        <button
-          type="button"
-          className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-2"
-          onClick={() => {
-            setMode(mode === "sign-up" ? "sign-in" : "sign-up");
-            clearError();
-          }}
-        >
-          {mode === "sign-up" ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-        </button>
-      </DialogFooter>
-    </form>
+        <DialogFooter className="flex-col gap-2 sm:flex-col">
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+            {isSubmitting
+              ? mode === "sign-up"
+                ? "Creating account…"
+                : "Signing in…"
+              : mode === "sign-up"
+                ? "Sign up"
+                : "Sign in"}
+          </Button>
+          <button
+            type="button"
+            className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-2"
+            onClick={() => {
+              const next = mode === "sign-up" ? "sign-in" : "sign-up";
+              setMode(next);
+              clearError();
+              clearErrors("name");
+              if (next === "sign-in") {
+                setValue("name", "");
+              }
+            }}
+          >
+            {mode === "sign-up" ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
+          </button>
+        </DialogFooter>
+      </form>
+    </FormProvider>
   );
 };

@@ -8,14 +8,9 @@ import { AuthDialogForm } from "../forms/auth-dialog-form";
 type AuthMode = "sign-in" | "sign-up";
 
 export const HeaderAuth = () => {
-  // todo: change to React Hook Form!
-  const { user, isAuthenticated, isLoading, error, login, register, logout, clearError } = useAuth();
+  const { user, isAuthenticated, isLoading, logout, clearError } = useAuth();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<AuthMode>("sign-in");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const openDialog = (m: AuthMode) => {
     setMode(m);
@@ -27,29 +22,6 @@ export const HeaderAuth = () => {
     setOpen(isOpen);
     if (!isOpen) {
       clearError();
-      setName("");
-      setEmail("");
-      setPassword("");
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-    setSubmitting(true);
-    try {
-      const ok =
-        mode === "sign-up"
-          ? await register({ email, password, name: name.trim() || undefined })
-          : await login({ email, password });
-      if (ok) {
-        setName("");
-        setEmail("");
-        setPassword("");
-        setOpen(false);
-      }
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -93,20 +65,7 @@ export const HeaderAuth = () => {
                 : "Use your email and password to sign in."}
             </DialogDescription>
           </DialogHeader>
-          <AuthDialogForm
-            mode={mode}
-            email={email}
-            password={password}
-            name={name}
-            error={error}
-            submitting={submitting}
-            setEmail={setEmail}
-            setPassword={setPassword}
-            setName={setName}
-            setMode={setMode}
-            clearError={clearError}
-            handleSubmit={handleSubmit}
-          />
+          <AuthDialogForm mode={mode} setMode={setMode} open={open} onSuccess={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
     </div>
