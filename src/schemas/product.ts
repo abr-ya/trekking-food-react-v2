@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createProductSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
+  name: z.string().trim().min(3, "Product name is required (at least 3 characters)"),
   kkal: z.number().min(0, "Must be 0 or more"),
   proteins: z.number().min(0, "Must be 0 or more"),
   fats: z.number().min(0, "Must be 0 or more"),

@@ -39,6 +39,7 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.16",
     "tailwindcss-animate": "^1.0.7",
+    "use-mask-input": "^3.7.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {

@@ -14,11 +14,12 @@ const PRODUCTS_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes
 /**
  * Fetch all products (TanStack Query `useQuery`).
  */
-export const useProducts = () => useQuery({
-  queryKey: productQueryKeys.list(),
-  queryFn: getProducts,
-  staleTime: PRODUCTS_STALE_TIME_MS,
-});
+export const useProducts = () =>
+  useQuery({
+    queryKey: productQueryKeys.list(),
+    queryFn: getProducts,
+    staleTime: PRODUCTS_STALE_TIME_MS,
+  });
 
 /**
  * Create a product (TanStack Query `useMutation`).
