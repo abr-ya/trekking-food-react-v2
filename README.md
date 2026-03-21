@@ -78,7 +78,28 @@ function Profile() {
 ## API & TanStack Query
 
 - **Products:** `GET /products`, `POST /products` (with auth token).
-- **Hooks:** `useProducts()`, `useCreateProduct()` from `@/hooks`. Creating a product invalidates the products list automatically.
+- **Hooks (TanStack Query):** `useProducts()` (`useQuery` → `GET /products`) and `useCreateProduct()` (`useMutation` → `POST /products`) from `@/hooks`.
+- **Query keys:** `productQueryKeys.all` (`["products"]`), `productQueryKeys.list()` (`["products","list"]`). Legacy alias: `productsQueryKey` (same as `all`).
+
+### Product list: when does it refetch?
+
+TanStack Query decides refetches from **stale vs fresh** data and a few flags. Here is how this app behaves for products:
+
+| Trigger | What happens |
+|--------|----------------|
+| **First visit** to a screen that uses `useProducts` | Fetches from the API (`GET /products`). |
+| **Navigate away and back** | If cached data is still **fresh** (within `staleTime`), **no** network request—UI uses cache. If **stale**, refetches in the background (or on mount, depending on defaults). |
+| **Window / tab regains focus** | Default `refetchOnWindowFocus: true`: if the list query is **stale**, it refetches. Fresh data is not refetched. |
+| **After creating a product** | `useCreateProduct` calls `invalidateQueries({ queryKey: productQueryKeys.all })`, so the list is marked stale and **refetches** so new items appear. |
+| **Manual** | `const { refetch } = useProducts();` then `refetch()` forces a new request. |
+
+**Configured in code:** `src/hooks/use-products.ts` sets **`staleTime: 2 * 60 * 1000` (2 minutes)** so the list is not treated as stale immediately. Without that, React Query’s default `staleTime: 0` would refetch almost every time you open the Products page or focus the window.
+
+**To change behavior:**
+
+- Longer cache: increase `PRODUCTS_STALE_TIME_MS` in `use-products.ts`.
+- Fewer refetches on tab focus: add `refetchOnWindowFocus: false` to the `useQuery` options in `useProducts`.
+- Always refetch on mount: set `staleTime: 0` or `refetchOnMount: "always"` (use sparingly).
 
 **Example – list products and create one:**
 
@@ -166,7 +187,7 @@ toast.dismiss(id);
 src/
   api/           # API functions (getProducts, postProduct)
   components/    # UI and forms (CreateProductForm, ProductsList, layout)
-  hooks/         # useAuth, useProducts, useCreateProduct, useTheme
+  hooks/         # use-products.ts (useProducts + useCreateProduct), useAuth, useTheme
   lib/           # api-client, auth-client, auth-token, toast, utils
   pages/         # Route pages (HomePage, ProductsPage)
   providers/     # AuthProvider, ThemeProvider
