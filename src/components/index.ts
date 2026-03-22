@@ -7,6 +7,7 @@ export { Skeleton } from "./ui/skeleton";
 // Layout
 export { Layout } from "./layout/layout";
 export { PageColumn, ColumnsWrapper } from "./layout/page-column";
+export { ProtectedPage } from "./layout/protected-page";
 
 // Forms
 export { CreateProductForm } from "./forms/create-product-form";
