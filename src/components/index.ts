@@ -16,6 +16,8 @@ export { CreateRecipeForm } from "./forms/create-recipe-form";
 // Dialogs
 export { CategoryDialog } from "./dialogs/category-dialog";
 export type { CategoryDialogProps } from "./dialogs/category-dialog";
+export { RemoveProductDialog } from "./dialogs/remove-product-dialog";
+export type { RemoveProductDialogProps } from "./dialogs/remove-product-dialog";
 
 // Lists
 export { ProductsList } from "./lists/products-list";

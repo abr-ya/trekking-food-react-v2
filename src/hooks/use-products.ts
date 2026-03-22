@@ -54,6 +54,8 @@ export const useDeleteProduct = () => {
 
   return useMutation({
     mutationFn: (id: string) => deleteProduct(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: productQueryKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: productQueryKeys.all });
+    },
   });
 };
