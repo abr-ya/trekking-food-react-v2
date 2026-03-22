@@ -43,7 +43,14 @@ export const CategoriesPage = () => {
           </div>
         </PageColumn>
         <PageColumn title="Recipe categories" description="Categories from the API (GET /recipe-categories).">
-          todo: add recipe categories
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" size="sm" onClick={() => openCreate("recipe")}>
+              New recipe category
+            </Button>
+          </div>
+          <div className="mt-3">
+            <CategoriesList kind="recipe" onEditCategory={openEdit("recipe")} />
+          </div>
         </PageColumn>
       </ColumnsWrapper>
       <CategoryDialog
