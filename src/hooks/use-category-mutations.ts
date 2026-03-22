@@ -18,11 +18,15 @@ export const useUpdateProductCategory = () => {
   });
 };
 
+// ToDo: Different invalidate - test: which one is better?
 export const useCreateRecipeCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: { name: string }) => postRecipeCategory(payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: recipeCategoryQueryKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: recipeCategoryQueryKeys.all });
+      await queryClient.refetchQueries({ queryKey: recipeCategoryQueryKeys.list() });
+    },
   });
 };
 
@@ -30,6 +34,9 @@ export const useUpdateRecipeCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, name }: { id: string; name: string }) => patchRecipeCategory(id, { name }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: recipeCategoryQueryKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: recipeCategoryQueryKeys.all });
+      await queryClient.refetchQueries({ queryKey: recipeCategoryQueryKeys.list() });
+    },
   });
 };

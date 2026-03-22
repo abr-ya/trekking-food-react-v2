@@ -13,8 +13,9 @@ export { CreateProductForm } from "./forms/create-product-form";
 
 // Dialogs
 export { CategoryDialog } from "./dialogs/category-dialog";
-export type { CategoryDialogProps, CategoryKind } from "./dialogs/category-dialog";
+export type { CategoryDialogProps } from "./dialogs/category-dialog";
 
 // Lists
 export { ProductsList } from "./lists/products-list";
 export { CategoriesList } from "./lists/categories-list";
+export type { CategoryListEditPayload } from "./lists/categories-list";

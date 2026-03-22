@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProductCategories } from "@/api/categories";
+import { getProductCategories, getRecipeCategories } from "@/api/categories";
 
 export const categoryQueryKeys = {
   all: ["categories"] as const,
@@ -17,5 +17,12 @@ export const useProductCategories = () =>
   useQuery({
     queryKey: categoryQueryKeys.list(),
     queryFn: getProductCategories,
+    staleTime: CATEGORIES_STALE_TIME_MS,
+  });
+
+export const useRecipeCategories = () =>
+  useQuery({
+    queryKey: recipeCategoryQueryKeys.list(),
+    queryFn: getRecipeCategories,
     staleTime: CATEGORIES_STALE_TIME_MS,
   });

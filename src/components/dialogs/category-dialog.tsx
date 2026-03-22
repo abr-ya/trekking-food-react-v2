@@ -18,8 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { RHFInput } from "@/components/rhf";
 import { categoryNameSchema, type CategoryNameFormData } from "@/schemas/category-name";
-
-export type CategoryKind = "product" | "recipe";
+import type { CategoryKind } from "@/types/category";
 
 export type CategoryDialogProps = {
   kind: CategoryKind;

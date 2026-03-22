@@ -1,32 +1,80 @@
-import { useProductCategories } from "@/hooks";
-import type { ProductCategory } from "@/types/category";
+import { useProductCategories, useRecipeCategories } from "@/hooks";
+import type { CategoryKind } from "@/types/category";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CategoryCard } from "./category-card";
 
-type CategoriesListProps = {
-  onEditCategory?: (category: ProductCategory) => void;
+export type CategoryListEditPayload = {
+  id: string;
+  name: string;
 };
 
-export const CategoriesList = ({ onEditCategory }: CategoriesListProps) => {
-  const { data, isLoading, error } = useProductCategories();
-  const categories = data?.data;
+type CategoriesListProps = {
+  kind: CategoryKind;
+  onEditCategory?: (category: CategoryListEditPayload) => void;
+};
 
-  if (isLoading) {
+function LoadingSkeletons() {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Skeleton key={i} className="h-14 w-full" />
+      ))}
+    </div>
+  );
+}
+
+function ErrorMessage({ error }: { error: unknown }) {
+  return (
+    <p className="text-destructive text-sm">
+      Failed to load categories: {error instanceof Error ? error.message : "Unknown error"}
+    </p>
+  );
+}
+
+export const CategoriesList = ({ kind, onEditCategory }: CategoriesListProps) => {
+  const productQuery = useProductCategories();
+  const recipeQuery = useRecipeCategories();
+
+  if (kind === "product") {
+    const { data, isLoading, error } = productQuery;
+    const categories = data?.data;
+
+    if (isLoading) {
+      return <LoadingSkeletons />;
+    }
+
+    if (error) {
+      return <ErrorMessage error={error} />;
+    }
+
+    if (!categories?.length) {
+      return <p className="text-muted-foreground text-sm">No categories returned from the API.</p>;
+    }
+
     return (
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-14 w-full" />
+      <div className="space-y-3">
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            name={category.name}
+            itemCount={category.products.length}
+            kind="product"
+            onEdit={onEditCategory != null ? () => onEditCategory({ id: category.id, name: category.name }) : undefined}
+          />
         ))}
       </div>
     );
   }
 
+  const { data, isLoading, error } = recipeQuery;
+  const categories = data?.data;
+
+  if (isLoading) {
+    return <LoadingSkeletons />;
+  }
+
   if (error) {
-    return (
-      <p className="text-destructive text-sm">
-        Failed to load categories: {error instanceof Error ? error.message : "Unknown error"}
-      </p>
-    );
+    return <ErrorMessage error={error} />;
   }
 
   if (!categories?.length) {
@@ -36,7 +84,13 @@ export const CategoriesList = ({ onEditCategory }: CategoriesListProps) => {
   return (
     <div className="space-y-3">
       {categories.map((category) => (
-        <CategoryCard key={category.id} category={category} onEdit={onEditCategory} />
+        <CategoryCard
+          key={category.id}
+          name={category.name}
+          itemCount={category.recipes.length}
+          kind="recipe"
+          onEdit={onEditCategory != null ? () => onEditCategory({ id: category.id, name: category.name }) : undefined}
+        />
       ))}
     </div>
   );
