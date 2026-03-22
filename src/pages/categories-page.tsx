@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CategoriesList, ColumnsWrapper, PageColumn, type CategoryListEditPayload } from "@/components";
+import { CategoriesList, ColumnsWrapper, PageColumn, ProtectedPage, type CategoryListEditPayload } from "@/components";
 import { Button } from "@/components/ui/button";
 import { CategoryDialog } from "@/components/dialogs/category-dialog";
 import type { CategoryKind } from "@/types/category";
@@ -29,8 +29,7 @@ export const CategoriesPage = () => {
   };
 
   return (
-    <div className="space-y-2">
-      <h1 className="text-xl font-bold">Categories</h1>
+    <ProtectedPage title="Categories">
       <ColumnsWrapper>
         <PageColumn title="Product categories" description="Categories from the API (GET /product-categories).">
           <div className="flex flex-wrap items-center gap-2">
@@ -59,6 +58,6 @@ export const CategoriesPage = () => {
         onOpenChange={handleDialogOpenChange}
         initialCategory={editing}
       />
-    </div>
+    </ProtectedPage>
   );
 };

@@ -1,7 +1,7 @@
 import { ColumnsWrapper, CreateProductForm, PageColumn, ProductsList, ProtectedPage } from "@/components";
 
 export const ProductsPage = () => (
-  <ProtectedPage>
+  <ProtectedPage title="Products Page">
     <ColumnsWrapper>
       <PageColumn title="Products list">
         <ProductsList />
