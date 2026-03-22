@@ -10,6 +10,7 @@ export { PageColumn, ColumnsWrapper } from "./layout/page-column";
 
 // Forms
 export { CreateProductForm } from "./forms/create-product-form";
+export { CreateRecipeForm } from "./forms/create-recipe-form";
 
 // Dialogs
 export { CategoryDialog } from "./dialogs/category-dialog";
