@@ -1,10 +1,37 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postRecipe } from "@/api/recipes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getRecipes, postRecipe } from "@/api/recipes";
 import type { CreateRecipePayload } from "@/types/recipe";
+
+const RECIPES_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes — match `useProducts`
+
+const DEFAULT_LIST_PAGE = 1;
+const DEFAULT_LIST_LIMIT = 20;
+
+export type UseRecipesParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
 
 export const recipeQueryKeys = {
   all: ["recipes"] as const,
-  list: () => [...recipeQueryKeys.all, "list"] as const,
+  list: (params: { page: number; limit: number; search: string }) =>
+    [...recipeQueryKeys.all, "list", params.page, params.limit, params.search] as const,
+};
+
+/**
+ * Fetch recipes (`GET /recipes`) with pagination and optional name search. Pass `page`, `limit`, `search` like a product list.
+ */
+export const useRecipes = (params: UseRecipesParams = {}) => {
+  const page = params.page ?? DEFAULT_LIST_PAGE;
+  const limit = params.limit ?? DEFAULT_LIST_LIMIT;
+  const search = params.search ?? "";
+
+  return useQuery({
+    queryKey: recipeQueryKeys.list({ page, limit, search }),
+    queryFn: () => getRecipes({ page, limit, search: search.trim() || undefined }),
+    staleTime: RECIPES_STALE_TIME_MS,
+  });
 };
 
 /**

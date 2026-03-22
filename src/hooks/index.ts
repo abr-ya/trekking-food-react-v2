@@ -13,4 +13,4 @@ export {
   useCreateRecipeCategory,
   useUpdateRecipeCategory,
 } from "./use-category-mutations";
-export { useCreateRecipe, recipeQueryKeys } from "./use-recipes";
+export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
