@@ -1,0 +1,43 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getHikings, postHiking } from "@/api/hikings";
+import type { CreateHikingPayload } from "@/types/hiking";
+
+const HIKINGS_STALE_TIME_MS = 2 * 60 * 1000;
+
+const DEFAULT_LIST_PAGE = 1;
+const DEFAULT_LIST_LIMIT = 20;
+
+export type UseHikingsParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
+
+export const hikingQueryKeys = {
+  all: ["hikings"] as const,
+  list: (params: { page: number; limit: number; search: string }) =>
+    [...hikingQueryKeys.all, "list", params.page, params.limit, params.search] as const,
+};
+
+export const useHikings = (params: UseHikingsParams = {}) => {
+  const page = params.page ?? DEFAULT_LIST_PAGE;
+  const limit = params.limit ?? DEFAULT_LIST_LIMIT;
+  const search = params.search ?? "";
+
+  return useQuery({
+    queryKey: hikingQueryKeys.list({ page, limit, search }),
+    queryFn: () => getHikings({ page, limit, search: search.trim() || undefined }),
+    staleTime: HIKINGS_STALE_TIME_MS,
+  });
+};
+
+export const useCreateHiking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateHikingPayload) => postHiking(payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.all });
+    },
+  });
+};

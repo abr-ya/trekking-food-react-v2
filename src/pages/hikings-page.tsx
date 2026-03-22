@@ -6,7 +6,7 @@ export const HikingsPage = () => (
       <PageColumn title="Hikings list">
         <HikingsList />
       </PageColumn>
-      <PageColumn title="Create hiking" description="Plan a new hiking trip (API hook-up pending).">
+      <PageColumn title="Create hiking" description="Plan a new hiking trip (POST /hikings).">
         <CreateHikingForm />
       </PageColumn>
     </ColumnsWrapper>
