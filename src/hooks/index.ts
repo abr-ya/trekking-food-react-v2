@@ -14,4 +14,4 @@ export {
   useUpdateRecipeCategory,
 } from "./use-category-mutations";
 export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
-export { useCreateHiking, useHikings, hikingQueryKeys } from "./use-hikings";
+export { useCreateHiking, useHiking, useHikings, hikingQueryKeys } from "./use-hikings";

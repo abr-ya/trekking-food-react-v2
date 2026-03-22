@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  CategoryDialog,
-  ColumnsWrapper,
-  CreateRecipeForm,
-  PageColumn,
-  ProtectedPage,
-  RecipesList,
-} from "@/components";
+import { CategoryDialog, ColumnsWrapper, CreateRecipeForm, PageColumn, ProtectedPage, RecipesList } from "@/components";
 import { Button } from "@/components/ui/button";
 
 export const RecipesPage = () => {

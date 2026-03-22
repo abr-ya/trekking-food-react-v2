@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getHikings, postHiking } from "@/api/hikings";
+import { getHiking, getHikings, postHiking } from "@/api/hikings";
 import type { CreateHikingPayload } from "@/types/hiking";
 
 const HIKINGS_STALE_TIME_MS = 2 * 60 * 1000;
@@ -17,7 +17,16 @@ export const hikingQueryKeys = {
   all: ["hikings"] as const,
   list: (params: { page: number; limit: number; search: string }) =>
     [...hikingQueryKeys.all, "list", params.page, params.limit, params.search] as const,
+  detail: (id: string) => [...hikingQueryKeys.all, "detail", id] as const,
 };
+
+export const useHiking = (id: string | undefined) =>
+  useQuery({
+    queryKey: hikingQueryKeys.detail(id ?? ""),
+    queryFn: () => getHiking(id!),
+    enabled: Boolean(id),
+    staleTime: HIKINGS_STALE_TIME_MS,
+  });
 
 export const useHikings = (params: UseHikingsParams = {}) => {
   const page = params.page ?? DEFAULT_LIST_PAGE;

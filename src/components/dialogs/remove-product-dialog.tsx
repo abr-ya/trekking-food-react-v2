@@ -58,4 +58,4 @@ export const RemoveProductDialog = ({ itemId, itemName }: RemoveProductDialogPro
       </Dialog>
     </>
   );
-}
+};

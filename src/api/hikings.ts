@@ -1,11 +1,5 @@
 import { apiFetch } from "@/lib/api-client";
-import type {
-  CreateHikingPayload,
-  Hiking,
-  HikingsListParams,
-  HikingsListResponse,
-  HikingsMeta,
-} from "@/types/hiking";
+import type { CreateHikingPayload, Hiking, HikingsListParams, HikingsListResponse, HikingsMeta } from "@/types/hiking";
 
 /** Row as returned by the API (camelCase or snake_case; numeric fields may be strings). */
 type HikingApiRow = {
@@ -23,7 +17,7 @@ type HikingApiRow = {
   updated_at?: string;
 };
 
-function coalesceNumber(...candidates: unknown[]): number {
+const coalesceNumber = (...candidates: unknown[]): number => {
   for (const v of candidates) {
     if (typeof v === "number" && !Number.isNaN(v)) return v;
     if (typeof v === "string" && v.trim() !== "") {
@@ -32,47 +26,37 @@ function coalesceNumber(...candidates: unknown[]): number {
     }
   }
   return 0;
-}
+};
 
-function normalizeHiking(row: HikingApiRow): Hiking {
-  return {
-    id: String(row.id),
-    name: row.name ?? "",
-    daysTotal: coalesceNumber(row.daysTotal, row.days_total),
-    membersTotal: coalesceNumber(row.membersTotal, row.members_total),
-    vegetariansTotal: coalesceNumber(row.vegetariansTotal, row.vegetarians_total),
-    createdAt: row.createdAt ?? row.created_at,
-    updatedAt: row.updatedAt ?? row.updated_at,
-  };
-}
+const normalizeHiking = (row: HikingApiRow): Hiking => ({
+  id: String(row.id),
+  name: row.name ?? "",
+  daysTotal: coalesceNumber(row.daysTotal, row.days_total),
+  membersTotal: coalesceNumber(row.membersTotal, row.members_total),
+  vegetariansTotal: coalesceNumber(row.vegetariansTotal, row.vegetarians_total),
+  createdAt: row.createdAt ?? row.created_at,
+  updatedAt: row.updatedAt ?? row.updated_at,
+});
 
-function normalizeHikingsList(data: HikingApiRow[] | undefined): Hiking[] {
-  return (data ?? []).map(normalizeHiking);
-}
+const normalizeHikingsList = (data: HikingApiRow[] | undefined): Hiking[] => (data ?? []).map(normalizeHiking);
 
-function metaFromListLength(length: number): HikingsMeta {
-  return {
-    total: length,
-    page: 1,
-    limit: length,
-    totalPages: length > 0 ? 1 : 0,
-  };
-}
+const metaFromListLength = (length: number): HikingsMeta => ({
+  total: length,
+  page: 1,
+  limit: length,
+  totalPages: length > 0 ? 1 : 0,
+});
 
-function hikingsListQueryString(params: HikingsListParams): string {
+const hikingsListQueryString = (params: HikingsListParams): string => {
   const sp = new URLSearchParams();
   if (params.page != null) sp.set("page", String(params.page));
   if (params.limit != null) sp.set("limit", String(params.limit));
   const q = params.search?.trim();
   if (q) sp.set("search", q);
-  const s = sp.toString();
-  return s ? `?${s}` : "";
-}
+  return sp.toString() ? `?${sp.toString()}` : "";
+};
 
-/**
- * `GET /hikings` — paginated list, optional `search`. Expects `{ data, meta }`; plain arrays are normalized.
- */
-export async function getHikings(params: HikingsListParams = {}): Promise<HikingsListResponse> {
+export const getHikings = async (params: HikingsListParams = {}): Promise<HikingsListResponse> => {
   const path = `/hikings${hikingsListQueryString(params)}`;
   const raw = await apiFetch<HikingApiRow[] | { data?: HikingApiRow[]; meta?: HikingsMeta }>(path, {
     method: "GET",
@@ -86,6 +70,22 @@ export async function getHikings(params: HikingsListParams = {}): Promise<Hiking
     data,
     meta: raw.meta ?? metaFromListLength(data.length),
   };
+};
+
+function unwrapHikingResponse(raw: unknown): HikingApiRow {
+  if (raw && typeof raw === "object" && "data" in raw && (raw as { data: unknown }).data != null) {
+    return (raw as { data: HikingApiRow }).data;
+  }
+  return raw as HikingApiRow;
+}
+
+/**
+ * `GET /hikings/:id` — single hiking (raw object or `{ data }`; normalized to `Hiking`).
+ */
+export async function getHiking(id: string): Promise<Hiking> {
+  const path = `/hikings/${encodeURIComponent(id)}`;
+  const raw = await apiFetch<unknown>(path, { method: "GET" });
+  return normalizeHiking(unwrapHikingResponse(raw));
 }
 
 /**

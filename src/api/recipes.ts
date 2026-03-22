@@ -1,11 +1,5 @@
 import { apiFetch } from "@/lib/api-client";
-import type {
-  CreateRecipePayload,
-  Recipe,
-  RecipesListResponse,
-  RecipesMeta,
-  RecipesListParams,
-} from "@/types/recipe";
+import type { CreateRecipePayload, Recipe, RecipesListResponse, RecipesMeta, RecipesListParams } from "@/types/recipe";
 
 function metaFromListLength(length: number): RecipesMeta {
   return {

@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { CategoriesPage, HikingsPage, HomePage, ProductsPage, RecipesPage } from "./pages";
+import { CategoriesPage, HikingDetailPage, HikingsPage, HomePage, ProductsPage, RecipesPage } from "./pages";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -21,6 +21,7 @@ const App = () => {
                 <Route path="/products/" element={<ProductsPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/recipes" element={<RecipesPage />} />
+                <Route path="/hikings/:id" element={<HikingDetailPage />} />
                 <Route path="/hikings" element={<HikingsPage />} />
               </Routes>
             </Layout>
