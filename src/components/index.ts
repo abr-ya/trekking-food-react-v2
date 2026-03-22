@@ -21,5 +21,6 @@ export type { RemoveProductDialogProps } from "./dialogs/remove-product-dialog";
 
 // Lists
 export { ProductsList } from "./lists/products-list";
+export { RecipesList } from "./lists/recipes-list";
 export { CategoriesList } from "./lists/categories-list";
 export type { CategoryListEditPayload } from "./lists/categories-list";

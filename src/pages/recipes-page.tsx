@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { CategoryDialog, ColumnsWrapper, CreateRecipeForm, PageColumn, ProtectedPage } from "@/components";
+import {
+  CategoryDialog,
+  ColumnsWrapper,
+  CreateRecipeForm,
+  PageColumn,
+  ProtectedPage,
+  RecipesList,
+} from "@/components";
 import { Button } from "@/components/ui/button";
 
 export const RecipesPage = () => {
@@ -9,7 +16,7 @@ export const RecipesPage = () => {
     <ProtectedPage title="Recipes">
       <ColumnsWrapper>
         <PageColumn title="Recipes list">
-          <p>Recipes list</p>
+          <RecipesList />
         </PageColumn>
         <PageColumn title="Create recipe" description="Create a new recipe (POST /recipes).">
           <CreateRecipeForm />
