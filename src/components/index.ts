@@ -12,6 +12,7 @@ export { ProtectedPage } from "./layout/protected-page";
 // Forms
 export { CreateProductForm } from "./forms/create-product-form";
 export { CreateRecipeForm } from "./forms/create-recipe-form";
+export { CreateHikingForm } from "./forms/create-hiking-form";
 
 // Dialogs
 export { CategoryDialog } from "./dialogs/category-dialog";
@@ -22,5 +23,6 @@ export type { RemoveProductDialogProps } from "./dialogs/remove-product-dialog";
 // Lists
 export { ProductsList } from "./lists/products-list";
 export { RecipesList } from "./lists/recipes-list";
+export { HikingsList } from "./lists/hikings-list";
 export { CategoriesList } from "./lists/categories-list";
 export type { CategoryListEditPayload } from "./lists/categories-list";

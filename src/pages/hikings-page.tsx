@@ -1,7 +1,14 @@
-import { ProtectedPage } from "@/components";
+import { ColumnsWrapper, CreateHikingForm, HikingsList, PageColumn, ProtectedPage } from "@/components";
 
 export const HikingsPage = () => (
   <ProtectedPage title="Hikings">
-    <p className="text-muted-foreground text-sm">Hiking eating plans and recipes will appear here soon...</p>
+    <ColumnsWrapper>
+      <PageColumn title="Hikings list">
+        <HikingsList />
+      </PageColumn>
+      <PageColumn title="Create hiking" description="Plan a new hiking trip (API hook-up pending).">
+        <CreateHikingForm />
+      </PageColumn>
+    </ColumnsWrapper>
   </ProtectedPage>
 );
