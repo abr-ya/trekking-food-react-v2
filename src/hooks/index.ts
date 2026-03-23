@@ -14,4 +14,11 @@ export {
   useUpdateRecipeCategory,
 } from "./use-category-mutations";
 export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
-export { useCreateHiking, useHiking, useHikings, hikingQueryKeys } from "./use-hikings";
+export {
+  useAddHikingProductsFromRecipe,
+  useCreateHiking,
+  useHiking,
+  useHikings,
+  hikingQueryKeys,
+} from "./use-hikings";
+export type { AddHikingProductsFromRecipeVariables } from "./use-hikings";

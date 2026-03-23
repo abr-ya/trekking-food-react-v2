@@ -1,5 +1,12 @@
 import { apiFetch } from "@/lib/api-client";
-import type { CreateHikingPayload, Hiking, HikingsListParams, HikingsListResponse, HikingsMeta } from "@/types/hiking";
+import type {
+  CreateHikingPayload,
+  Hiking,
+  HikingProductsFromRecipePayload,
+  HikingsListParams,
+  HikingsListResponse,
+  HikingsMeta,
+} from "@/types/hiking";
 
 /** Row as returned by the API (camelCase or snake_case; numeric fields may be strings). */
 type HikingApiRow = {
@@ -93,6 +100,19 @@ export async function getHiking(id: string): Promise<Hiking> {
  */
 export async function postHiking(payload: CreateHikingPayload): Promise<unknown> {
   return apiFetch("/hikings", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `POST /hikings/:id/hiking-products/from-recipe` — add hiking products from a recipe for a day / eating time.
+ */
+export async function postHikingProductsFromRecipe(
+  hikingId: string,
+  payload: HikingProductsFromRecipePayload,
+): Promise<unknown> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/from-recipe`, {
     method: "POST",
     body: payload,
   });

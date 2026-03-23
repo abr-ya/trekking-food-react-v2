@@ -148,6 +148,71 @@ function Products() {
 }
 ```
 
+### Hikings
+
+- **API (`src/api/hikings.ts`):** `getHikings` / `getHiking` / `postHiking` — list and detail responses are normalized (camelCase vs snake_case). `postHikingProductsFromRecipe(hikingId, payload)` → `POST /hikings/:id/hiking-products/from-recipe`.
+- **Hooks (`@/hooks`):** `useHikings`, `useHiking(id)`, `useCreateHiking`, `useAddHikingProductsFromRecipe`.
+- **Query keys:** `hikingQueryKeys.all`, `hikingQueryKeys.list({ page, limit, search })`, `hikingQueryKeys.detail(id)`.
+
+**Example – list hikings, open one, create a hiking, add products from a recipe:**
+
+```tsx
+import {
+  useHikings,
+  useHiking,
+  useCreateHiking,
+  useAddHikingProductsFromRecipe,
+} from "@/hooks";
+
+function HikingFlow({ hikingId }: { hikingId: string }) {
+  const { data: listData } = useHikings();
+  const { data: hiking } = useHiking(hikingId);
+  const createHiking = useCreateHiking();
+  const addFromRecipe = useAddHikingProductsFromRecipe();
+
+  return (
+    <div>
+      <p>Hikings: {listData?.data?.length ?? 0}</p>
+      {hiking && <p>Current: {hiking.name}</p>}
+
+      <button
+        type="button"
+        onClick={() =>
+          createHiking.mutate({
+            name: "Dolomites 2026",
+            daysTotal: 7,
+            membersTotal: 4,
+            vegetariansTotal: 1,
+          })
+        }
+        disabled={createHiking.isPending}
+      >
+        Create hiking
+      </button>
+
+      <button
+        type="button"
+        onClick={() =>
+          addFromRecipe.mutate({
+            hikingId,
+            payload: {
+              recipeId: "r1b2c3d4-1111-4111-8111-111111111111",
+              dayNumber: 1,
+              eatingTimeId: "e5f6a7b8-5555-4555-8555-555555555555",
+            },
+          })
+        }
+        disabled={addFromRecipe.isPending}
+      >
+        Add from recipe
+      </button>
+    </div>
+  );
+}
+```
+
+After `useCreateHiking` or `useAddHikingProductsFromRecipe` succeeds, hiking list and detail queries are invalidated so the UI can refetch.
+
 ## Toast (React Toastify)
 
 Use the shared helpers in components or any TS file. Import from `@/lib/toast`.
@@ -192,7 +257,7 @@ toast.dismiss(id);
 
 ```
 src/
-  api/           # API functions (getProducts, postProduct)
+  api/           # API functions (products, recipes, hikings, …)
   components/    # UI and forms (CreateProductForm, ProductsList, layout)
   hooks/         # use-products.ts (useProducts + useCreateProduct), useAuth, useTheme
   lib/           # api-client, auth-client, auth-token, toast, utils

@@ -28,3 +28,10 @@ export type HikingsListParams = {
   limit?: number;
   search?: string;
 };
+
+/** Body for `POST /hikings/:id/hiking-products/from-recipe`. */
+export type HikingProductsFromRecipePayload = {
+  recipeId: string;
+  dayNumber: number;
+  eatingTimeId: string;
+};
