@@ -26,3 +26,6 @@ export { RecipesList } from "./lists/recipes-list";
 export { HikingsList } from "./lists/hikings-list";
 export { CategoriesList } from "./lists/categories-list";
 export type { CategoryListEditPayload } from "./lists/categories-list";
+
+// Hiking page
+export { HikingInfo } from "./hiking-page/hiking-info";
