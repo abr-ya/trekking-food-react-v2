@@ -1,7 +1,7 @@
 import { useHiking } from "@/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const HikingInfo = ({id}: {id: string}) => {
+export const HikingInfo = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
 
   if (!id) {
