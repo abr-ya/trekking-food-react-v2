@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useHiking } from "@/hooks";
-import { HikingInfo, ProtectedPage } from "@/components";
+import { FoodPlan, HikingInfo, PacksByUsers, ProtectedPage, ShoppingList } from "@/components";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const HikingDetailPage = () => {
@@ -26,13 +26,13 @@ export const HikingDetailPage = () => {
           <HikingInfo id={id ?? ""} />
         </TabsContent>
         <TabsContent value="food-plan" className="pt-3">
-          <p className="text-muted-foreground text-sm">Food plan content will be added here.</p>
+          <FoodPlan id={id ?? ""} />
         </TabsContent>
         <TabsContent value="shopping-list" className="pt-3">
-          <p className="text-muted-foreground text-sm">Shopping list content will be added here.</p>
+          <ShoppingList />
         </TabsContent>
         <TabsContent value="packs-by-users" className="pt-3">
-          <p className="text-muted-foreground text-sm">Packs by users content will be added here.</p>
+          <PacksByUsers />
         </TabsContent>
       </Tabs>
     </ProtectedPage>

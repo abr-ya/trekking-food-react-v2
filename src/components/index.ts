@@ -29,3 +29,6 @@ export type { CategoryListEditPayload } from "./lists/categories-list";
 
 // Hiking page
 export { HikingInfo } from "./hiking-page/hiking-info";
+export { FoodPlan } from "./hiking-page/food-plan";
+export { ShoppingList } from "./hiking-page/shopping-list";
+export { PacksByUsers } from "./hiking-page/packs-by-users";

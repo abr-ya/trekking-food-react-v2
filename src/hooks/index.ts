@@ -16,3 +16,4 @@ export {
 export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
 export { useAddHikingProductsFromRecipe, useCreateHiking, useHiking, useHikings, hikingQueryKeys } from "./use-hikings";
 export type { AddHikingProductsFromRecipeVariables } from "./use-hikings";
+export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";
