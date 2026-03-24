@@ -1,6 +1,7 @@
 import { useEatingTimes, useHiking } from "@/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AddRecipeToHikingForm } from "@/components";
 
 export const FoodPlan = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
@@ -39,6 +40,7 @@ export const FoodPlan = ({ id }: { id: string }) => {
 
   return (
     <div className="rounded-md border p-3">
+      <AddRecipeToHikingForm hikingId={id} />
       <Tabs defaultValue={defaultDay} orientation="vertical" className="w-full gap-4 md:flex-row">
         <TabsList className="h-auto w-full justify-start md:w-40 md:flex-col md:items-stretch">
           {days.map((day) => (

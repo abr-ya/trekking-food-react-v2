@@ -13,6 +13,7 @@ export { ProtectedPage } from "./layout/protected-page";
 export { CreateProductForm } from "./forms/create-product-form";
 export { CreateRecipeForm } from "./forms/create-recipe-form";
 export { CreateHikingForm } from "./forms/create-hiking-form";
+export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
 
 // Dialogs
 export { CategoryDialog } from "./dialogs/category-dialog";
