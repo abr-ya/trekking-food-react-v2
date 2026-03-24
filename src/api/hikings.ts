@@ -6,7 +6,9 @@ import type {
   HikingsListParams,
   HikingsListResponse,
   HikingsMeta,
+  HikingWithProducts,
 } from "@/types/hiking";
+import type { HikingProduct } from "@/types/hiking-product";
 
 /** Row as returned by the API (camelCase or snake_case; numeric fields may be strings). */
 type HikingApiRow = {
@@ -47,6 +49,40 @@ const normalizeHiking = (row: HikingApiRow): Hiking => ({
 
 const normalizeHikingsList = (data: HikingApiRow[] | undefined): Hiking[] => (data ?? []).map(normalizeHiking);
 
+type HikingDetailApiRow = HikingApiRow & {
+  hiking_products?: unknown;
+  hikingProducts?: unknown;
+};
+
+function unwrapHikingDetailResponse(raw: unknown): HikingDetailApiRow {
+  if (raw && typeof raw === "object" && "data" in raw && (raw as { data: unknown }).data != null) {
+    return (raw as { data: HikingDetailApiRow }).data;
+  }
+  return raw as HikingDetailApiRow;
+}
+
+function normalizeHikingProduct(row: unknown): HikingProduct {
+  const r = row as Record<string, unknown>;
+  return {
+    id: String(r.id ?? ""),
+    hiking_id: String(r.hiking_id ?? r.hikingId ?? ""),
+    day_number: coalesceNumber(r.day_number, r.dayNumber),
+    eating_time_id: String(r.eating_time_id ?? r.eatingTimeId ?? ""),
+    eating_time_name: String(r.eating_time_name ?? r.eatingTimeName ?? ""),
+    product_id: String(r.product_id ?? r.productId ?? ""),
+    product_name: String(r.product_name ?? r.productName ?? ""),
+    recipe_id: String(r.recipe_id ?? r.recipeId ?? ""),
+    recipe_name: String(r.recipe_name ?? r.recipeName ?? ""),
+    personal_quantity: coalesceNumber(r.personal_quantity, r.personalQuantity),
+    total_quantity: coalesceNumber(r.total_quantity, r.totalQuantity),
+  };
+}
+
+function normalizeHikingProductsList(raw: unknown): HikingProduct[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(normalizeHikingProduct);
+}
+
 const metaFromListLength = (length: number): HikingsMeta => ({
   total: length,
   page: 1,
@@ -79,20 +115,17 @@ export const getHikings = async (params: HikingsListParams = {}): Promise<Hiking
   };
 };
 
-function unwrapHikingResponse(raw: unknown): HikingApiRow {
-  if (raw && typeof raw === "object" && "data" in raw && (raw as { data: unknown }).data != null) {
-    return (raw as { data: HikingApiRow }).data;
-  }
-  return raw as HikingApiRow;
-}
-
 /**
- * `GET /hikings/:id` — single hiking (raw object or `{ data }`; normalized to `Hiking`).
+ * `GET /hikings/:id` — single hiking with `hiking_products` (snake or camel from API; normalized).
  */
-export async function getHiking(id: string): Promise<Hiking> {
+export async function getHiking(id: string): Promise<HikingWithProducts> {
   const path = `/hikings/${encodeURIComponent(id)}`;
   const raw = await apiFetch<unknown>(path, { method: "GET" });
-  return normalizeHiking(unwrapHikingResponse(raw));
+  const row = unwrapHikingDetailResponse(raw);
+  const base = normalizeHiking(row);
+  const productsRaw = row.hiking_products ?? row.hikingProducts;
+  const hiking_products = normalizeHikingProductsList(productsRaw);
+  return { ...base, hiking_products };
 }
 
 /**

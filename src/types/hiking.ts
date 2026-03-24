@@ -1,3 +1,5 @@
+import type { HikingProduct } from "./hiking-product";
+
 export type CreateHikingPayload = {
   name: string;
   daysTotal: number;
@@ -9,6 +11,10 @@ export type Hiking = CreateHikingPayload & {
   id: string;
   createdAt?: string;
   updatedAt?: string;
+};
+
+export type HikingWithProducts = Hiking & {
+  hiking_products: HikingProduct[];
 };
 
 export type HikingsMeta = {
