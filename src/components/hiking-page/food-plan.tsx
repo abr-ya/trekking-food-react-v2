@@ -51,7 +51,7 @@ export const FoodPlan = ({ id }: { id: string }) => {
             <TabsContent key={day} value={`day-${day}`} className="pt-1">
               <div className="text-muted-foreground space-y-2 text-sm">
                 <p className="text-foreground font-medium">Day {day}</p>
-                <DayEatings dayNumber={day} hikingProducts={hiking.hiking_products} hikingId={id} membersTotal={hiking.membersTotal} />
+                <DayEatings dayNumber={day} hikingProducts={hiking.hiking_products} hikingId={id} />
               </div>
             </TabsContent>
           ))}

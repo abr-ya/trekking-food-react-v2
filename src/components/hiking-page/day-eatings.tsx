@@ -4,15 +4,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { HikingProduct } from "@/types/hiking-product";
 import { AddFooter } from "./add-footer";
 import { EatingCard } from "./eating-card";
+import { groupProductsByRecipeId } from "./hiking-helpers";
 
 export type DayEatingsProps = {
   dayNumber: number;
   hikingProducts: HikingProduct[];
   hikingId: string;
-  membersTotal: number;
 };
 
-export const DayEatings = ({ dayNumber, hikingProducts, hikingId, membersTotal }: DayEatingsProps) => {
+export const DayEatings = ({ dayNumber, hikingProducts, hikingId }: DayEatingsProps) => {
   const { data: eatingTimesData, isLoading, error } = useEatingTimes();
   const eatingTimes = eatingTimesData?.data ?? [];
 
@@ -48,11 +48,12 @@ export const DayEatings = ({ dayNumber, hikingProducts, hikingId, membersTotal }
             <CardTitle className="text-base font-semibold">{slot.name}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-2 pb-2 pt-0">
-            {productsForDay
-              .filter((p) => p.eating_time_id === slot.id)
-              .map((p) => (
-                <EatingCard key={p.id} data={p} membersTotal={membersTotal} />
-              ))}
+            {groupProductsByRecipeId(productsForDay.filter((p) => p.eating_time_id === slot.id)).map((items) => (
+              <EatingCard
+                key={items[0].recipe_id || items.map((p) => p.id).join("-")}
+                items={items}
+              />
+            ))}
           </CardContent>
           <AddFooter position={{ hikingId, dayNumber, eatingTimeId: slot.id }} />
         </Card>
