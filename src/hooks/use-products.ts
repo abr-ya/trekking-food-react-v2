@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct, getProducts, patchProduct, postProduct } from "@/api/products";
-import type { CreateProductPayload, UpdateProductPayload } from "@/types/product";
+import type { CreateProductPayload, ProductsListParams, UpdateProductPayload } from "@/types/product";
 
 /** TanStack Query keys for product API. */
 export const productQueryKeys = {
   all: ["products"] as const,
-  list: () => [...productQueryKeys.all, "list"] as const,
+  list: (params: ProductsListParams = {}) =>
+    [...productQueryKeys.all, "list", params.page ?? null, params.limit ?? null, params.search ?? ""] as const,
 };
 
 /** How long product list data stays “fresh” before TanStack Query may refetch on mount/focus. */
@@ -16,8 +17,8 @@ const PRODUCTS_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes
  */
 export const useProducts = () =>
   useQuery({
-    queryKey: productQueryKeys.list(),
-    queryFn: getProducts,
+    queryKey: productQueryKeys.list({}),
+    queryFn: () => getProducts(),
     staleTime: PRODUCTS_STALE_TIME_MS,
   });
 

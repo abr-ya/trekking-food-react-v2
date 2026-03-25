@@ -33,3 +33,11 @@ export type ProductsListResponse = {
   data: Product[];
   meta: ProductsMeta;
 };
+
+/** Query params for `GET /products?...` (optional pagination + name search, same idea as recipes). */
+export type ProductsListParams = {
+  page?: number;
+  limit?: number;
+  /** Server-side name filter (omit or empty = no filter). */
+  search?: string;
+};
