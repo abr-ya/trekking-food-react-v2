@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getHiking, getHikings, postHiking, postHikingProductsFromRecipe } from "@/api/hikings";
+import { getHiking, getHikings, patchHikingProduct, postHiking, postHikingProductsFromRecipe } from "@/api/hikings";
 import type { CreateHikingPayload, HikingProductsFromRecipePayload } from "@/types/hiking";
+import type { UpdateHikingProductPayload } from "@/types/hiking-product";
 
 const HIKINGS_STALE_TIME_MS = 2 * 60 * 1000;
 
@@ -54,6 +55,24 @@ export const useCreateHiking = () => {
 export type AddHikingProductsFromRecipeVariables = {
   hikingId: string;
   payload: HikingProductsFromRecipePayload;
+};
+
+export type UpdateHikingProductVariables = {
+  hikingId: string;
+  hikingProductId: string;
+  payload: UpdateHikingProductPayload;
+};
+
+export const useUpdateHikingProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, hikingProductId, payload }: UpdateHikingProductVariables) =>
+      patchHikingProduct(hikingId, hikingProductId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
 };
 
 export const useAddHikingProductsFromRecipe = () => {

@@ -14,6 +14,13 @@ export {
   useUpdateRecipeCategory,
 } from "./use-category-mutations";
 export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
-export { useAddHikingProductsFromRecipe, useCreateHiking, useHiking, useHikings, hikingQueryKeys } from "./use-hikings";
-export type { AddHikingProductsFromRecipeVariables } from "./use-hikings";
+export {
+  useAddHikingProductsFromRecipe,
+  useCreateHiking,
+  useHiking,
+  useHikings,
+  useUpdateHikingProduct,
+  hikingQueryKeys,
+} from "./use-hikings";
+export type { AddHikingProductsFromRecipeVariables, UpdateHikingProductVariables } from "./use-hikings";
 export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";

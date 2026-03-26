@@ -8,7 +8,7 @@ import type {
   HikingsMeta,
   HikingWithProducts,
 } from "@/types/hiking";
-import type { HikingProduct } from "@/types/hiking-product";
+import type { HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
 
 /** Row as returned by the API (camelCase or snake_case; numeric fields may be strings). */
 type HikingApiRow = {
@@ -134,6 +134,20 @@ export async function getHiking(id: string): Promise<HikingWithProducts> {
 export async function postHiking(payload: CreateHikingPayload): Promise<unknown> {
   return apiFetch("/hikings", {
     method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `PATCH /hikings/:hikingId/hiking-products/:hikingProductId` — update personal/total quantity for a hiking product.
+ */
+export async function patchHikingProduct(
+  hikingId: string,
+  hikingProductId: string,
+  payload: UpdateHikingProductPayload,
+): Promise<unknown> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/${encodeURIComponent(hikingProductId)}`, {
+    method: "PATCH",
     body: payload,
   });
 }

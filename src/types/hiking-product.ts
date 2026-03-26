@@ -12,3 +12,9 @@ export type HikingProduct = {
   personal_quantity: number;
   total_quantity: number;
 };
+
+/** Body for `PATCH /hikings/:hikingId/hiking-products/:hikingProductId`. */
+export type UpdateHikingProductPayload = {
+  personalQuantity?: number;
+  totalQuantity?: number;
+};
