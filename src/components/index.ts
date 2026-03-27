@@ -18,6 +18,7 @@ export { CreateHikingForm } from "./forms/create-hiking-form";
 export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
 
 // Dialogs
+export { AddHikingAdminDialog } from "./hiking-page/add-hiking-admin-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";
 export type { CategoryDialogProps } from "./dialogs/category-dialog";
 export { RemoveProductDialog } from "./dialogs/remove-product-dialog";

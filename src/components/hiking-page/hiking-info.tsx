@@ -1,5 +1,5 @@
 import { useHiking } from "@/hooks";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AddHikingAdminDialog, Skeleton } from "@/components";
 
 export const HikingInfo = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
@@ -56,10 +56,13 @@ export const HikingInfo = ({ id }: { id: string }) => {
           <span className="text-foreground font-medium">Updated:</span> {hiking.updatedAt}
         </p>
       ) : null}
-      <p>
-        <span className="text-foreground font-medium">Admins:</span>{" "}
-        {hiking.admins.length > 0 ? hiking.admins.map((admin) => admin.name).join(", ") : "No admins yet."}
-      </p>
+      <div className="flex items-center gap-3">
+        <p>
+          <span className="text-foreground font-medium">Admins:</span>{" "}
+          {hiking.admins.length > 0 ? hiking.admins.map((admin) => admin.name).join(", ") : "No admins yet."}
+        </p>
+        <AddHikingAdminDialog hikingId={hiking.id} />
+      </div>
     </div>
   );
 };
