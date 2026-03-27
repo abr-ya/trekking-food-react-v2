@@ -5,9 +5,15 @@ import {
   patchHikingProduct,
   postHiking,
   postHikingAdmin,
+  postHikingProduct,
   postHikingProductsFromRecipe,
 } from "@/api/hikings";
-import type { AddHikingAdminPayload, CreateHikingPayload, HikingProductsFromRecipePayload } from "@/types/hiking";
+import type {
+  AddHikingAdminPayload,
+  AddHikingProductPayload,
+  CreateHikingPayload,
+  HikingProductsFromRecipePayload,
+} from "@/types/hiking";
 import type { UpdateHikingProductPayload } from "@/types/hiking-product";
 
 const HIKINGS_STALE_TIME_MS = 2 * 60 * 1000;
@@ -92,6 +98,22 @@ export const useAddHikingAdmin = () => {
 
   return useMutation({
     mutationFn: ({ hikingId, payload }: AddHikingAdminVariables) => postHikingAdmin(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type AddHikingProductVariables = {
+  hikingId: string;
+  payload: AddHikingProductPayload;
+};
+
+export const useAddHikingProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: AddHikingProductVariables) => postHikingProduct(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },

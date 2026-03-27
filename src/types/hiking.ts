@@ -52,6 +52,16 @@ export type HikingProductsFromRecipePayload = {
   eatingTimeId: string;
 };
 
+/** Body for `POST /hikings/:id/hiking-products`. */
+export type AddHikingProductPayload = {
+  dayNumber: number;
+  eatingTimeId: string;
+  productId: string;
+  personalQuantity: number;
+  totalQuantity: number;
+  recipeId: string | null;
+};
+
 /** Body for `POST /hikings/:id/admins`. */
 export type AddHikingAdminPayload = {
   userId: string;

@@ -16,6 +16,7 @@ export {
 export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
 export {
   useAddHikingAdmin,
+  useAddHikingProduct,
   useAddHikingProductsFromRecipe,
   useCreateHiking,
   useHiking,
@@ -25,6 +26,7 @@ export {
 } from "./use-hikings";
 export type {
   AddHikingAdminVariables,
+  AddHikingProductVariables,
   AddHikingProductsFromRecipeVariables,
   UpdateHikingProductVariables,
 } from "./use-hikings";

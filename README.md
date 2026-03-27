@@ -213,6 +213,95 @@ function HikingFlow({ hikingId }: { hikingId: string }) {
 
 After `useCreateHiking` or `useAddHikingProductsFromRecipe` succeeds, hiking list and detail queries are invalidated so the UI can refetch.
 
+### Update hiking product quantities
+
+`useUpdateHikingProduct` — `PATCH /hikings/:hikingId/hiking-products/:hikingProductId`. Invalidates the hiking detail on success.
+
+```tsx
+import { useUpdateHikingProduct } from "@/hooks";
+
+function QuantityEditor({ hikingId, hikingProductId }: { hikingId: string; hikingProductId: string }) {
+  const { mutate, isPending } = useUpdateHikingProduct();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        mutate({
+          hikingId,
+          hikingProductId,
+          payload: { personalQuantity: 85, totalQuantity: 340 },
+        })
+      }
+      disabled={isPending}
+    >
+      {isPending ? "Saving…" : "Update quantities"}
+    </button>
+  );
+}
+```
+
+### Add a product directly to a hiking plan
+
+`useAddHikingProduct` — `POST /hikings/:id/hiking-products`. Invalidates the hiking detail on success. `recipeId` can be `null` when the product is not tied to a recipe.
+
+```tsx
+import { useAddHikingProduct } from "@/hooks";
+
+function AddProductButton({ hikingId }: { hikingId: string }) {
+  const { mutate, isPending } = useAddHikingProduct();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        mutate({
+          hikingId,
+          payload: {
+            dayNumber: 1,
+            eatingTimeId: "e5f6a7b8-5555-4555-8555-555555555555",
+            productId: "sugar-1111-4111-8111-111111111111",
+            personalQuantity: 85,
+            totalQuantity: 340,
+            recipeId: null,
+          },
+        })
+      }
+      disabled={isPending}
+    >
+      {isPending ? "Adding…" : "Add product"}
+    </button>
+  );
+}
+```
+
+### Grant admin access to a hiking plan
+
+`useAddHikingAdmin` — `POST /hikings/:id/admins`. Invalidates the hiking detail on success.
+
+```tsx
+import { useAddHikingAdmin } from "@/hooks";
+
+function AddAdminButton({ hikingId }: { hikingId: string }) {
+  const { mutate, isPending } = useAddHikingAdmin();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        mutate({
+          hikingId,
+          payload: { userId: "a1b2c3d4-e5f6-4789-a012-345678901234" },
+        })
+      }
+      disabled={isPending}
+    >
+      {isPending ? "Adding…" : "Add admin"}
+    </button>
+  );
+}
+```
+
 ## Toast (React Toastify)
 
 Use the shared helpers in components or any TS file. Import from `@/lib/toast`.
