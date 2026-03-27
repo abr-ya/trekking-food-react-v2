@@ -1,5 +1,6 @@
 import { CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AddProductToHikingDialog } from "./add-product-to-hiking-dialog";
 
 export type AddRecipeSlotPositionBy = {
   hikingId: string;
@@ -14,7 +15,7 @@ type AddFooterProps = {
 /** Footer action per meal slot; wire to add-recipe flow or dialog as needed. */
 export function AddFooter({ position }: AddFooterProps) {
   return (
-    <CardFooter className="mt-auto border-t pt-4">
+    <CardFooter className="mt-auto border-t pt-4 flex-col gap-2">
       <Button
         type="button"
         variant="outline"
@@ -24,6 +25,12 @@ export function AddFooter({ position }: AddFooterProps) {
       >
         Add recipe
       </Button>
+
+      <AddProductToHikingDialog
+        hikingId={position.hikingId}
+        dayNumber={position.dayNumber}
+        eatingTimeId={position.eatingTimeId}
+      />
     </CardFooter>
   );
 }

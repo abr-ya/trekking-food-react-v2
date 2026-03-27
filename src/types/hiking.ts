@@ -58,7 +58,7 @@ export type AddHikingProductPayload = {
   eatingTimeId: string;
   productId: string;
   personalQuantity: number;
-  totalQuantity: number;
+  totalQuantity?: number;
   recipeId: string | null;
 };
 

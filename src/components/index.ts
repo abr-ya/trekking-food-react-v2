@@ -16,6 +16,7 @@ export { CreateProductForm } from "./forms/create-product-form";
 export { CreateRecipeForm } from "./forms/create-recipe-form";
 export { CreateHikingForm } from "./forms/create-hiking-form";
 export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
+export { AddProductToHikingForm } from "./forms/add-product-to-hiking-form";
 
 // Dialogs
 export { AddHikingAdminDialog } from "./hiking-page/add-hiking-admin-dialog";

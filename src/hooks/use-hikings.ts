@@ -115,7 +115,7 @@ export const useAddHikingProduct = () => {
   return useMutation({
     mutationFn: ({ hikingId, payload }: AddHikingProductVariables) => postHikingProduct(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
-      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
     },
   });
 };
