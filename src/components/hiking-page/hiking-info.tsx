@@ -46,11 +46,20 @@ export const HikingInfo = ({ id }: { id: string }) => {
           <span className="text-foreground font-medium">Created:</span> {hiking.createdAt}
         </p>
       ) : null}
+      {hiking.userId ? (
+        <p>
+          <span className="text-foreground font-medium">Created by:</span> {hiking.userId}
+        </p>
+      ) : null}
       {hiking.updatedAt ? (
         <p>
           <span className="text-foreground font-medium">Updated:</span> {hiking.updatedAt}
         </p>
       ) : null}
+      <p>
+        <span className="text-foreground font-medium">Admins:</span>{" "}
+        {hiking.admins.length > 0 ? hiking.admins.map((admin) => admin.name).join(", ") : "No admins yet."}
+      </p>
     </div>
   );
 };

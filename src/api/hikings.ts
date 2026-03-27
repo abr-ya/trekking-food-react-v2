@@ -3,6 +3,7 @@ import type {
   AddHikingAdminPayload,
   CreateHikingPayload,
   Hiking,
+  HikingAdmin,
   HikingProductsFromRecipePayload,
   HikingsListParams,
   HikingsListResponse,
@@ -15,6 +16,7 @@ import type { HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-p
 type HikingApiRow = {
   id: string;
   name?: string;
+  user_id?: string;
   daysTotal?: unknown;
   days_total?: unknown;
   membersTotal?: unknown;
@@ -41,6 +43,7 @@ const coalesceNumber = (...candidates: unknown[]): number => {
 const normalizeHiking = (row: HikingApiRow): Hiking => ({
   id: String(row.id),
   name: row.name ?? "",
+  userId: row.user_id,
   daysTotal: coalesceNumber(row.daysTotal, row.days_total),
   membersTotal: coalesceNumber(row.membersTotal, row.members_total),
   vegetariansTotal: coalesceNumber(row.vegetariansTotal, row.vegetarians_total),
@@ -51,8 +54,8 @@ const normalizeHiking = (row: HikingApiRow): Hiking => ({
 const normalizeHikingsList = (data: HikingApiRow[] | undefined): Hiking[] => (data ?? []).map(normalizeHiking);
 
 type HikingDetailApiRow = HikingApiRow & {
-  hiking_products?: unknown;
-  hikingProducts?: unknown;
+  hiking_products: HikingProduct[];
+  admins: HikingAdmin[];
 };
 
 function unwrapHikingDetailResponse(raw: unknown): HikingDetailApiRow {
@@ -119,14 +122,15 @@ export const getHikings = async (params: HikingsListParams = {}): Promise<Hiking
 /**
  * `GET /hikings/:id` — single hiking with `hiking_products` (snake or camel from API; normalized).
  */
+// TODO: Simplify this, check types!
 export async function getHiking(id: string): Promise<HikingWithProducts> {
   const path = `/hikings/${encodeURIComponent(id)}`;
   const raw = await apiFetch<unknown>(path, { method: "GET" });
   const row = unwrapHikingDetailResponse(raw);
   const base = normalizeHiking(row);
-  const productsRaw = row.hiking_products ?? row.hikingProducts;
-  const hiking_products = normalizeHikingProductsList(productsRaw);
-  return { ...base, hiking_products };
+  const hiking_products = normalizeHikingProductsList(row.hiking_products);
+  const admins = row.admins as HikingAdmin[];
+  return { ...base, hiking_products, admins };
 }
 
 /**

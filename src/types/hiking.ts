@@ -9,12 +9,22 @@ export type CreateHikingPayload = {
 
 export type Hiking = CreateHikingPayload & {
   id: string;
+  userId?: string;
   createdAt?: string;
   updatedAt?: string;
 };
 
+/** Admin entry as returned by `GET /hikings/:id`. */
+export type HikingAdmin = {
+  id: string;
+  name: string;
+  email?: string;
+  image?: string;
+};
+
 export type HikingWithProducts = Hiking & {
   hiking_products: HikingProduct[];
+  admins: HikingAdmin[];
 };
 
 export type HikingsMeta = {
