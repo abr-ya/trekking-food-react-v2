@@ -1,5 +1,6 @@
 import { apiFetch } from "@/lib/api-client";
 import type {
+  AddHikingAdminPayload,
   CreateHikingPayload,
   Hiking,
   HikingProductsFromRecipePayload,
@@ -148,6 +149,16 @@ export async function patchHikingProduct(
 ): Promise<unknown> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/${encodeURIComponent(hikingProductId)}`, {
     method: "PATCH",
+    body: payload,
+  });
+}
+
+/**
+ * `POST /hikings/:id/admins` — grant admin access to a user for this hiking plan.
+ */
+export async function postHikingAdmin(hikingId: string, payload: AddHikingAdminPayload): Promise<unknown> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/admins`, {
+    method: "POST",
     body: payload,
   });
 }

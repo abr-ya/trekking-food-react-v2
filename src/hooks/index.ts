@@ -15,6 +15,7 @@ export {
 } from "./use-category-mutations";
 export { useCreateRecipe, useRecipes, recipeQueryKeys } from "./use-recipes";
 export {
+  useAddHikingAdmin,
   useAddHikingProductsFromRecipe,
   useCreateHiking,
   useHiking,
@@ -22,5 +23,9 @@ export {
   useUpdateHikingProduct,
   hikingQueryKeys,
 } from "./use-hikings";
-export type { AddHikingProductsFromRecipeVariables, UpdateHikingProductVariables } from "./use-hikings";
+export type {
+  AddHikingAdminVariables,
+  AddHikingProductsFromRecipeVariables,
+  UpdateHikingProductVariables,
+} from "./use-hikings";
 export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";
