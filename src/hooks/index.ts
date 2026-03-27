@@ -19,6 +19,7 @@ export {
   useAddHikingProduct,
   useAddHikingProductsFromRecipe,
   useCreateHiking,
+  useDeleteHikingProduct,
   useHiking,
   useHikings,
   useUpdateHikingProduct,
@@ -28,6 +29,7 @@ export type {
   AddHikingAdminVariables,
   AddHikingProductVariables,
   AddHikingProductsFromRecipeVariables,
+  DeleteHikingProductVariables,
   UpdateHikingProductVariables,
 } from "./use-hikings";
 export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";

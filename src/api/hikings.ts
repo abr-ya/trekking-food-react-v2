@@ -179,6 +179,16 @@ export async function postHikingProduct(hikingId: string, payload: AddHikingProd
 }
 
 /**
+ * `DELETE /hikings/:hikingId/hiking-products/:hikingProductId` — remove a product from a hiking plan.
+ */
+export async function deleteHikingProduct(hikingId: string, hikingProductId: string): Promise<unknown> {
+  return apiFetch(
+    `/hikings/${encodeURIComponent(hikingId)}/hiking-products/${encodeURIComponent(hikingProductId)}`,
+    { method: "DELETE" },
+  );
+}
+
+/**
  * `POST /hikings/:id/hiking-products/from-recipe` — add hiking products from a recipe for a day / eating time.
  */
 export async function postHikingProductsFromRecipe(

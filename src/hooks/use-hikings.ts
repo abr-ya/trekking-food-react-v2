@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteHikingProduct,
   getHiking,
   getHikings,
   patchHikingProduct,
@@ -114,6 +115,23 @@ export const useAddHikingProduct = () => {
 
   return useMutation({
     mutationFn: ({ hikingId, payload }: AddHikingProductVariables) => postHikingProduct(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
+    },
+  });
+};
+
+export type DeleteHikingProductVariables = {
+  hikingId: string;
+  hikingProductId: string;
+};
+
+export const useDeleteHikingProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, hikingProductId }: DeleteHikingProductVariables) =>
+      deleteHikingProduct(hikingId, hikingProductId),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
     },
