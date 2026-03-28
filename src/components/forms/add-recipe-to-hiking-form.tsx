@@ -115,7 +115,12 @@ const AddRecipeToHikingFormFields = ({ hikingId, daysTotal, onSuccess }: AddReci
             ) : eatingTimeOptions.length === 0 ? (
               <p className="text-muted-foreground text-sm">No eating times.</p>
             ) : (
-              <RHFSelect<FormData> name="eatingTimeId" label="Eating time" options={eatingTimeOptions} placeholder="Meal" />
+              <RHFSelect<FormData>
+                name="eatingTimeId"
+                label="Eating time"
+                options={eatingTimeOptions}
+                placeholder="Meal"
+              />
             )}
           </div>
 

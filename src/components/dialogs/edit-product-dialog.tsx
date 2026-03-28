@@ -55,4 +55,4 @@ export const EditProductDialog = ({ product }: Props) => {
       </Dialog>
     </>
   );
-}
+};

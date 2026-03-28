@@ -49,7 +49,11 @@ export const DayEatings = ({ dayNumber, hikingProducts, hikingId }: DayEatingsPr
           </CardHeader>
           <CardContent className="flex flex-col gap-2 pb-2 pt-0">
             {groupProductsByRecipeId(productsForDay.filter((p) => p.eating_time_id === slot.id)).map((items) => (
-              <EatingCard key={items[0].recipe_id || items.map((p) => p.id).join("-")} hikingId={hikingId} items={items} />
+              <EatingCard
+                key={items[0].recipe_id || items.map((p) => p.id).join("-")}
+                hikingId={hikingId}
+                items={items}
+              />
             ))}
           </CardContent>
           <AddFooter position={{ hikingId, dayNumber, eatingTimeId: slot.id }} />

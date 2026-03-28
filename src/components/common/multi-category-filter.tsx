@@ -41,15 +41,16 @@ export function MultiCategoryFilter({
     <Combobox
       multiple
       value={value}
-      onValueChange={(ids) => { onChange(ids); setOpen(false); }}
+      onValueChange={(ids) => {
+        onChange(ids);
+        setOpen(false);
+      }}
       open={open}
       onOpenChange={setOpen}
     >
       <ComboboxChips ref={anchor}>
         {value.map((id) => (
-          <ComboboxChip key={id}>
-            {nameById[id] ?? id}
-          </ComboboxChip>
+          <ComboboxChip key={id}>{nameById[id] ?? id}</ComboboxChip>
         ))}
         <ComboboxChipsInput placeholder={value.length === 0 ? placeholder : ""} disabled={isLoading} />
       </ComboboxChips>

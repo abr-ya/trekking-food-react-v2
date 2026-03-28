@@ -5,7 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateProduct, useProductCategories, useUpdateProduct } from "@/hooks";
 import type { CreateProductPayload, Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
-import { createProductSchema, editProductSchema, type CreateProductFormData, type EditProductFormData } from "@/schemas/product";
+import {
+  createProductSchema,
+  editProductSchema,
+  type CreateProductFormData,
+  type EditProductFormData,
+} from "@/schemas/product";
 import { RHFInput, RHFSelect } from "../rhf";
 
 // ─── shared defaults ──────────────────────────────────────────────────────────
@@ -20,7 +25,6 @@ const emptyFormValues: CreateProductFormData = {
   productCategoryId: "",
   isCommon: false,
 };
-
 
 // ─── shared inner form ────────────────────────────────────────────────────────
 type ProductFormFieldsProps =
@@ -137,7 +141,6 @@ const ProductFormFields = (props: ProductFormFieldsProps) => {
   );
 };
 
-
 // ─── CreateProductForm ────────────────────────────────────────────────────────
 /**
  * Wrapper bumps `key` after a successful create so the inner form remounts with a fresh
@@ -156,10 +159,5 @@ type EditProductFormProps = {
 };
 
 export const EditProductForm = ({ product, onSuccess }: EditProductFormProps) => (
-  <ProductFormFields
-    mode="edit"
-    productId={product.id}
-    defaultValues={product}
-    onSuccess={onSuccess}
-  />
+  <ProductFormFields mode="edit" productId={product.id} defaultValues={product} onSuccess={onSuccess} />
 );

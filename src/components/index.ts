@@ -24,6 +24,7 @@ export { AddProductToHikingForm } from "./forms/add-product-to-hiking-form";
 // Dialogs
 export { AddHikingAdminDialog } from "./hiking-page/add-hiking-admin-dialog";
 export { EditProductDialog } from "./dialogs/edit-product-dialog";
+export { EditProductCategoryDialog } from "./dialogs/edit-product-category-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";
 export type { CategoryDialogProps } from "./dialogs/category-dialog";
 export { RemoveProductDialog } from "./dialogs/remove-product-dialog";

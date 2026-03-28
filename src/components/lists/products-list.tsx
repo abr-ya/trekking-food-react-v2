@@ -10,9 +10,7 @@ export const ProductsList = () => {
   const { data: categoriesData, isLoading: categoriesLoading } = useProductCategories();
   const categories = categoriesData?.data ?? [];
 
-  const { data, isLoading, error } = useProducts(
-    selectedCategoryIds.length ? { categoryId: selectedCategoryIds } : {},
-  );
+  const { data, isLoading, error } = useProducts(selectedCategoryIds.length ? { categoryId: selectedCategoryIds } : {});
   const products = data?.data;
   const meta = data?.meta;
 
@@ -42,7 +40,14 @@ export const ProductsList = () => {
           <ul className="space-y-2 list-none p-0 m-0">
             {products.map((product) => (
               <li key={product.id}>
-                <ProductCard product={product} />
+                <ProductCard
+                  product={product}
+                  categoryName={
+                    categories.find(
+                      (c) => c.id === product.productCategoryId || c.products.some((p) => p.id === product.id),
+                    )?.name
+                  }
+                />
               </li>
             ))}
           </ul>

@@ -33,9 +33,7 @@ export const EatingCard = ({ hikingId, items }: EatingCardProps) => {
 
   return (
     <>
-      <div
-        className={cn("rounded-md border border-border/80 bg-muted/40 px-2.5 py-2 text-sm", "flex flex-col gap-1")}
-      >
+      <div className={cn("rounded-md border border-border/80 bg-muted/40 px-2.5 py-2 text-sm", "flex flex-col gap-1")}>
         <span className="font-medium leading-tight">{recipeName}</span>
         <div className="flex flex-col gap-2">
           {items.map((item) => (
