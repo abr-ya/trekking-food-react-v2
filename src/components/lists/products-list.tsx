@@ -40,14 +40,7 @@ export const ProductsList = () => {
           <ul className="space-y-2 list-none p-0 m-0">
             {products.map((product) => (
               <li key={product.id}>
-                <ProductCard
-                  product={product}
-                  categoryName={
-                    categories.find(
-                      (c) => c.id === product.productCategoryId || c.products.some((p) => p.id === product.id),
-                    )?.name
-                  }
-                />
+                <ProductCard product={product} />
               </li>
             ))}
           </ul>

@@ -13,10 +13,33 @@ export type CreateProductPayload = {
 /** Fields allowed on `PATCH /products/:id` (server may accept a subset). */
 export type UpdateProductPayload = Partial<CreateProductPayload>;
 
+export type ProductCategory = {
+  id: string;
+  name: string;
+};
+
 export type Product = CreateProductPayload & {
   id: string;
+  userId?: string;
+  category?: ProductCategory;
   createdAt?: string;
   updatedAt?: string;
+};
+
+/** Raw shape returned by `GET /products` (snake_case from the server). */
+export type ProductApiRow = {
+  id: string;
+  name: string;
+  kkal: number;
+  proteins: number;
+  fats: number;
+  carbohydrates: number;
+  price: number;
+  is_vegetarian: boolean;
+  product_category_id: string;
+  is_common: boolean;
+  user_id?: string;
+  category?: ProductCategory;
 };
 
 export type ProductPreview = Pick<Product, "id" | "name">;

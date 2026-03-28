@@ -2,11 +2,29 @@ import { apiFetch } from "@/lib/api-client";
 import type {
   CreateProductPayload,
   Product,
+  ProductApiRow,
   ProductsListParams,
   ProductsListResponse,
   ProductsMeta,
   UpdateProductPayload,
 } from "@/types/product";
+
+function normalizeProduct(row: ProductApiRow): Product {
+  return {
+    id: row.id,
+    name: row.name,
+    kkal: row.kkal,
+    proteins: row.proteins,
+    fats: row.fats,
+    carbohydrates: row.carbohydrates,
+    price: row.price,
+    isVegetarian: row.is_vegetarian,
+    productCategoryId: row.product_category_id,
+    isCommon: row.is_common,
+    userId: row.user_id,
+    category: row.category,
+  };
+}
 
 function metaFromListLength(length: number): ProductsMeta {
   return {
@@ -31,15 +49,19 @@ function productsListQueryString(params: ProductsListParams): string {
 /**
  * `GET /products` — optional `page`, `limit`, `search` (name filter). Expects `{ data, meta }`; plain arrays are normalized.
  */
+type RawProductsListResponse = { data: ProductApiRow[]; meta?: ProductsMeta };
+
 export async function getProducts(params: ProductsListParams = {}): Promise<ProductsListResponse> {
   const path = `/products${productsListQueryString(params)}`;
-  const raw = await apiFetch<Product[] | ProductsListResponse>(path, { method: "GET" });
+  const raw = await apiFetch<ProductApiRow[] | RawProductsListResponse>(path, { method: "GET" });
   if (Array.isArray(raw)) {
-    return { data: raw, meta: metaFromListLength(raw.length) };
+    const data = raw.map(normalizeProduct);
+    return { data, meta: metaFromListLength(data.length) };
   }
+  const data = (raw.data ?? []).map(normalizeProduct);
   return {
-    data: raw.data ?? [],
-    meta: raw.meta ?? metaFromListLength(raw.data?.length ?? 0),
+    data,
+    meta: raw.meta ?? metaFromListLength(data.length),
   };
 }
 
