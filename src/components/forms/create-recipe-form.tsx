@@ -87,7 +87,6 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
       <form onSubmit={handleSubmit(submitHandler, errorHandler)} className="grid max-w-md gap-4">
         <RHFInput<CreateRecipeFormData> name="name" label="Name" helpText="Recipe name" />
         <div className="grid gap-2">
-          <span className="text-sm font-medium">Recipe category</span>
           {recipeCategoriesLoading ? (
             <p className="text-muted-foreground text-sm">Loading recipe categories…</p>
           ) : recipeCategoriesError ? (
@@ -100,11 +99,11 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
           ) : (
             <RHFSelect<CreateRecipeFormData>
               name="categoryId"
+              label="Recipe category"
               options={recipeCategoryOptions}
               placeholder="Select a recipe category"
             />
           )}
-          {errors.categoryId ? <p className="text-destructive text-sm">{errors.categoryId.message}</p> : null}
         </div>
         <div className="grid gap-2">
           <label htmlFor="recipe-description" className="text-sm font-medium">
@@ -141,10 +140,10 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
               className="flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-end"
             >
               <div className="grid min-w-0 flex-1 gap-2">
-                <span className="text-muted-foreground text-xs font-medium">Product</span>
                 {!productsLoading && !productsError && productOptions.length > 0 ? (
                   <RHFSelect<CreateRecipeFormData>
                     name={`ingredients.${index}.productId` as Path<CreateRecipeFormData>}
+                    label="Product"
                     options={productOptions}
                     placeholder="Select product"
                   />

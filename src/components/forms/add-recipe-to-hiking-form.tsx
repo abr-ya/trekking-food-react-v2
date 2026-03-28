@@ -77,7 +77,6 @@ const AddRecipeToHikingFormFields = ({ hikingId, daysTotal, onSuccess }: AddReci
       <form onSubmit={handleSubmit(submitHandler, errorHandler)} className="w-full mb-4">
         <div className="flex w-full flex-wrap items-end gap-3">
           <div className="grid min-w-[min(100%,14rem)] flex-1 gap-1">
-            <span className="text-sm font-medium">Recipe</span>
             {recipesLoading ? (
               <p className="text-muted-foreground text-sm">Loading…</p>
             ) : recipesError ? (
@@ -87,9 +86,8 @@ const AddRecipeToHikingFormFields = ({ hikingId, daysTotal, onSuccess }: AddReci
             ) : recipeOptions.length === 0 ? (
               <p className="text-muted-foreground text-sm">No recipes yet.</p>
             ) : (
-              <RHFSelect<FormData> name="recipeId" options={recipeOptions} placeholder="Recipe" />
+              <RHFSelect<FormData> name="recipeId" label="Recipe" options={recipeOptions} placeholder="Recipe" />
             )}
-            {errors.recipeId ? <p className="text-destructive text-xs">{errors.recipeId.message}</p> : null}
           </div>
 
           <div className="w-24 shrink-0">
@@ -108,7 +106,6 @@ const AddRecipeToHikingFormFields = ({ hikingId, daysTotal, onSuccess }: AddReci
           </div>
 
           <div className="grid min-w-[min(100%,12rem)] flex-1 gap-1">
-            <span className="text-sm font-medium">Eating time</span>
             {timesLoading ? (
               <p className="text-muted-foreground text-sm">Loading…</p>
             ) : timesError ? (
@@ -118,9 +115,8 @@ const AddRecipeToHikingFormFields = ({ hikingId, daysTotal, onSuccess }: AddReci
             ) : eatingTimeOptions.length === 0 ? (
               <p className="text-muted-foreground text-sm">No eating times.</p>
             ) : (
-              <RHFSelect<FormData> name="eatingTimeId" options={eatingTimeOptions} placeholder="Meal" />
+              <RHFSelect<FormData> name="eatingTimeId" label="Eating time" options={eatingTimeOptions} placeholder="Meal" />
             )}
-            {errors.eatingTimeId ? <p className="text-destructive text-xs">{errors.eatingTimeId.message}</p> : null}
           </div>
 
           <Button type="submit" className="shrink-0" disabled={addFromRecipe.isPending || isSubmitting}>

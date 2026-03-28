@@ -99,7 +99,6 @@ const ProductFormFields = (props: ProductFormFieldsProps) => {
         </div>
         {showCategorySelect && (
           <div className="grid gap-2">
-            <span className="text-sm font-medium">Category</span>
             {categoriesLoading ? (
               <p className="text-muted-foreground text-sm">Loading categories…</p>
             ) : categoriesError ? (
@@ -111,6 +110,7 @@ const ProductFormFields = (props: ProductFormFieldsProps) => {
             ) : (
               <RHFSelect<CreateProductFormData>
                 name="productCategoryId"
+                label="Category"
                 options={categoryOptions}
                 placeholder="Select a category"
               />
