@@ -66,3 +66,14 @@ export type AddHikingProductPayload = {
 export type AddHikingAdminPayload = {
   userId: string;
 };
+
+export type HikingProductTotal = {
+  productId: string;
+  productName: string;
+  totalGrams: number;
+  lineCount: number;
+};
+
+export type HikingProductTotalsResponse = {
+  items: HikingProductTotal[];
+};

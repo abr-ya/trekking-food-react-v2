@@ -29,7 +29,7 @@ export const HikingDetailPage = () => {
           <FoodPlan id={id ?? ""} />
         </TabsContent>
         <TabsContent value="shopping-list" className="pt-3">
-          <ShoppingList />
+          <ShoppingList hikingId={id ?? ""} />
         </TabsContent>
         <TabsContent value="packs-by-users" className="pt-3">
           <PacksByUsers />

@@ -21,6 +21,7 @@ export {
   useCreateHiking,
   useDeleteHikingProduct,
   useHiking,
+  useHikingProductTotals,
   useHikings,
   useUpdateHikingProduct,
   hikingQueryKeys,

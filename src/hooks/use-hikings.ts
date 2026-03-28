@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteHikingProduct,
   getHiking,
+  getHikingProductTotals,
   getHikings,
   patchHikingProduct,
   postHiking,
@@ -33,6 +34,7 @@ export const hikingQueryKeys = {
   list: (params: { page: number; limit: number; search: string }) =>
     [...hikingQueryKeys.all, "list", params.page, params.limit, params.search] as const,
   detail: (id: string) => [...hikingQueryKeys.all, "detail", id] as const,
+  productTotals: (id: string) => [...hikingQueryKeys.all, "product-totals", id] as const,
 };
 
 export const useHiking = (id: string | undefined) =>
@@ -40,6 +42,14 @@ export const useHiking = (id: string | undefined) =>
     queryKey: hikingQueryKeys.detail(id ?? ""),
     queryFn: () => getHiking(id!),
     enabled: Boolean(id),
+    staleTime: HIKINGS_STALE_TIME_MS,
+  });
+
+export const useHikingProductTotals = (hikingId: string | undefined) =>
+  useQuery({
+    queryKey: hikingQueryKeys.productTotals(hikingId ?? ""),
+    queryFn: () => getHikingProductTotals(hikingId!),
+    enabled: Boolean(hikingId),
     staleTime: HIKINGS_STALE_TIME_MS,
   });
 

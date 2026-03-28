@@ -22,7 +22,8 @@ export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
 export { AddProductToHikingForm } from "./forms/add-product-to-hiking-form";
 
 // Dialogs
-export { AddHikingAdminDialog } from "./hiking-page/add-hiking-admin-dialog";
+export { AddHikingAdminDialog } from "./dialogs/add-hiking-admin-dialog";
+export { AddProductToHikingDialog } from "./dialogs/add-product-to-hiking-dialog";
 export { EditProductDialog } from "./dialogs/edit-product-dialog";
 export { EditProductCategoryDialog } from "./dialogs/edit-product-category-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";

@@ -6,6 +6,7 @@ import type {
   Hiking,
   HikingAdmin,
   HikingProductsFromRecipePayload,
+  HikingProductTotalsResponse,
   HikingsListParams,
   HikingsListResponse,
   HikingsMeta,
@@ -185,6 +186,13 @@ export async function deleteHikingProduct(hikingId: string, hikingProductId: str
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/${encodeURIComponent(hikingProductId)}`, {
     method: "DELETE",
   });
+}
+
+/**
+ * `GET /hikings/:id/product-totals` — aggregated grams and line count per product for a hiking plan.
+ */
+export async function getHikingProductTotals(hikingId: string): Promise<HikingProductTotalsResponse> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/product-totals`, { method: "GET" });
 }
 
 /**

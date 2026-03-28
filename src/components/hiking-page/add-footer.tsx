@@ -1,6 +1,4 @@
-import { CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AddProductToHikingDialog } from "./add-product-to-hiking-dialog";
+import { AddProductToHikingDialog, Button, CardFooter } from "@/components";
 
 export type AddRecipeSlotPositionBy = {
   hikingId: string;
