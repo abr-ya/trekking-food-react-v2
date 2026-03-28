@@ -6,19 +6,26 @@ import type { CreateProductPayload, ProductsListParams, UpdateProductPayload } f
 export const productQueryKeys = {
   all: ["products"] as const,
   list: (params: ProductsListParams = {}) =>
-    [...productQueryKeys.all, "list", params.page ?? null, params.limit ?? null, params.search ?? ""] as const,
+    [
+      ...productQueryKeys.all,
+      "list",
+      params.page ?? null,
+      params.limit ?? null,
+      params.search ?? "",
+      params.categoryId?.join(",") ?? "",
+    ] as const,
 };
 
 /** How long product list data stays “fresh” before TanStack Query may refetch on mount/focus. */
 const PRODUCTS_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes
 
 /**
- * Fetch all products (TanStack Query `useQuery`).
+ * Fetch products with optional filters (TanStack Query `useQuery`).
  */
-export const useProducts = () =>
+export const useProducts = (params: ProductsListParams = {}) =>
   useQuery({
-    queryKey: productQueryKeys.list({}),
-    queryFn: () => getProducts(),
+    queryKey: productQueryKeys.list(params),
+    queryFn: () => getProducts(params),
     staleTime: PRODUCTS_STALE_TIME_MS,
   });
 

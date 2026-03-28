@@ -23,6 +23,7 @@ function productsListQueryString(params: ProductsListParams): string {
   if (params.limit != null) sp.set("limit", String(params.limit));
   const q = params.search?.trim();
   if (q) sp.set("search", q);
+  if (params.categoryId?.length) sp.set("categoryId", params.categoryId.join(","));
   const s = sp.toString();
   return s ? `?${s}` : "";
 }

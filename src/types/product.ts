@@ -40,4 +40,6 @@ export type ProductsListParams = {
   limit?: number;
   /** Server-side name filter (omit or empty = no filter). */
   search?: string;
+  /** Filter by one or more category IDs; serialized as comma-joined string. */
+  categoryId?: string[];
 };
