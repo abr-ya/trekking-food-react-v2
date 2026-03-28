@@ -1,6 +1,5 @@
-import { Pencil } from "lucide-react";
 import type { Product } from "@/types/product";
-import { Button, Card, CardContent, RemoveProductDialog } from "@/components";
+import { Card, CardContent, EditProductDialog, RemoveProductDialog } from "@/components";
 
 export const ProductCard = ({ product }: { product: Product }) => (
   <Card className="py-3 px-4">
@@ -19,16 +18,7 @@ export const ProductCard = ({ product }: { product: Product }) => (
           </span>
         )}
         <div className="flex items-center gap-0.5">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            className="size-7 text-muted-foreground hover:text-foreground [&_svg]:size-3.5"
-            aria-label={`Edit ${product.name}`}
-            onClick={() => console.log("edit", product.id, product.name)}
-          >
-            <Pencil />
-          </Button>
+          <EditProductDialog product={product} />
           <RemoveProductDialog itemId={product.id} itemName={product.name} />
         </div>
       </div>

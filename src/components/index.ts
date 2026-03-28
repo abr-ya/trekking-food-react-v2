@@ -15,7 +15,7 @@ export { PageColumn, ColumnsWrapper } from "./layout/page-column";
 export { ProtectedPage } from "./layout/protected-page";
 
 // Forms
-export { CreateProductForm } from "./forms/create-product-form";
+export { CreateProductForm, EditProductForm } from "./forms/product-form";
 export { CreateRecipeForm } from "./forms/create-recipe-form";
 export { CreateHikingForm } from "./forms/create-hiking-form";
 export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
@@ -23,6 +23,7 @@ export { AddProductToHikingForm } from "./forms/add-product-to-hiking-form";
 
 // Dialogs
 export { AddHikingAdminDialog } from "./hiking-page/add-hiking-admin-dialog";
+export { EditProductDialog } from "./dialogs/edit-product-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";
 export type { CategoryDialogProps } from "./dialogs/category-dialog";
 export { RemoveProductDialog } from "./dialogs/remove-product-dialog";

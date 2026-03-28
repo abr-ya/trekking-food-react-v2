@@ -13,3 +13,6 @@ export const createProductSchema = z.object({
 });
 
 export type CreateProductFormData = z.infer<typeof createProductSchema>;
+
+export const editProductSchema = createProductSchema.omit({ productCategoryId: true });
+export type EditProductFormData = z.infer<typeof editProductSchema>;
