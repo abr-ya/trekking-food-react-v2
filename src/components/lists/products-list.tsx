@@ -1,8 +1,7 @@
 import { useState } from "react";
 
 import { useProducts, useProductCategories } from "@/hooks";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MultiCategoryFilter } from "@/components/common/MultiCategoryFilter";
+import { MultiCategoryFilter, Skeleton } from "@/components";
 import { ProductCard } from "./product-card";
 
 export const ProductsList = () => {

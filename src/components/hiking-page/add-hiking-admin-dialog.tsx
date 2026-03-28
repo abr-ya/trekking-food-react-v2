@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { RHFInput } from "@/components/rhf/RHFInput";
+import { RHFInput } from "@/components/rhf/rhf-input";
 
 type FormData = {
   userId: string;

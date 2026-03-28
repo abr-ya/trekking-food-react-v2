@@ -2,9 +2,12 @@
 export { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 export { Button, buttonVariants } from "./ui/button";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
-export { SelectWithSearch, type SelectWithSearchOption } from "./common/select-with-search";
 export { Skeleton } from "./ui/skeleton";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
+
+// Common
+export { SelectWithSearch, type SelectWithSearchOption } from "./common/select-with-search";
+export { MultiCategoryFilter } from "./common/multi-category-filter";
 
 // Layout
 export { Layout } from "./layout/layout";

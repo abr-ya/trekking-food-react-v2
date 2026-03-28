@@ -2,16 +2,15 @@ import { useCallback } from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-
 import type { UseMutateFunction } from "@tanstack/react-query";
+
 import { getProducts } from "@/api/products";
 import { productQueryKeys } from "@/hooks/use-products";
 import { addProductToHikingSchema, type AddProductToHikingFormData } from "@/schemas/add-product-to-hiking";
-import type { SelectWithSearchOption } from "@/components/common/select-with-search";
+import type { SelectWithSearchOption } from "@/components";
 import type { Product } from "@/types/product";
 import type { AddHikingProductVariables } from "@/hooks";
-import { RHFInput } from "@/components/rhf/RHFInput";
-import { RHFSelectWithSearch } from "@/components/rhf/RHFSelectWithSearch";
+import { RHFInput, RHFSelectWithSearch } from "@/components/rhf";
 
 type Props = {
   hikingId: string;
