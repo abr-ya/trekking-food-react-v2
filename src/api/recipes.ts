@@ -1,5 +1,14 @@
 import { apiFetch } from "@/lib/api-client";
-import type { CreateRecipePayload, Recipe, RecipesListResponse, RecipesMeta, RecipesListParams } from "@/types/recipe";
+import type {
+  CreateRecipePayload,
+  Recipe,
+  RecipeApiRow,
+  RecipeIngredient,
+  RecipeIngredientApiRow,
+  RecipesListParams,
+  RecipesListResponse,
+  RecipesMeta,
+} from "@/types/recipe";
 
 function metaFromListLength(length: number): RecipesMeta {
   return {
@@ -20,18 +29,60 @@ function recipesListQueryString(params: RecipesListParams): string {
   return s ? `?${s}` : "";
 }
 
+function normalizeIngredient(row: RecipeIngredientApiRow): RecipeIngredient {
+  return {
+    id: row.id,
+    recipeId: row.recipe_id,
+    productId: row.product_id,
+    quantity: row.quantity,
+    product: row.product
+      ? {
+          id: row.product.id,
+          name: row.product.name,
+          kkal: row.product.kkal,
+          proteins: row.product.proteins,
+          fats: row.product.fats,
+          carbohydrates: row.product.carbohydrates,
+          price: row.product.price,
+          isVegetarian: row.product.is_vegetarian,
+          productCategoryId: row.product.product_category_id,
+          isCommon: row.product.is_common,
+          userId: row.product.user_id,
+        }
+      : undefined,
+  };
+}
+
+function normalizeRecipe(row: RecipeApiRow): Recipe {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    categoryId: row.category_id,
+    isCommon: row.is_common,
+    userId: row.user_id,
+    category: row.category,
+    ingredients: (row.ingredients ?? []).map(normalizeIngredient),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 /**
  * `GET /recipes` — paginated, optional `search` (name filter). Expects `{ data, meta }`; plain arrays are normalized.
  */
 export async function getRecipes(params: RecipesListParams = {}): Promise<RecipesListResponse> {
   const path = `/recipes${recipesListQueryString(params)}`;
-  const raw = await apiFetch<Recipe[] | RecipesListResponse>(path, { method: "GET" });
+  type RawListResponse = { data: RecipeApiRow[]; meta?: RecipesMeta };
+  const raw = await apiFetch<RecipeApiRow[] | RawListResponse>(path, { method: "GET" });
   if (Array.isArray(raw)) {
-    return { data: raw, meta: metaFromListLength(raw.length) };
+    const data = raw.map(normalizeRecipe);
+    return { data, meta: metaFromListLength(data.length) };
   }
+  const data = (raw.data ?? []).map(normalizeRecipe);
   return {
-    data: raw.data ?? [],
-    meta: raw.meta ?? metaFromListLength(raw.data?.length ?? 0),
+    data,
+    meta: raw.meta ?? metaFromListLength(data.length),
   };
 }
 
@@ -39,7 +90,8 @@ export async function getRecipes(params: RecipesListParams = {}): Promise<Recipe
  * `GET /recipes/:id` — fetch a single recipe by ID.
  */
 export async function getRecipe(id: string): Promise<Recipe> {
-  return apiFetch(`/recipes/${encodeURIComponent(id)}`, { method: "GET" });
+  const raw = await apiFetch<RecipeApiRow>(`/recipes/${encodeURIComponent(id)}`, { method: "GET" });
+  return normalizeRecipe(raw);
 }
 
 /**
