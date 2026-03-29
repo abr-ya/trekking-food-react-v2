@@ -35,21 +35,19 @@ function normalizeIngredient(row: RecipeIngredientApiRow): RecipeIngredient {
     recipeId: row.recipe_id,
     productId: row.product_id,
     quantity: row.quantity,
-    product: row.product
-      ? {
-          id: row.product.id,
-          name: row.product.name,
-          kkal: row.product.kkal,
-          proteins: row.product.proteins,
-          fats: row.product.fats,
-          carbohydrates: row.product.carbohydrates,
-          price: row.product.price,
-          isVegetarian: row.product.is_vegetarian,
-          productCategoryId: row.product.product_category_id,
-          isCommon: row.product.is_common,
-          userId: row.product.user_id,
-        }
-      : undefined,
+    product: {
+      id: row.product.id,
+      name: row.product.name,
+      kkal: row.product.kkal,
+      proteins: row.product.proteins,
+      fats: row.product.fats,
+      carbohydrates: row.product.carbohydrates,
+      price: row.product.price,
+      isVegetarian: row.product.is_vegetarian,
+      productCategoryId: row.product.product_category_id,
+      isCommon: row.product.is_common,
+      userId: row.product.user_id,
+    },
   };
 }
 

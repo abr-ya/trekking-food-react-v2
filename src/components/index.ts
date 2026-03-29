@@ -38,6 +38,9 @@ export { HikingsList } from "./lists/hikings-list";
 export { CategoriesList } from "./lists/categories-list";
 export type { CategoryListEditPayload } from "./lists/categories-list";
 
+// Recipe page
+export { IngredientCard } from "./recipe-page/ingredient-card";
+
 // Hiking page
 export { HikingInfo } from "./hiking-page/hiking-info";
 export { FoodPlan } from "./hiking-page/food-plan";

@@ -39,7 +39,7 @@ export type RecipeIngredient = {
   recipeId: string;
   productId: string;
   quantity: number;
-  product?: RecipeIngredientProduct;
+  product: RecipeIngredientProduct;
 };
 
 /** Full recipe row — normalized (camelCase, client-side). */
@@ -81,7 +81,7 @@ export type RecipeIngredientApiRow = {
   recipe_id: string;
   product_id: string;
   quantity: number;
-  product?: RecipeIngredientProductApiRow;
+  product: RecipeIngredientProductApiRow;
 };
 
 /** Raw recipe row returned by `GET /recipes/:id` and `GET /recipes` (snake_case). */

@@ -1,6 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { CategoriesPage, HikingDetailPage, HikingsPage, HomePage, ProductsPage, RecipeDetailPage, RecipesPage } from "./pages";
+import {
+  CategoriesPage,
+  HikingDetailPage,
+  HikingsPage,
+  HomePage,
+  ProductsPage,
+  RecipeDetailPage,
+  RecipesPage,
+} from "./pages";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "./providers/theme-provider";
