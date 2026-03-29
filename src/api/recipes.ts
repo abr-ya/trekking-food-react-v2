@@ -36,6 +36,13 @@ export async function getRecipes(params: RecipesListParams = {}): Promise<Recipe
 }
 
 /**
+ * `GET /recipes/:id` — fetch a single recipe by ID.
+ */
+export async function getRecipe(id: string): Promise<Recipe> {
+  return apiFetch(`/recipes/${encodeURIComponent(id)}`, { method: "GET" });
+}
+
+/**
  * `POST /recipes` — create a recipe (auth as required by the API).
  */
 export async function postRecipe(payload: CreateRecipePayload): Promise<unknown> {

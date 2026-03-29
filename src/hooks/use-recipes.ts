@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getRecipes, postRecipe } from "@/api/recipes";
+import { getRecipe, getRecipes, postRecipe } from "@/api/recipes";
 import type { CreateRecipePayload } from "@/types/recipe";
 
 const RECIPES_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes — match `useProducts`
@@ -17,6 +17,7 @@ export const recipeQueryKeys = {
   all: ["recipes"] as const,
   list: (params: { page: number; limit: number; search: string }) =>
     [...recipeQueryKeys.all, "list", params.page, params.limit, params.search] as const,
+  detail: (id: string) => [...recipeQueryKeys.all, "detail", id] as const,
 };
 
 /**
@@ -33,6 +34,14 @@ export const useRecipes = (params: UseRecipesParams = {}) => {
     staleTime: RECIPES_STALE_TIME_MS,
   });
 };
+
+export const useRecipe = (id: string | undefined) =>
+  useQuery({
+    queryKey: recipeQueryKeys.detail(id ?? ""),
+    queryFn: () => getRecipe(id!),
+    enabled: Boolean(id),
+    staleTime: RECIPES_STALE_TIME_MS,
+  });
 
 /**
  * Create a recipe (`POST /recipes`). On success, invalidates recipe queries for future `useRecipes` lists.

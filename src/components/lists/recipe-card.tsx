@@ -1,4 +1,5 @@
 import { Pencil } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { Recipe } from "@/types/recipe";
 import { Button, Card, CardContent } from "@/components";
 
@@ -6,7 +7,12 @@ export const RecipeCard = ({ recipe }: { recipe: Recipe }) => (
   <Card className="py-3 px-4">
     <CardContent className="flex flex-wrap items-center justify-between gap-2 p-0">
       <div className="min-w-0 flex-1">
-        <p className="font-medium">{recipe.name}</p>
+        <Link
+          to={`/recipes/${recipe.id}`}
+          className="font-medium hover:underline"
+        >
+          {recipe.name}
+        </Link>
         <p className="text-muted-foreground line-clamp-2 text-sm">{recipe.description}</p>
       </div>
       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
