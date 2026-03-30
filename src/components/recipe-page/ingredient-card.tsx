@@ -1,3 +1,5 @@
+import { Pencil, Trash2 } from "lucide-react";
+
 import type { RecipeIngredient } from "@/types/recipe";
 import { Card, CardContent } from "../";
 
@@ -12,7 +14,25 @@ export const IngredientCard = ({ ing }: { ing: RecipeIngredient }) => {
             {ing.product.carbohydrates}g
           </p>
         </div>
-        <span className="shrink-0 font-semibold">{ing.quantity} g</span>
+        <div className="flex items-center gap-4">
+          <span className="shrink-0 font-semibold">{ing.quantity} g</span>
+          <button
+            type="button"
+            onClick={() => console.log("edit ingredient", ing.id)}
+            className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+            aria-label={`Edit ${ing.product.name}`}
+          >
+            <Pencil className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => console.log("delete ingredient", ing.id)}
+            className="text-muted-foreground hover:text-destructive cursor-pointer transition-colors"
+            aria-label={`Delete ${ing.product.name}`}
+          >
+            <Trash2 className="size-4" />
+          </button>
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,7 +1,13 @@
 # Trekking Food React v2 — Project Analysis
 
 ## 📋 Purpose
-Application for planning meals on hiking trips.
+Application for planning meals on hiking trips. Main features:
+
+- **Products** — catalog with calories, macronutrients (protein/fat/carbs), price, categories (vegetarian, etc.)
+- **Hikings** — create and manage trips (duration, members)
+- **Planning** — add products to hiking by days and meal times
+- **Recipes** — add products from recipes
+- **Administration** — grant access to hiking plans to other users
 
 ## 🛠 Tech Stack
 
@@ -15,6 +21,7 @@ Application for planning meals on hiking trips.
 | **Forms** | React Hook Form + Zod |
 | **Auth** | Better Auth |
 | **Testing** | Vitest |
+| **Linting** | ESLint 9 + Prettier |
 
 ### Main Dependencies
 ```json
