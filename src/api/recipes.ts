@@ -101,3 +101,12 @@ export async function postRecipe(payload: CreateRecipePayload): Promise<unknown>
     body: payload,
   });
 }
+
+/**
+ * `DELETE /recipes/:recipeId/ingredients/:ingredientId` — delete an ingredient from a recipe.
+ */
+export async function deleteRecipeIngredient(recipeId: string, ingredientId: string): Promise<unknown> {
+  return apiFetch(`/recipes/${encodeURIComponent(recipeId)}/ingredients/${encodeURIComponent(ingredientId)}`, {
+    method: "DELETE",
+  });
+}
