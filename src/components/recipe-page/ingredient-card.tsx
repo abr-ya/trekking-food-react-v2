@@ -64,8 +64,8 @@ export const IngredientCard = ({ ing }: { ing: RecipeIngredient }) => {
           <DialogHeader>
             <DialogTitle>Remove this ingredient?</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove{" "}
-              <span className="font-medium text-foreground">{ing.product.name}</span>? This cannot be undone.
+              Are you sure you want to remove <span className="font-medium text-foreground">{ing.product.name}</span>?
+              This cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
