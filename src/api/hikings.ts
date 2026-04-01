@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api-client";
 import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
+  CreateHikingDayPackPayload,
   CreateHikingPayload,
   Hiking,
   HikingAdmin,
@@ -11,8 +12,9 @@ import type {
   HikingsListResponse,
   HikingsMeta,
   HikingWithProducts,
+  UpdateHikingDayPackPayload,
 } from "@/types/hiking";
-import type { HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
+import type { HikingDayPack, HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
 
 /** Row as returned by the API (camelCase or snake_case; numeric fields may be strings). */
 type HikingApiRow = {
@@ -81,6 +83,20 @@ function normalizeHikingProduct(row: unknown): HikingProduct {
     recipe_name: String(r.recipe_name ?? r.recipeName ?? ""),
     personal_quantity: coalesceNumber(r.personal_quantity, r.personalQuantity),
     total_quantity: coalesceNumber(r.total_quantity, r.totalQuantity),
+    hiking_day_pack_id: (r.hiking_day_pack_id ?? r.hikingDayPackId ?? null) as string | null,
+    hiking_day_pack: normalizeHikingDayPack(r.hiking_day_pack ?? r.hikingDayPack),
+  };
+}
+
+function normalizeHikingDayPack(row: unknown): HikingDayPack | null {
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  return {
+    id: String(r.id ?? ""),
+    day_number: coalesceNumber(r.day_number, r.dayNumber),
+    pack_number: coalesceNumber(r.pack_number, r.packNumber),
+    label: (r.label ?? null) as string | null,
+    notes: (r.notes ?? null) as string | null,
   };
 }
 
@@ -205,5 +221,41 @@ export async function postHikingProductsFromRecipe(
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/from-recipe`, {
     method: "POST",
     body: payload,
+  });
+}
+
+/**
+ * `POST /hikings/:id/packs` — create a new day pack for organizing products.
+ */
+export async function postHikingDayPack(
+  hikingId: string,
+  payload: CreateHikingDayPackPayload,
+): Promise<HikingDayPack> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `PATCH /hikings/:hikingId/packs/:packId` — update label or notes of a day pack.
+ */
+export async function patchHikingDayPack(
+  hikingId: string,
+  packId: string,
+  payload: UpdateHikingDayPackPayload,
+): Promise<HikingDayPack> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/${encodeURIComponent(packId)}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+/**
+ * `DELETE /hikings/:hikingId/packs/:packId` — delete a day pack.
+ */
+export async function deleteHikingDayPack(hikingId: string, packId: string): Promise<void> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/${encodeURIComponent(packId)}`, {
+    method: "DELETE",
   });
 }

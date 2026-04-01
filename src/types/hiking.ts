@@ -67,6 +67,20 @@ export type AddHikingAdminPayload = {
   userId: string;
 };
 
+/** Body for `POST /hikings/:id/packs`. */
+export type CreateHikingDayPackPayload = {
+  dayNumber: number;
+  packNumber: number;
+  label?: string | null;
+  notes?: string | null;
+};
+
+/** Body for `PATCH /hikings/:hikingId/packs/:packId`. */
+export type UpdateHikingDayPackPayload = {
+  label?: string | null;
+  notes?: string | null;
+};
+
 export type HikingProductTotal = {
   productId: string;
   productName: string;

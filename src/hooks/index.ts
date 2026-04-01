@@ -19,10 +19,13 @@ export {
   useAddHikingProduct,
   useAddHikingProductsFromRecipe,
   useCreateHiking,
+  useCreateHikingDayPack,
+  useDeleteHikingDayPack,
   useDeleteHikingProduct,
   useHiking,
   useHikingProductTotals,
   useHikings,
+  useUpdateHikingDayPack,
   useUpdateHikingProduct,
   hikingQueryKeys,
 } from "./use-hikings";
@@ -30,7 +33,10 @@ export type {
   AddHikingAdminVariables,
   AddHikingProductVariables,
   AddHikingProductsFromRecipeVariables,
+  CreateHikingDayPackVariables,
+  DeleteHikingDayPackVariables,
   DeleteHikingProductVariables,
+  UpdateHikingDayPackVariables,
   UpdateHikingProductVariables,
 } from "./use-hikings";
 export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";

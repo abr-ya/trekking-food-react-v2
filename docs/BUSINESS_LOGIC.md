@@ -96,9 +96,29 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 5. Hiking Product
+### 5. Hiking Day Pack
 
-**Purpose:** A specific product added to the meal plan for a specific day and meal time.
+**Purpose:** A logical grouping of products for a specific day in the hiking plan. Used to organize products into packs (e.g., per person, per group, or by purpose).
+
+**Attributes:**
+- `id` — unique identifier (e.g., `p1a2b3c4-1111-4111-8111-111111111111`)
+- `hiking_id` — reference to hiking
+- `day_number` — day number (1-based)
+- `pack_number` — pack slot within the day (e.g., 1..membersTotal)
+- `label` — optional label for the pack (e.g., "Anna", "Group kitchen")
+- `notes` — optional notes (e.g., "Breakfast items only")
+
+**Business Rules:**
+- Each pack belongs to a specific day in the hiking
+- `pack_number` typically ranges from 1 to `membersTotal` (one pack per member)
+- `label` and `notes` are optional and can be null
+- Multiple products can be linked to the same pack
+
+---
+
+### 6. Hiking Product
+
+**Purpose:** A specific product added to the meal plan for a specific day and meal time. Each hiking product can be linked to a HikingDayPack by ID.
 
 **Attributes:**
 - `id` — unique identifier
@@ -112,6 +132,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 - `recipe_name` — recipe name (optional)
 - `personal_quantity` — amount per 1 person in grams
 - `total_quantity` — total amount in grams (0 = not calculated)
+- `hiking_day_pack_id` — reference to HikingDayPack (optional, links product to a specific pack)
 
 **Business Rules:**
 - `day_number` must be in range 1 to `daysTotal` of the hiking
@@ -120,10 +141,11 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 - If `total_quantity > 0`, it must be > `personal_quantity`
 - Product can be added from a recipe or independently
 - When added from a recipe, quantity is calculated automatically
+- Product can be linked to a HikingDayPack for organization within a day
 
 ---
 
-### 6. Eating Time
+### 7. Eating Time
 
 **Purpose:** Reference directory of meal times.
 
@@ -137,7 +159,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 7. Hiking Admin
+### 8. Hiking Admin
 
 **Purpose:** A user with rights to edit the hiking plan.
 
@@ -383,6 +405,51 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
+### 8. Create/Manage Hiking Day Pack
+
+**Participants:** Hiking owner or administrator
+
+**Purpose:** Organize products within a day into packs (e.g., per person, per group, or by purpose).
+
+**Steps:**
+1. User creates a pack for a specific day
+2. User specifies:
+   - `pack_number` — slot within the day (e.g., 1..membersTotal)
+   - `label` — optional label (e.g., "Anna", "Group kitchen")
+   - `notes` — optional notes (e.g., "Breakfast items only")
+3. Pack is saved and linked to the hiking
+4. Products can be linked to this pack via `hiking_day_pack_id`
+
+**Endpoints:**
+- `POST /hikings/:id/packs` — create pack
+- `PATCH /hikings/:hikingId/packs/:packId` — update pack
+- `DELETE /hikings/:hikingId/packs/:packId` — delete pack
+
+**Parameters (Create):**
+```typescript
+{
+  dayNumber: number,
+  packNumber: number,
+  label?: string | null,
+  notes?: string | null
+}
+```
+
+**Parameters (Update):**
+```typescript
+{
+  label?: string | null,
+  notes?: string | null
+}
+```
+
+**Business Rules:**
+- Pack must belong to a valid day in the hiking
+- `pack_number` is typically unique within a day
+- `label` and `notes` are optional
+
+---
+
 ## 🧮 Calculation Formulas
 
 ### Total Product Quantity
@@ -419,10 +486,13 @@ User
 │       └── Product (reference)
 └── Hikings (created)
     ├── Admins (list of users)
+    ├── HikingDayPacks
+    │   └── (grouped by day_number, pack_number)
     └── HikingProducts
         ├── Product (reference)
         ├── EatingTime (reference)
-        └── Recipe (optional, reference)
+        ├── Recipe (optional, reference)
+        └── HikingDayPack (optional, reference)
 ```
 
 ### Table Relationships
@@ -438,6 +508,8 @@ User
 | Hiking | User | Many-to-One (creator) |
 | HikingAdmin | Hiking | Many-to-One |
 | HikingAdmin | User | Many-to-One |
+| HikingDayPack | Hiking | Many-to-One |
+| HikingProduct | HikingDayPack | Many-to-One (optional) |
 | HikingProduct | Hiking | Many-to-One |
 | HikingProduct | Product | Many-to-One |
 | HikingProduct | EatingTime | Many-to-One |
@@ -503,6 +575,130 @@ API returns data in `snake_case`, client works with `camelCase`:
 1. Specify the number of vegetarians when creating a hiking
 2. Select vegetarian recipes when adding
 3. System accounts for this in total quantity calculation
+
+---
+
+## 🔌 API Interfaces
+
+### GET /hikings/:id — Hiking Details
+
+**Response:** Returns a `HikingWithProducts` object with nested `hiking_day_pack` for each product.
+
+```typescript
+{
+  id: string;
+  name: string;
+  daysTotal: number;
+  membersTotal: number;
+  vegetariansTotal: number;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  admins: HikingAdmin[];
+  hiking_products: (HikingProduct & {
+    hiking_day_pack: HikingDayPack | null;
+  })[];
+}
+```
+
+**HikingProduct (with hiking_day_pack):**
+```typescript
+{
+  id: string;
+  hiking_id: string;
+  day_number: number;
+  eating_time_id: string;
+  eating_time_name: string;
+  product_id: string;
+  product_name: string;
+  recipe_id: string | null;
+  recipe_name: string | null;
+  personal_quantity: number;
+  total_quantity: number;
+  hiking_day_pack_id: string | null;  // FK to HikingDayPack (nullable)
+  hiking_day_pack: {                  // Nested object, present if hiking_day_pack_id is not null
+    id: string;                       // e.g., "p1a2b3c4-1111-4111-8111-111111111111"
+    pack_number: number;              // e.g., 1
+    label: string | null;             // e.g., "Pack 1"
+    notes: string | null;             // e.g., null
+  } | null;
+}
+```
+
+**HikingDayPack:**
+```typescript
+{
+  id: string;           // UUID format
+  day_number: number;   // Day number (1-based)
+  pack_number: number;  // Pack slot within the day (e.g., 1..membersTotal)
+  label: string | null; // Optional label
+  notes: string | null; // Optional notes
+}
+```
+
+**Example Response:**
+```json
+{
+  "id": "h1a2b3c4-1111-4111-8111-111111111111",
+  "name": "Dolomites 2026",
+  "daysTotal": 5,
+  "membersTotal": 4,
+  "vegetariansTotal": 1,
+  "userId": "u1a2b3c4-1111-4111-8111-111111111111",
+  "createdAt": "2026-04-01T10:00:00Z",
+  "updatedAt": "2026-04-01T12:00:00Z",
+  "admins": [
+    {
+      "id": "u1a2b3c4-1111-4111-8111-111111111111",
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
+  ],
+  "hiking_products": [
+    {
+      "id": "hp1a2b3c4-1111-4111-8111-111111111111",
+      "hiking_id": "h1a2b3c4-1111-4111-8111-111111111111",
+      "day_number": 1,
+      "eating_time_id": "e1a2b3c4-1111-4111-8111-111111111111",
+      "eating_time_name": "Breakfast",
+      "product_id": "prod1a2b3c4-1111-4111-8111-111111111",
+      "product_name": "Oatmeal",
+      "recipe_id": null,
+      "recipe_name": null,
+      "personal_quantity": 80,
+      "total_quantity": 320,
+      "hiking_day_pack_id": "p1a2b3c4-1111-4111-8111-111111111111",
+      "hiking_day_pack": {
+        "id": "p1a2b3c4-1111-4111-8111-111111111111",
+        "pack_number": 1,
+        "label": "Pack 1",
+        "notes": null
+      }
+    },
+    {
+      "id": "hp2a2b3c4-2222-4222-8222-222222222222",
+      "hiking_id": "h1a2b3c4-1111-4111-8111-111111111111",
+      "day_number": 1,
+      "eating_time_id": "e1a2b3c4-1111-4111-8111-111111111111",
+      "eating_time_name": "Breakfast",
+      "product_id": "prod2a2b3c4-2222-4222-8222-222222222222",
+      "product_name": "Honey",
+      "recipe_id": null,
+      "recipe_name": null,
+      "personal_quantity": 30,
+      "total_quantity": 120,
+      "hiking_day_pack_id": null,
+      "hiking_day_pack": null
+    }
+  ]
+}
+```
+
+**Notes:**
+- `hiking_day_pack_id` is nullable — if `null`, the product is not linked to any pack
+- `hiking_day_pack` object is included only when `hiking_day_pack_id` is not null
+- Products can be grouped by `hiking_day_pack_id` for display purposes
+- `pack_number` typically corresponds to a member number (1..membersTotal)
 
 ---
 

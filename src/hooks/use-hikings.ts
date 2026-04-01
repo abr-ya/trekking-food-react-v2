@@ -1,20 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteHikingDayPack,
   deleteHikingProduct,
   getHiking,
   getHikingProductTotals,
   getHikings,
+  patchHikingDayPack,
   patchHikingProduct,
   postHiking,
   postHikingAdmin,
+  postHikingDayPack,
   postHikingProduct,
   postHikingProductsFromRecipe,
 } from "@/api/hikings";
 import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
+  CreateHikingDayPackPayload,
   CreateHikingPayload,
   HikingProductsFromRecipePayload,
+  UpdateHikingDayPackPayload,
 } from "@/types/hiking";
 import type { UpdateHikingProductPayload } from "@/types/hiking-product";
 
@@ -156,6 +161,56 @@ export const useAddHikingProductsFromRecipe = () => {
       postHikingProductsFromRecipe(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.all });
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type CreateHikingDayPackVariables = {
+  hikingId: string;
+  payload: CreateHikingDayPackPayload;
+};
+
+export const useCreateHikingDayPack = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: CreateHikingDayPackVariables) => postHikingDayPack(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type UpdateHikingDayPackVariables = {
+  hikingId: string;
+  packId: string;
+  payload: UpdateHikingDayPackPayload;
+};
+
+export const useUpdateHikingDayPack = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, packId, payload }: UpdateHikingDayPackVariables) =>
+      patchHikingDayPack(hikingId, packId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type DeleteHikingDayPackVariables = {
+  hikingId: string;
+  packId: string;
+};
+
+export const useDeleteHikingDayPack = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, packId }: DeleteHikingDayPackVariables) => deleteHikingDayPack(hikingId, packId),
+    onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },
   });
