@@ -227,10 +227,7 @@ export async function postHikingProductsFromRecipe(
 /**
  * `POST /hikings/:id/packs` — create a new day pack for organizing products.
  */
-export async function postHikingDayPack(
-  hikingId: string,
-  payload: CreateHikingDayPackPayload,
-): Promise<HikingDayPack> {
+export async function postHikingDayPack(hikingId: string, payload: CreateHikingDayPackPayload): Promise<HikingDayPack> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs`, {
     method: "POST",
     body: payload,

@@ -144,9 +144,9 @@ export const AddRecipeToHikingForm = ({ hikingId }: { hikingId: string }) => {
   if (isLoading) {
     return (
       <div className="space-y-3 max-w-md">
-        <Skeleton className="h-9 w-full" />
-        <Skeleton className="h-9 w-full" />
-        <Skeleton className="h-9 w-2/3" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
       </div>
     );
   }
