@@ -3,8 +3,7 @@ import { FormProvider, useForm, type SubmitErrorHandler, type SubmitHandler } fr
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { useAddHikingProductsFromRecipe, useEatingTimes, useHiking, useRecipes } from "@/hooks";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button, LoadingSkeleton } from "@/components";
 import { createAddRecipeToHikingSchema } from "@/schemas/add-recipe-to-hiking";
 import { RHFInput, RHFSelect } from "../rhf";
 
@@ -137,19 +136,8 @@ export const AddRecipeToHikingForm = ({ hikingId }: { hikingId: string }) => {
   const [formKey, setFormKey] = useState(0);
   const { data: hiking, isLoading, error } = useHiking(hikingId.trim() || undefined);
 
-  if (!hikingId.trim()) {
-    return <p className="text-muted-foreground text-sm">Hiking id is missing.</p>;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="space-y-3 max-w-md">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
-    );
-  }
+  if (!hikingId.trim()) return <p className="text-muted-foreground text-sm">Hiking id is missing.</p>;
+  if (isLoading) return <LoadingSkeleton />;
 
   if (error) {
     return (

@@ -7,6 +7,7 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/t
 
 // Common
 export { SelectWithSearch, type SelectWithSearchOption } from "./common/select-with-search";
+export { LoadingSkeleton } from "./common/loading-skeleton";
 export { MultiCategoryFilter } from "./common/multi-category-filter";
 
 // Layout

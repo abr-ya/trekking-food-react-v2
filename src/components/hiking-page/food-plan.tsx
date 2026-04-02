@@ -1,24 +1,12 @@
 import { useHiking } from "@/hooks";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AddRecipeToHikingForm, DayEatings } from "@/components";
+import { AddRecipeToHikingForm, DayEatings, LoadingSkeleton } from "@/components";
 import { DayTabs } from "./day-tabs";
 
 export const FoodPlan = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
 
-  if (!id) {
-    return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="space-y-3 max-w-md">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
-    );
-  }
+  if (!id) return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
+  if (isLoading) return <LoadingSkeleton />;
 
   if (error) {
     return (
