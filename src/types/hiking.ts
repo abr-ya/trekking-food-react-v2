@@ -27,6 +27,24 @@ export type HikingWithProducts = Hiking & {
   admins: HikingAdmin[];
 };
 
+export type HikingDayPack = {
+  id: string;
+  day_number: number;
+  pack_number: number;
+};
+
+export type HikingDayPackSummary = {
+  id: string;
+  day_number: number;
+  pack_number: number;
+};
+
+export type HikingDetail = Hiking & {
+  hiking_products: HikingProduct[];
+  admins: HikingAdmin[];
+  day_packs: HikingDayPackSummary[];
+};
+
 export type HikingsMeta = {
   total: number;
   page: number;

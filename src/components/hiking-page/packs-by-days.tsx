@@ -22,7 +22,6 @@ export const PacksByDays = ({ id }: { id: string }) => {
   }
 
   const days = Array.from({ length: Math.max(1, hiking.daysTotal) }, (_, i) => i + 1);
-  const packs = Array.from({ length: hiking.membersTotal }, (_, i) => i);
 
   return (
     <div className="rounded-md border p-3">
@@ -51,9 +50,19 @@ export const PacksByDays = ({ id }: { id: string }) => {
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {packs.map((participantIndex) => (
-                  <DayPackCard key={participantIndex} dayNumber={day} participantIndex={participantIndex} />
-                ))}
+                {Array.from({ length: hiking.membersTotal }, (_, participantIndex) => {
+                  const dayPack = hiking.day_packs.find(
+                    (pack) => pack.day_number === day && pack.pack_number === participantIndex + 1,
+                  );
+                  return (
+                    <DayPackCard
+                      key={participantIndex}
+                      dayNumber={day}
+                      participantIndex={participantIndex}
+                      packId={dayPack?.id}
+                    />
+                  );
+                })}
               </div>
             </div>
           );

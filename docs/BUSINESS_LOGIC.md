@@ -582,7 +582,7 @@ API returns data in `snake_case`, client works with `camelCase`:
 
 ### GET /hikings/:id — Hiking Details
 
-**Response:** Returns a `HikingWithProducts` object with nested `hiking_day_pack` for each product.
+**Response:** Returns a `HikingDetail` object with nested `hiking_day_pack` for each product.
 
 ```typescript
 {

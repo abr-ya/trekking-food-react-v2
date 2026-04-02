@@ -14,6 +14,7 @@ function product(partial: Partial<HikingProduct> & Pick<HikingProduct, "id">): H
     recipe_name: "Oatmeal",
     personal_quantity: 1,
     total_quantity: 4,
+    hiking_day_pack_id: null,
     ...partial,
   };
 }

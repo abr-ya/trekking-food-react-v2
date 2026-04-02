@@ -11,7 +11,8 @@ import type {
   HikingsListParams,
   HikingsListResponse,
   HikingsMeta,
-  HikingWithProducts,
+  HikingDetail,
+  HikingDayPackSummary,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
 import type { HikingDayPack, HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
@@ -60,6 +61,7 @@ const normalizeHikingsList = (data: HikingApiRow[] | undefined): Hiking[] => (da
 type HikingDetailApiRow = HikingApiRow & {
   hiking_products: HikingProduct[];
   admins: HikingAdmin[];
+  day_packs: HikingDayPack[];
 };
 
 function unwrapHikingDetailResponse(raw: unknown): HikingDetailApiRow {
@@ -105,6 +107,23 @@ function normalizeHikingProductsList(raw: unknown): HikingProduct[] {
   return raw.map(normalizeHikingProduct);
 }
 
+function normalizeHikingDayPacksList(raw: unknown): HikingDayPackSummary[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((row) => normalizeHikingDayPackSummary(row))
+    .filter((pack): pack is HikingDayPackSummary => pack !== null);
+}
+
+function normalizeHikingDayPackSummary(row: unknown): HikingDayPackSummary | null {
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  return {
+    id: String(r.id ?? ""),
+    day_number: coalesceNumber(r.day_number, r.dayNumber),
+    pack_number: coalesceNumber(r.pack_number, r.packNumber),
+  };
+}
+
 const metaFromListLength = (length: number): HikingsMeta => ({
   total: length,
   page: 1,
@@ -141,14 +160,15 @@ export const getHikings = async (params: HikingsListParams = {}): Promise<Hiking
  * `GET /hikings/:id` — single hiking with `hiking_products` (snake or camel from API; normalized).
  */
 // TODO: Simplify this, check types!
-export async function getHiking(id: string): Promise<HikingWithProducts> {
+export async function getHiking(id: string): Promise<HikingDetail> {
   const path = `/hikings/${encodeURIComponent(id)}`;
   const raw = await apiFetch<unknown>(path, { method: "GET" });
   const row = unwrapHikingDetailResponse(raw);
   const base = normalizeHiking(row);
   const hiking_products = normalizeHikingProductsList(row.hiking_products);
   const admins = row.admins as HikingAdmin[];
-  return { ...base, hiking_products, admins };
+  const day_packs = normalizeHikingDayPacksList(row.day_packs);
+  return { ...base, hiking_products, admins, day_packs };
 }
 
 /**
