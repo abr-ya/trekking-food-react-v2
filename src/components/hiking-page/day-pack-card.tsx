@@ -1,10 +1,26 @@
+import { useCreateHikingDayPack } from "@/hooks";
+import { Button } from "@/components/ui/button";
+
 type DayPackCardProps = {
   dayNumber: number;
   participantIndex: number;
   packId?: string;
+  hikingId: string;
 };
 
-export const DayPackCard = ({ dayNumber, participantIndex, packId }: DayPackCardProps) => {
+export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId }: DayPackCardProps) => {
+  const createPackMutation = useCreateHikingDayPack();
+
+  const handleCreatePack = () => {
+    createPackMutation.mutate({
+      hikingId,
+      payload: {
+        dayNumber,
+        packNumber: participantIndex + 1,
+      },
+    });
+  };
+
   return (
     <div className="rounded-md border p-4 bg-card">
       <div className="space-y-2">
@@ -18,7 +34,21 @@ export const DayPackCard = ({ dayNumber, participantIndex, packId }: DayPackCard
           )}
         </div>
         {/* Pack details will be added here */}
-        <div className="mt-4 p-3 bg-muted rounded text-sm text-muted-foreground">Pack details placeholder</div>
+        {packId ? (
+          <div className="mt-4 p-3 bg-muted rounded text-sm text-muted-foreground">Pack details placeholder</div>
+        ) : (
+          <div className="mt-4">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleCreatePack}
+              disabled={createPackMutation.isPending}
+              className="w-full"
+            >
+              {createPackMutation.isPending ? "Creating..." : "Create Pack"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

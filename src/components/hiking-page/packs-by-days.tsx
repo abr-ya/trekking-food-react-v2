@@ -60,6 +60,7 @@ export const PacksByDays = ({ id }: { id: string }) => {
                       dayNumber={day}
                       participantIndex={participantIndex}
                       packId={dayPack?.id}
+                      hikingId={hiking.id}
                     />
                   );
                 })}
