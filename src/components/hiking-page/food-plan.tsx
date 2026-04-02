@@ -1,7 +1,7 @@
 import { useHiking } from "@/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AddRecipeToHikingForm, DayEatings } from "@/components";
+import { DayTabs } from "./day-tabs";
 
 export const FoodPlan = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
@@ -38,25 +38,9 @@ export const FoodPlan = ({ id }: { id: string }) => {
   return (
     <div className="rounded-md border p-3">
       <AddRecipeToHikingForm hikingId={id} />
-      <Tabs defaultValue={defaultDay} orientation="vertical" className="w-full gap-4 md:flex-row">
-        <TabsList className="h-auto w-full justify-start md:w-40 md:flex-col md:items-stretch">
-          {days.map((day) => (
-            <TabsTrigger key={day} value={`day-${day}`} className="justify-start">
-              Day {day}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <div className="flex-1">
-          {days.map((day) => (
-            <TabsContent key={day} value={`day-${day}`} className="pt-1">
-              <div className="text-muted-foreground space-y-2 text-sm">
-                <p className="text-foreground font-medium">Day {day}</p>
-                <DayEatings dayNumber={day} hikingProducts={hiking.hiking_products} hikingId={id} />
-              </div>
-            </TabsContent>
-          ))}
-        </div>
-      </Tabs>
+      <DayTabs days={days} defaultValue={defaultDay}>
+        {(day) => <DayEatings hikingId={id} dayNumber={day} hikingProducts={hiking.hiking_products} />}
+      </DayTabs>
     </div>
   );
 };
