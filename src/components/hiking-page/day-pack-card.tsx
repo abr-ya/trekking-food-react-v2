@@ -7,9 +7,17 @@ type DayPackCardProps = {
   packId?: string;
   hikingId: string;
   children?: React.ReactNode;
+  movedProductIds?: string[];
 };
 
-export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId, children }: DayPackCardProps) => {
+export const DayPackCard = ({
+  dayNumber,
+  participantIndex,
+  packId,
+  hikingId,
+  children,
+  movedProductIds = [],
+}: DayPackCardProps) => {
   const createPackMutation = useCreateHikingDayPack();
 
   const handleCreatePack = () => {
@@ -20,6 +28,10 @@ export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId, chi
         packNumber: participantIndex + 1,
       },
     });
+  };
+
+  const handleSavePack = () => {
+    console.log("Save Pack clicked for pack", packId, "with products:", movedProductIds);
   };
 
   return (
@@ -35,7 +47,14 @@ export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId, chi
           )}
         </div>
         {packId ? (
-          <div className="mt-4">{children}</div>
+          <>
+            <div className="mt-4">{children}</div>
+            {movedProductIds.length > 0 && (
+              <Button size="sm" variant="default" onClick={handleSavePack} className="w-full mt-4">
+                Save Pack
+              </Button>
+            )}
+          </>
         ) : (
           <div className="mt-4">
             <Button

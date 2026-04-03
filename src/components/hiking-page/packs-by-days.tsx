@@ -157,6 +157,7 @@ export const PacksByDays = ({ id }: { id: string }) => {
                         hikingId={hiking.id}
                         itemIds={items[columnId] ?? []}
                         renderItem={renderProduct}
+                        allProducts={productsById}
                       />
                     );
                   })}
@@ -231,6 +232,7 @@ const DroppablePackCard = ({
   hikingId,
   itemIds,
   renderItem,
+  allProducts,
 }: {
   columnId: ColumnId;
   dayNumber: number;
@@ -239,12 +241,45 @@ const DroppablePackCard = ({
   hikingId: string;
   itemIds: string[];
   renderItem: (id: string, columnId: string) => React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  allProducts?: Map<string, any>;
 }) => {
   const { isOver, setNodeRef } = useDroppable({ id: columnId });
 
+  // Determine which products were moved into this pack
+  const movedProductIds = useMemo(() => {
+    if (!packId || !allProducts) return [];
+
+    const moved: string[] = [];
+    for (const productId of itemIds) {
+      const product = allProducts.get(productId);
+      if (!product) continue;
+
+      // Product is moved if it wasn't originally in this pack
+      let originalPackId: string | null = null;
+      if (product.hiking_day_pack_id != null) {
+        originalPackId = product.hiking_day_pack_id;
+      }
+
+      const currentPackId = columnId.startsWith("pack-") ? packId : null;
+
+      // If the original pack doesn't match current, it was moved
+      if (originalPackId !== currentPackId) {
+        moved.push(productId);
+      }
+    }
+    return moved;
+  }, [packId, itemIds, columnId, allProducts]);
+
   return (
     <div ref={setNodeRef} className={isOver ? "ring-2 ring-primary/40 rounded-md" : undefined}>
-      <DayPackCard dayNumber={dayNumber} participantIndex={participantIndex} packId={packId} hikingId={hikingId}>
+      <DayPackCard
+        dayNumber={dayNumber}
+        participantIndex={participantIndex}
+        packId={packId}
+        hikingId={hikingId}
+        movedProductIds={movedProductIds}
+      >
         <div className="grid grid-cols-1 gap-3">
           {itemIds.length === 0 ? (
             <p className="text-muted-foreground text-sm">Drop products here.</p>
