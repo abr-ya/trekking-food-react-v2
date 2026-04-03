@@ -25,30 +25,9 @@ export const PacksByDays = ({ id }: { id: string }) => {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
-  if (!id) return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
-  if (isLoading) return <LoadingSkeleton />;
-
-  if (error) {
-    return (
-      <p className="text-destructive text-sm">
-        Failed to load packs: {error instanceof Error ? error.message : "Unknown error"}
-      </p>
-    );
-  }
-
-  if (!hiking) {
-    return <p className="text-muted-foreground text-sm">Hiking not found.</p>;
-  }
-
-  const days = Array.from({ length: Math.max(1, hiking.daysTotal) }, (_, i) => i + 1);
-
-  const productsById = useMemo(() => {
-    const map = new Map<string, (typeof hiking.hiking_products)[number]>();
-    for (const p of hiking.hiking_products) map.set(p.id, p);
-    return map;
-  }, [hiking.hiking_products]);
-
   useEffect(() => {
+    if (!hiking) return;
+
     setItemsByDay((prev) => {
       const next = { ...prev };
       const initDays = Array.from({ length: Math.max(1, hiking.daysTotal) }, (_, i) => i + 1);
@@ -86,7 +65,32 @@ export const PacksByDays = ({ id }: { id: string }) => {
     });
     // only initialize once per hiking id (local dnd state is ephemeral)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hiking.id]);
+  }, [hiking?.id]);
+
+  const productsById = useMemo(() => {
+    if (!hiking) return;
+
+    const map = new Map<string, (typeof hiking.hiking_products)[number]>();
+    for (const p of hiking.hiking_products) map.set(p.id, p);
+    return map;
+  }, [hiking]);
+
+  if (!id) return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
+  if (isLoading) return <LoadingSkeleton />;
+
+  if (error) {
+    return (
+      <p className="text-destructive text-sm">
+        Failed to load packs: {error instanceof Error ? error.message : "Unknown error"}
+      </p>
+    );
+  }
+
+  if (!hiking) {
+    return <p className="text-muted-foreground text-sm">Hiking not found.</p>;
+  }
+
+  const days = Array.from({ length: Math.max(1, hiking.daysTotal) }, (_, i) => i + 1);
 
   return (
     <div className="rounded-md border p-3">
@@ -124,10 +128,10 @@ export const PacksByDays = ({ id }: { id: string }) => {
             });
           };
 
-          const renderProduct = (productId: string) => {
-            const product = productsById.get(productId);
+          const renderProduct = (productId: string, columnId: string) => {
+            const product = productsById!.get(productId);
             if (!product) return null;
-            return <DraggableDayProductCard key={productId} product={product} />;
+            return <DraggableDayProductCard key={productId} product={product} currentColumnId={columnId} />;
           };
 
           return (
@@ -166,8 +170,23 @@ export const PacksByDays = ({ id }: { id: string }) => {
   );
 };
 
-const DraggableDayProductCard = ({ product }: { product: Parameters<typeof DayProductCard>[0]["product"] }) => {
+type DraggableDayProductCardProps = {
+  product: Parameters<typeof DayProductCard>[0]["product"];
+  currentColumnId?: string;
+};
+
+const DraggableDayProductCard = ({ product, currentColumnId }: DraggableDayProductCardProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: product.id });
+
+  // Calculate original column position
+  let originalColumnId: string;
+  if (product.hiking_day_pack_id == null) {
+    originalColumnId = "unassigned";
+  } else {
+    originalColumnId = `pack-${product.hiking_day_pack?.pack_number}`;
+  }
+
+  const isMoved = currentColumnId && currentColumnId !== originalColumnId;
 
   const style: CSSProperties = {
     transform: CSS.Translate.toString(transform),
@@ -176,7 +195,7 @@ const DraggableDayProductCard = ({ product }: { product: Parameters<typeof DayPr
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
-      <DayProductCard product={product} />
+      <DayProductCard product={product} isMoved={!!isMoved} />
     </div>
   );
 };
@@ -186,20 +205,19 @@ const DroppableUnassignedColumn = ({
   renderItem,
 }: {
   itemIds: string[];
-  renderItem: (id: string) => React.ReactNode;
+  renderItem: (id: string, columnId: string) => React.ReactNode;
 }) => {
   const { isOver, setNodeRef } = useDroppable({ id: "unassigned" });
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`rounded-md border p-3 bg-card ${isOver ? "ring-2 ring-primary/40" : ""}`}
-    >
+    <div ref={setNodeRef} className={`rounded-md border p-3 bg-card ${isOver ? "ring-2 ring-primary/40" : ""}`}>
       <h3 className="font-semibold text-sm mb-2">Unassigned products</h3>
       {itemIds.length === 0 ? (
         <p className="text-muted-foreground text-sm">Drop products here.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{itemIds.map(renderItem)}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {itemIds.map((id) => renderItem(id, "unassigned"))}
+        </div>
       )}
     </div>
   );
@@ -220,7 +238,7 @@ const DroppablePackCard = ({
   packId?: string;
   hikingId: string;
   itemIds: string[];
-  renderItem: (id: string) => React.ReactNode;
+  renderItem: (id: string, columnId: string) => React.ReactNode;
 }) => {
   const { isOver, setNodeRef } = useDroppable({ id: columnId });
 
@@ -231,7 +249,7 @@ const DroppablePackCard = ({
           {itemIds.length === 0 ? (
             <p className="text-muted-foreground text-sm">Drop products here.</p>
           ) : (
-            itemIds.map(renderItem)
+            itemIds.map((id) => renderItem(id, columnId))
           )}
         </div>
       </DayPackCard>
