@@ -6,9 +6,10 @@ type DayPackCardProps = {
   participantIndex: number;
   packId?: string;
   hikingId: string;
+  children?: React.ReactNode;
 };
 
-export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId }: DayPackCardProps) => {
+export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId, children }: DayPackCardProps) => {
   const createPackMutation = useCreateHikingDayPack();
 
   const handleCreatePack = () => {
@@ -33,9 +34,8 @@ export const DayPackCard = ({ dayNumber, participantIndex, packId, hikingId }: D
             <span className="text-orange-600">Pack not found</span>
           )}
         </div>
-        {/* Pack details will be added here */}
         {packId ? (
-          <div className="mt-4 p-3 bg-muted rounded text-sm text-muted-foreground">Pack details placeholder</div>
+          <div className="mt-4">{children}</div>
         ) : (
           <div className="mt-4">
             <Button
