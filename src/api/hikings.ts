@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api-client";
 import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
+  AssignHikingProductsToPackPayload,
   CreateHikingDayPackPayload,
   CreateHikingPayload,
   Hiking,
@@ -274,5 +275,19 @@ export async function patchHikingDayPack(
 export async function deleteHikingDayPack(hikingId: string, packId: string): Promise<void> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/${encodeURIComponent(packId)}`, {
     method: "DELETE",
+  });
+}
+
+/**
+ * `POST /hikings/:id/packs/:packId/hiking-products` — assign hiking products to a pack.
+ */
+export async function postHikingProductsToPack(
+  hikingId: string,
+  packId: string,
+  payload: AssignHikingProductsToPackPayload,
+): Promise<unknown> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/${encodeURIComponent(packId)}/hiking-products`, {
+    method: "POST",
+    body: payload,
   });
 }

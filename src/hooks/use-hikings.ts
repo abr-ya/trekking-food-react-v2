@@ -12,10 +12,12 @@ import {
   postHikingDayPack,
   postHikingProduct,
   postHikingProductsFromRecipe,
+  postHikingProductsToPack,
 } from "@/api/hikings";
 import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
+  AssignHikingProductsToPackPayload,
   CreateHikingDayPackPayload,
   CreateHikingPayload,
   HikingProductsFromRecipePayload,
@@ -194,6 +196,24 @@ export const useUpdateHikingDayPack = () => {
   return useMutation({
     mutationFn: ({ hikingId, packId, payload }: UpdateHikingDayPackVariables) =>
       patchHikingDayPack(hikingId, packId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type AssignHikingProductsToPackVariables = {
+  hikingId: string;
+  packId: string;
+  payload: AssignHikingProductsToPackPayload;
+};
+
+export const useAssignHikingProductsToPack = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, packId, payload }: AssignHikingProductsToPackVariables) =>
+      postHikingProductsToPack(hikingId, packId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },

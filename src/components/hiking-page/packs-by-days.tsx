@@ -244,7 +244,10 @@ const DroppablePackCard = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   allProducts?: Map<string, any>;
 }) => {
-  const { isOver, setNodeRef } = useDroppable({ id: columnId });
+  const { isOver, setNodeRef } = useDroppable({
+    id: columnId,
+    disabled: !packId, // Disable drop if pack doesn't exist
+  });
 
   // Determine which products were moved into this pack
   const movedProductIds = useMemo(() => {
@@ -272,7 +275,10 @@ const DroppablePackCard = ({
   }, [packId, itemIds, columnId, allProducts]);
 
   return (
-    <div ref={setNodeRef} className={isOver ? "ring-2 ring-primary/40 rounded-md" : undefined}>
+    <div
+      ref={setNodeRef}
+      className={`${isOver && packId ? "ring-2 ring-primary/40 rounded-md" : ""} ${!packId ? "opacity-60" : ""}`}
+    >
       <DayPackCard
         dayNumber={dayNumber}
         participantIndex={participantIndex}
@@ -282,7 +288,7 @@ const DroppablePackCard = ({
       >
         <div className="grid grid-cols-1 gap-3">
           {itemIds.length === 0 ? (
-            <p className="text-muted-foreground text-sm">Drop products here.</p>
+            <p className="text-muted-foreground text-sm">{packId ? "Drop products here." : "Create pack first."}</p>
           ) : (
             itemIds.map((id) => renderItem(id, columnId))
           )}

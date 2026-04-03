@@ -60,7 +60,7 @@ src/
 
 ### Hooks (`src/hooks/`)
 - `use-products.ts` — `useProducts()`, `useCreateProduct()`
-- `use-hikings.ts` — `useHikings()`, `useHiking()`, `useCreateHiking()`, `useAddHikingProduct()`, `useUpdateHikingProduct()`, `useAddHikingAdmin()`
+- `use-hikings.ts` — `useHikings()`, `useHiking()`, `useCreateHiking()`, `useAddHikingProduct()`, `useUpdateHikingProduct()`, `useAddHikingAdmin()`, `useAssignHikingProductsToPack()`
 - `use-recipes.ts` — recipes management
 - `use-categories.ts` — categories management
 - `use-auth.ts` — authentication
@@ -115,6 +115,14 @@ src/
 - **Zod** — validation schemas in `src/schemas/`
 - **@hookform/resolvers** — Zod integration with React Hook Form
 
+### Drag & Drop Pack Management
+- **@dnd-kit/core** — drag and drop functionality for organizing products into packs
+- **Visual indicators** — orange dot shows moved products
+- **Pack validation** — products can only be dropped into existing packs (with ID)
+- **Disabled state** — packs without ID are visually dimmed and reject drops
+- **Pack assignment API** — `POST /hikings/:id/packs/:packId/hiking-products` assigns products to packs
+- **Real-time updates** — automatic data refresh after pack assignments
+
 ### Theming
 - **next-themes** — light/dark theme toggle
 - **Tailwind CSS** — utility classes
@@ -147,6 +155,7 @@ toastInfo("Profile updated");
 | `POST` | `/hikings/:id/hiking-products/from-recipe` | Add products from recipe |
 | `PATCH` | `/hikings/:hikingId/hiking-products/:id` | Update product quantity |
 | `POST` | `/hikings/:id/admins` | Add hiking admin |
+| `POST` | `/hikings/:id/packs/:packId/hiking-products` | Assign products to pack |
 
 ### Recipes
 | Method | Endpoint | Description |

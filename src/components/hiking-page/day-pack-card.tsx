@@ -1,4 +1,5 @@
-import { useCreateHikingDayPack } from "@/hooks";
+import { useCallback } from "react";
+import { useAssignHikingProductsToPack, useCreateHikingDayPack } from "@/hooks";
 import { Button } from "@/components/ui/button";
 
 type DayPackCardProps = {
@@ -19,6 +20,7 @@ export const DayPackCard = ({
   movedProductIds = [],
 }: DayPackCardProps) => {
   const createPackMutation = useCreateHikingDayPack();
+  const assignProductsMutation = useAssignHikingProductsToPack();
 
   const handleCreatePack = () => {
     createPackMutation.mutate({
@@ -30,9 +32,17 @@ export const DayPackCard = ({
     });
   };
 
-  const handleSavePack = () => {
-    console.log("Save Pack clicked for pack", packId, "with products:", movedProductIds);
-  };
+  const handleSavePack = useCallback(() => {
+    if (!packId || movedProductIds.length === 0) return;
+
+    assignProductsMutation.mutate({
+      hikingId,
+      packId,
+      payload: {
+        hikingProductIds: movedProductIds,
+      },
+    });
+  }, [packId, movedProductIds, hikingId, assignProductsMutation]);
 
   return (
     <div className="rounded-md border p-4 bg-card">
@@ -50,8 +60,14 @@ export const DayPackCard = ({
           <>
             <div className="mt-4">{children}</div>
             {movedProductIds.length > 0 && (
-              <Button size="sm" variant="default" onClick={handleSavePack} className="w-full mt-4">
-                Save Pack
+              <Button
+                size="sm"
+                variant="default"
+                onClick={handleSavePack}
+                disabled={assignProductsMutation.isPending}
+                className="w-full mt-4"
+              >
+                {assignProductsMutation.isPending ? "Saving..." : "Save Pack"}
               </Button>
             )}
           </>
