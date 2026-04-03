@@ -9,6 +9,7 @@ type DayPackCardProps = {
   hikingId: string;
   children?: React.ReactNode;
   movedProductIds?: string[];
+  totalQuantity?: number;
 };
 
 export const DayPackCard = ({
@@ -18,6 +19,7 @@ export const DayPackCard = ({
   hikingId,
   children,
   movedProductIds = [],
+  totalQuantity = 0,
 }: DayPackCardProps) => {
   const createPackMutation = useCreateHikingDayPack();
   const assignProductsMutation = useAssignHikingProductsToPack();
@@ -45,7 +47,8 @@ export const DayPackCard = ({
   }, [packId, movedProductIds, hikingId, assignProductsMutation]);
 
   return (
-    <div className="rounded-md border p-4 bg-card">
+    <div className="rounded-md border p-4 bg-card relative">
+      {totalQuantity > 0 && <div className="absolute top-3 right-5 text-lg font-medium">{totalQuantity}</div>}
       <div className="space-y-2">
         <h3 className="font-semibold">Pack {participantIndex + 1}</h3>
         <p className="text-sm text-muted-foreground">Day {dayNumber} pack contents</p>

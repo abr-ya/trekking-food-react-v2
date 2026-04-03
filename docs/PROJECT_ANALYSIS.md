@@ -122,6 +122,7 @@ src/
 - **Disabled state** — packs without ID are visually dimmed and reject drops
 - **Pack assignment API** — `POST /hikings/:id/packs/:packId/hiking-products` assigns products to packs
 - **Real-time updates** — automatic data refresh after pack assignments
+- **Quantity display** — shows total quantity of all products in each pack
 
 ### Theming
 - **next-themes** — light/dark theme toggle

@@ -192,6 +192,7 @@ const DraggableDayProductCard = ({ product, currentColumnId }: DraggableDayProdu
   const style: CSSProperties = {
     transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0.65 : undefined,
+    zIndex: isDragging ? 999 : undefined,
   };
 
   return (
@@ -274,6 +275,15 @@ const DroppablePackCard = ({
     return moved;
   }, [packId, itemIds, columnId, allProducts]);
 
+  // Calculate total quantity of all products in this pack
+  const totalQuantity = useMemo(() => {
+    if (!allProducts) return 0;
+    return itemIds.reduce((sum, productId) => {
+      const product = allProducts.get(productId);
+      return sum + (product?.total_quantity || 0);
+    }, 0);
+  }, [itemIds, allProducts]);
+
   return (
     <div
       ref={setNodeRef}
@@ -285,6 +295,7 @@ const DroppablePackCard = ({
         packId={packId}
         hikingId={hikingId}
         movedProductIds={movedProductIds}
+        totalQuantity={totalQuantity}
       >
         <div className="grid grid-cols-1 gap-3">
           {itemIds.length === 0 ? (
