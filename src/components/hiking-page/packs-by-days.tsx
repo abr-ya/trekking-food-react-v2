@@ -2,6 +2,7 @@ import { useHiking } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
 import { DayTabs } from "./day-tabs";
 import { DayPackCard } from "./day-pack-card";
+import { DayProductCard } from "./day-product-card";
 
 export const PacksByDays = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
@@ -38,13 +39,7 @@ export const PacksByDays = ({ id }: { id: string }) => {
                   <h3 className="font-semibold text-sm">Unassigned products</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {unassignedProducts.map((product) => (
-                      <div key={product.id} className="rounded-md border p-3 bg-muted/50">
-                        <p className="font-medium text-sm">{product.product_name}</p>
-                        <p className="text-xs text-muted-foreground">{product.eating_time_name}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Total: {product.total_quantity} · Personal: {product.personal_quantity}
-                        </p>
-                      </div>
+                      <DayProductCard key={product.id} product={product} />
                     ))}
                   </div>
                 </div>
