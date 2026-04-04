@@ -21,7 +21,7 @@ export const PackCell = ({ pack, dayNumber, packNumber }: PackCellProps) => {
   if (!pack) {
     return (
       <div
-        className="bg-muted/30 rounded border border-dashed p-2 min-h-[100px] flex items-center justify-center"
+        className="bg-muted/30 rounded border border-dashed p-2 min-h-25 flex items-center justify-center"
         data-pack-id={undefined}
         data-day-number={dayNumber}
         data-pack-number={packNumber}

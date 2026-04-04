@@ -1,16 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useProducts, useProductCategories } from "@/hooks";
-import { MultiCategoryFilter, Skeleton } from "@/components";
+import { Input, MultiCategoryFilter, Skeleton } from "@/components";
 import { ProductCard } from "./product-card";
 
 export const ProductsList = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Clear search when category filter changes
+  useEffect(() => {
+    setSearch("");
+  }, [selectedCategoryIds]);
 
   const { data: categoriesData, isLoading: categoriesLoading } = useProductCategories();
   const categories = categoriesData?.data ?? [];
 
-  const { data, isLoading, error } = useProducts(selectedCategoryIds.length ? { categoryId: selectedCategoryIds } : {});
+  const params = {
+    ...(selectedCategoryIds.length ? { categoryId: selectedCategoryIds } : {}),
+    ...(debouncedSearch ? { search: debouncedSearch } : {}),
+  };
+  const { data, isLoading, error } = useProducts(params);
   const products = data?.data;
   const meta = data?.meta;
 
@@ -23,7 +39,14 @@ export const ProductsList = () => {
         isLoading={categoriesLoading}
       />
 
-      <div className="overflow-y-auto max-h-[60vh] pr-1">
+      <Input
+        type="search"
+        placeholder="Search products by name…"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <div className="overflow-y-auto max-h-[54vh] pr-1">
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
