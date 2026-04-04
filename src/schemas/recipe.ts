@@ -1,7 +1,14 @@
 import { z } from "zod";
 
 const recipeIngredientSchema = z.object({
-  productId: z.string().min(1, "Product is required"),
+  product: z
+    .object({
+      label: z.string(),
+      value: z.string(),
+    })
+    .refine((val) => val && val.value.trim() !== "", {
+      message: "Product is required",
+    }),
   quantity: z.number().positive("Quantity must be greater than 0"),
 });
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   FormProvider,
   useFieldArray,
@@ -9,17 +9,22 @@ import {
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateRecipe, useProducts, useRecipeCategories } from "@/hooks";
+import { getProducts } from "@/api/products";
+import { productQueryKeys } from "@/hooks/use-products";
+import { useQueryClient } from "@tanstack/react-query";
+import type { Product } from "@/types/product";
+import type { SelectWithSearchOption } from "@/components";
 import { Button } from "@/components/ui/button";
 import { inputClassName } from "@/components/ui/input-cursor";
 import { cn } from "@/lib/utils";
 import { createRecipeSchema, type CreateRecipeFormData } from "@/schemas/recipe";
-import { RHFInput, RHFSelect } from "../rhf";
+import { RHFInput, RHFSelect, RHFSelectWithSearch } from "../rhf";
 
 const defaultFormValues: CreateRecipeFormData = {
   name: "",
   categoryId: "",
   description: "",
-  ingredients: [{ productId: "", quantity: 0 }],
+  ingredients: [{ product: { label: "", value: "" }, quantity: 0 }],
   isCommon: false,
 };
 
@@ -43,11 +48,25 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
     isLoading: recipeCategoriesLoading,
     error: recipeCategoriesError,
   } = useRecipeCategories();
+  const queryClient = useQueryClient();
 
   const productOptions = useMemo(
     () => (productsData?.data ?? []).map((p) => ({ label: p.name, value: p.id })),
     [productsData?.data],
   );
+
+  const searchProducts = useCallback(
+    (query: string) =>
+      queryClient
+        .fetchQuery({
+          queryKey: productQueryKeys.list({ search: query }),
+          queryFn: () => getProducts({ search: query }),
+        })
+        .then((res) => res.data),
+    [queryClient],
+  );
+
+  const mapProductToOption = useCallback((p: Product): SelectWithSearchOption => ({ label: p.name, value: p.id }), []);
 
   const recipeCategoryOptions = useMemo(
     () => (recipeCategoriesData?.data ?? []).map((c) => ({ label: c.name, value: c.id })),
@@ -70,7 +89,17 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
     if (TEST_MODE) {
       console.log("submitHandler data", data);
     } else {
-      createRecipe.mutate(data, {
+      const payload = {
+        name: data.name,
+        categoryId: data.categoryId,
+        description: data.description,
+        ingredients: data.ingredients.map((ing) => ({
+          productId: ing.product!.value,
+          quantity: ing.quantity,
+        })),
+        isCommon: data.isCommon,
+      };
+      createRecipe.mutate(payload, {
         onSuccess: () => {
           onCreated();
         },
@@ -121,7 +150,12 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
         <div className="grid gap-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-medium">Ingredients</span>
-            <Button type="button" variant="outline" size="sm" onClick={() => append({ productId: "", quantity: 1 })}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append({ product: { label: "", value: "" }, quantity: 1 })}
+            >
               Add ingredient
             </Button>
           </div>
@@ -141,15 +175,17 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
             >
               <div className="grid min-w-0 flex-1 gap-2">
                 {!productsLoading && !productsError && productOptions.length > 0 ? (
-                  <RHFSelect<CreateRecipeFormData>
+                  <RHFSelectWithSearch<Product, CreateRecipeFormData>
                     name={`ingredients.${index}.productId` as Path<CreateRecipeFormData>}
                     label="Product"
-                    options={productOptions}
-                    placeholder="Select product"
+                    placeholder="Type to search…"
+                    searchRequest={searchProducts}
+                    mapFunc={mapProductToOption}
+                    minForSearch={1}
                   />
                 ) : null}
-                {errors.ingredients?.[index]?.productId ? (
-                  <p className="text-destructive text-sm">{errors.ingredients[index]?.productId?.message}</p>
+                {errors.ingredients?.[index]?.product ? (
+                  <p className="text-destructive text-sm">{errors.ingredients[index]?.product?.message}</p>
                 ) : null}
               </div>
               <div className="w-full sm:w-28">
