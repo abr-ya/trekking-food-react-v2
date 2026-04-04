@@ -13,7 +13,15 @@ export {
   useCreateRecipeCategory,
   useUpdateRecipeCategory,
 } from "./use-category-mutations";
-export { useCreateRecipe, useRecipe, useRecipes, useDeleteRecipeIngredient, recipeQueryKeys } from "./use-recipes";
+export {
+  useCreateRecipe,
+  useRecipe,
+  useRecipes,
+  useDeleteRecipeIngredient,
+  useAddRecipeIngredient,
+  recipeQueryKeys,
+} from "./use-recipes";
+export type { AddRecipeIngredientVariables, DeleteRecipeIngredientVariables } from "./use-recipes";
 export {
   useAddHikingAdmin,
   useAddHikingProduct,

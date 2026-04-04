@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecipe } from "@/hooks";
-import { IngredientCard, ProtectedPage } from "@/components";
+import { IngredientCard, AddRecipeIngredientDialog, ProtectedPage } from "@/components";
 
 export const RecipeDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,7 +44,10 @@ export const RecipeDetailPage = () => {
           {recipe.description && <p className="text-muted-foreground">{recipe.description}</p>}
 
           <div>
-            <h2 className="mb-3 text-lg font-semibold">Ingredients</h2>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Ingredients</h2>
+              {id && <AddRecipeIngredientDialog recipeId={id} />}
+            </div>
             {recipe.ingredients.length === 0 ? (
               <p className="text-muted-foreground text-sm">No ingredients.</p>
             ) : (

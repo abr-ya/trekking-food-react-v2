@@ -70,10 +70,39 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 - Each ingredient quantity must be > 0
 - Recipe category is required
 - Recipe can be shared or personal
+- Ingredients can be added to an existing recipe after creation
 
 ---
 
-### 4. Hiking
+### 4. Add Ingredient to Recipe
+
+**Participants:** Recipe owner
+
+**Steps:**
+1. User opens recipe details page
+2. User clicks "Add ingredient" button
+3. User selects a product from the catalog
+4. User specifies quantity in grams (> 0)
+5. System validates data:
+   - Product is selected
+   - Quantity > 0
+6. Ingredient is added to the recipe
+7. Recipe details are refreshed
+
+**Validation:**
+```typescript
+{
+  productId: string (required),
+  quantity: number (> 0)
+}
+```
+
+**Endpoint:**
+- `POST /recipes/:recipeId/ingredients`
+
+---
+
+### 5. Hiking
 
 **Purpose:** A meal plan for a specific hiking trip.
 
@@ -96,7 +125,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 5. Hiking Day Pack
+### 6. Hiking Day Pack
 
 **Purpose:** A logical grouping of products for a specific day in the hiking plan. Used to organize products into packs (e.g., per person, per group, or by purpose).
 
@@ -116,7 +145,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 6. Hiking Product
+### 7. Hiking Product
 
 **Purpose:** A specific product added to the meal plan for a specific day and meal time. Each hiking product can be linked to a HikingDayPack by ID.
 
@@ -145,7 +174,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 7. Eating Time
+### 8. Eating Time
 
 **Purpose:** Reference directory of meal times.
 
@@ -159,7 +188,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 8. Hiking Admin
+### 9. Hiking Admin
 
 **Purpose:** A user with rights to edit the hiking plan.
 
@@ -263,7 +292,35 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 3. Create Hiking
+### 3. Add Ingredient to Recipe
+
+**Participants:** Recipe owner
+
+**Steps:**
+1. User opens recipe details page
+2. User clicks "Add ingredient" button
+3. User selects a product from the catalog
+4. User specifies quantity in grams (> 0)
+5. System validates data:
+   - Product is selected
+   - Quantity > 0
+6. Ingredient is added to the recipe
+7. Recipe details are refreshed
+
+**Validation:**
+```typescript
+{
+  productId: string (required),
+  quantity: number (> 0)
+}
+```
+
+**Endpoint:**
+- `POST /recipes/:recipeId/ingredients`
+
+---
+
+### 4. Create Hiking
 
 **Participants:** Authenticated user
 
@@ -297,7 +354,7 @@ if (vegetariansTotal > membersTotal) {
 
 ---
 
-### 4. Add Product to Hiking Plan
+### 5. Add Product to Hiking Plan
 
 **Participants:** Hiking owner or administrator
 
@@ -333,7 +390,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 5. Add Recipe to Hiking Plan
+### 6. Add Recipe to Hiking Plan
 
 **Participants:** Hiking owner or administrator
 
@@ -359,7 +416,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 6. Edit Product Quantity in Plan
+### 7. Edit Product Quantity in Plan
 
 **Participants:** Hiking owner or administrator
 
@@ -383,7 +440,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 7. Add Hiking Administrator
+### 8. Add Hiking Administrator
 
 **Participants:** Hiking owner or current administrator
 
@@ -405,7 +462,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 8. Create/Manage Hiking Day Pack
+### 9. Create/Manage Hiking Day Pack
 
 **Participants:** Hiking owner or administrator
 

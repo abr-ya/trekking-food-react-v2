@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteRecipeIngredient, getRecipe, getRecipes, postRecipe } from "@/api/recipes";
+import { addRecipeIngredient, deleteRecipeIngredient, getRecipe, getRecipes, postRecipe } from "@/api/recipes";
 import type { CreateRecipePayload } from "@/types/recipe";
 
 const RECIPES_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes — match `useProducts`
@@ -70,6 +70,24 @@ export const useDeleteRecipeIngredient = () => {
   return useMutation({
     mutationFn: ({ recipeId, ingredientId }: DeleteRecipeIngredientVariables) =>
       deleteRecipeIngredient(recipeId, ingredientId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: recipeQueryKeys.all }),
+  });
+};
+
+export type AddRecipeIngredientVariables = {
+  recipeId: string;
+  payload: { productId: string; quantity: number };
+};
+
+/**
+ * Add an ingredient to a recipe (`POST /recipes/:recipeId/ingredients`).
+ * On success, invalidates recipe queries.
+ */
+export const useAddRecipeIngredient = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ recipeId, payload }: AddRecipeIngredientVariables) => addRecipeIngredient(recipeId, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: recipeQueryKeys.all }),
   });
 };

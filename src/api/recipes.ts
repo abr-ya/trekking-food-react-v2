@@ -110,3 +110,16 @@ export async function deleteRecipeIngredient(recipeId: string, ingredientId: str
     method: "DELETE",
   });
 }
+
+/**
+ * `POST /recipes/:recipeId/ingredients` — add an ingredient to a recipe.
+ */
+export async function addRecipeIngredient(
+  recipeId: string,
+  payload: { productId: string; quantity: number },
+): Promise<unknown> {
+  return apiFetch(`/recipes/${encodeURIComponent(recipeId)}/ingredients`, {
+    method: "POST",
+    body: payload,
+  });
+}
