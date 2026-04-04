@@ -12,6 +12,8 @@ export {
   useUpdateProductCategory,
   useCreateRecipeCategory,
   useUpdateRecipeCategory,
+  useDeleteProductCategory,
+  useDeleteRecipeCategory,
 } from "./use-category-mutations";
 export {
   useCreateRecipe,

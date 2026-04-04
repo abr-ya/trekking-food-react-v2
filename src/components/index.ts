@@ -30,6 +30,7 @@ export { AddHikingAdminDialog } from "./dialogs/add-hiking-admin-dialog";
 export { AddProductToHikingDialog } from "./dialogs/add-product-to-hiking-dialog";
 export { AddRecipeIngredientDialog } from "./dialogs/add-recipe-ingredient-dialog";
 export { EditRecipeIngredientDialog } from "./dialogs/edit-recipe-ingredient-dialog";
+export { DeleteCategoryDialog } from "./dialogs/delete-category-dialog";
 export { EditProductDialog } from "./dialogs/edit-product-dialog";
 export { EditProductCategoryDialog } from "./dialogs/edit-product-category-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";

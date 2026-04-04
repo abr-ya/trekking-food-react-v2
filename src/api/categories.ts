@@ -49,3 +49,11 @@ export async function postRecipeCategory(payload: SaveCategoryNamePayload): Prom
 export async function patchRecipeCategory(id: string, payload: SaveCategoryNamePayload): Promise<unknown> {
   return apiFetch(`/recipe-categories/${encodeURIComponent(id)}`, { method: "PATCH", body: payload });
 }
+
+export async function deleteProductCategory(id: string): Promise<unknown> {
+  return apiFetch(`/product-categories/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+export async function deleteRecipeCategory(id: string): Promise<unknown> {
+  return apiFetch(`/recipe-categories/${encodeURIComponent(id)}`, { method: "DELETE" });
+}

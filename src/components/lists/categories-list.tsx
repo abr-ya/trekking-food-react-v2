@@ -2,6 +2,7 @@ import { useProductCategories, useRecipeCategories } from "@/hooks";
 import type { CategoryKind } from "@/types/category";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CategoryCard } from "./category-card";
+import { DeleteCategoryDialog } from "../dialogs/delete-category-dialog";
 
 export type CategoryListEditPayload = {
   id: string;
@@ -39,14 +40,8 @@ export const CategoriesList = ({ kind, onEditCategory }: CategoriesListProps) =>
     const { data, isLoading, error } = productQuery;
     const categories = data?.data;
 
-    if (isLoading) {
-      return <LoadingSkeletons />;
-    }
-
-    if (error) {
-      return <ErrorMessage error={error} />;
-    }
-
+    if (isLoading) return <LoadingSkeletons />;
+    if (error) return <ErrorMessage error={error} />;
     if (!categories?.length) {
       return <p className="text-muted-foreground text-sm">No categories returned from the API.</p>;
     }
@@ -60,6 +55,7 @@ export const CategoriesList = ({ kind, onEditCategory }: CategoriesListProps) =>
             itemCount={category.products.length}
             kind="product"
             onEdit={onEditCategory != null ? () => onEditCategory({ id: category.id, name: category.name }) : undefined}
+            deleteDialog={<DeleteCategoryDialog categoryId={category.id} name={category.name} kind="product" />}
           />
         ))}
       </div>
@@ -69,14 +65,8 @@ export const CategoriesList = ({ kind, onEditCategory }: CategoriesListProps) =>
   const { data, isLoading, error } = recipeQuery;
   const categories = data?.data;
 
-  if (isLoading) {
-    return <LoadingSkeletons />;
-  }
-
-  if (error) {
-    return <ErrorMessage error={error} />;
-  }
-
+  if (isLoading) return <LoadingSkeletons />;
+  if (error) return <ErrorMessage error={error} />;
   if (!categories?.length) {
     return <p className="text-muted-foreground text-sm">No categories returned from the API.</p>;
   }
@@ -90,6 +80,7 @@ export const CategoriesList = ({ kind, onEditCategory }: CategoriesListProps) =>
           itemCount={category.recipes.length}
           kind="recipe"
           onEdit={onEditCategory != null ? () => onEditCategory({ id: category.id, name: category.name }) : undefined}
+          deleteDialog={<DeleteCategoryDialog categoryId={category.id} name={category.name} kind="recipe" />}
         />
       ))}
     </div>
