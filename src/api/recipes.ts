@@ -123,3 +123,17 @@ export async function addRecipeIngredient(
     body: payload,
   });
 }
+
+/**
+ * `PATCH /recipes/:recipeId/ingredients/:ingredientId` — update ingredient quantity.
+ */
+export async function updateRecipeIngredient(
+  recipeId: string,
+  ingredientId: string,
+  payload: { quantity: number },
+): Promise<unknown> {
+  return apiFetch(`/recipes/${encodeURIComponent(recipeId)}/ingredients/${encodeURIComponent(ingredientId)}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}

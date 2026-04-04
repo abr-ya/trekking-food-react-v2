@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 import { useDeleteRecipeIngredient } from "@/hooks";
 import type { RecipeIngredient } from "@/types/recipe";
@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "../";
+import { EditRecipeIngredientDialog } from "../dialogs/edit-recipe-ingredient-dialog";
 
 export const IngredientCard = ({ ing }: { ing: RecipeIngredient }) => {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
@@ -39,14 +40,7 @@ export const IngredientCard = ({ ing }: { ing: RecipeIngredient }) => {
           </div>
           <div className="flex items-center gap-4">
             <span className="shrink-0 font-semibold">{ing.quantity} g</span>
-            <button
-              type="button"
-              onClick={() => console.log("edit ingredient", ing.id)}
-              className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
-              aria-label={`Edit ${ing.product.name}`}
-            >
-              <Pencil className="size-4" />
-            </button>
+            <EditRecipeIngredientDialog ingredient={ing} />
             <button
               type="button"
               onClick={() => setPendingDeleteId(ing.id)}

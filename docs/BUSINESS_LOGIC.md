@@ -71,6 +71,7 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 - Recipe category is required
 - Recipe can be shared or personal
 - Ingredients can be added to an existing recipe after creation
+- Ingredient quantity can be edited after creation
 
 ---
 
@@ -320,7 +321,33 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 ---
 
-### 4. Create Hiking
+### 4. Edit Ingredient Quantity
+
+**Participants:** Recipe owner
+
+**Steps:**
+1. User opens recipe details page
+2. User clicks "Edit" (pencil icon) next to an ingredient
+3. Dialog opens with current quantity pre-filled
+4. User changes quantity in grams (> 0)
+5. System validates data:
+   - Quantity > 0
+6. Ingredient is updated
+7. Recipe details are refreshed
+
+**Validation:**
+```typescript
+{
+  quantity: number (> 0)
+}
+```
+
+**Endpoint:**
+- `PATCH /recipes/:recipeId/ingredients/:ingredientId`
+
+---
+
+### 5. Create Hiking
 
 **Participants:** Authenticated user
 
@@ -354,7 +381,7 @@ if (vegetariansTotal > membersTotal) {
 
 ---
 
-### 5. Add Product to Hiking Plan
+### 6. Add Product to Hiking Plan
 
 **Participants:** Hiking owner or administrator
 
@@ -390,7 +417,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 6. Add Recipe to Hiking Plan
+### 7. Add Recipe to Hiking Plan
 
 **Participants:** Hiking owner or administrator
 
@@ -416,7 +443,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 7. Edit Product Quantity in Plan
+### 8. Edit Product Quantity in Plan
 
 **Participants:** Hiking owner or administrator
 
@@ -440,7 +467,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 8. Add Hiking Administrator
+### 9. Add Hiking Administrator
 
 **Participants:** Hiking owner or current administrator
 
@@ -462,7 +489,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
-### 9. Create/Manage Hiking Day Pack
+### 10. Create/Manage Hiking Day Pack
 
 **Participants:** Hiking owner or administrator
 
