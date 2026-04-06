@@ -33,7 +33,15 @@ const StaticSelectInner = ({ field, error, options, label, placeholder, inputId 
         isClearable
         menuPortalTarget={document.body}
         menuPosition="fixed"
-        styles={{ ...styles, menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+        styles={{
+          ...styles,
+          menuPortal: (base) => ({
+            ...base,
+            zIndex: 9999,
+            // Modal Radix Dialog sets body pointer-events: none; portaled menu must opt back in.
+            pointerEvents: "auto",
+          }),
+        }}
         classNamePrefix="rhf-static-select"
       />
       {error?.message ? <UIFieldError>{error.message}</UIFieldError> : null}
