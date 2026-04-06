@@ -17,7 +17,7 @@ type Props = {
   recipeId: string;
 };
 
-export function AddRecipeIngredientDialog({ recipeId }: Props) {
+export const AddRecipeIngredientDialog = ({ recipeId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { mutate, isPending, isError, error, reset: resetMutation } = useAddRecipeIngredient();
 
@@ -58,4 +58,4 @@ export function AddRecipeIngredientDialog({ recipeId }: Props) {
       </Dialog>
     </>
   );
-}
+};

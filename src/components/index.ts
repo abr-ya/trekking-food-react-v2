@@ -24,11 +24,13 @@ export { CreateHikingForm } from "./forms/create-hiking-form";
 export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
 export { AddProductToHikingForm } from "./forms/add-product-to-hiking-form";
 export { AddRecipeIngredientForm } from "./forms/add-recipe-ingredient-form";
+export { AddRecipeToSlotForm } from "./forms/add-recipe-to-slot-form";
 
 // Dialogs
 export { AddHikingAdminDialog } from "./dialogs/add-hiking-admin-dialog";
 export { AddProductToHikingDialog } from "./dialogs/add-product-to-hiking-dialog";
 export { AddRecipeIngredientDialog } from "./dialogs/add-recipe-ingredient-dialog";
+export { AddRecipeToHikingDialog } from "./dialogs/add-recipe-to-hiking-dialog";
 export { EditRecipeIngredientDialog } from "./dialogs/edit-recipe-ingredient-dialog";
 export { DeleteCategoryDialog } from "./dialogs/delete-category-dialog";
 export { EditProductDialog } from "./dialogs/edit-product-dialog";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PlusCircle } from "lucide-react";
 
-import { useAddHikingProduct } from "@/hooks";
+import { useAddHikingProductsFromRecipe } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AddProductToHikingForm } from "@/components/forms/add-product-to-hiking-form";
+import { AddRecipeToSlotForm } from "@/components/forms/add-recipe-to-slot-form";
 
 type Props = {
   hikingId: string;
@@ -19,29 +19,27 @@ type Props = {
   eatingTimeId: string;
 };
 
-export const AddProductToHikingDialog = ({ hikingId, dayNumber, eatingTimeId }: Props) => {
+export const AddRecipeToHikingDialog = ({ hikingId, dayNumber, eatingTimeId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate, isPending, isError, error, reset: resetMutation } = useAddHikingProduct();
+  const { mutate, isPending, isError, error, reset: resetMutation } = useAddHikingProductsFromRecipe();
 
   const handleClose = () => setIsOpen(false);
 
   return (
     <>
-      <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(true)}>
+      <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setIsOpen(true)}>
         <PlusCircle className="mr-1.5 size-3.5" />
-        Add product
+        Add recipe
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent showCloseButton>
           <DialogHeader>
-            <DialogTitle>Add product</DialogTitle>
-            <DialogDescription>
-              Search for a product and set per-person and total quantities for day {dayNumber}.
-            </DialogDescription>
+            <DialogTitle>Add recipe</DialogTitle>
+            <DialogDescription>Select a recipe to add to this meal slot.</DialogDescription>
           </DialogHeader>
 
-          <AddProductToHikingForm
+          <AddRecipeToSlotForm
             hikingId={hikingId}
             dayNumber={dayNumber}
             eatingTimeId={eatingTimeId}
@@ -56,8 +54,8 @@ export const AddProductToHikingDialog = ({ hikingId, dayNumber, eatingTimeId }: 
             <Button type="button" variant="outline" onClick={handleClose} disabled={isPending}>
               Cancel
             </Button>
-            <Button type="submit" form="add-product-to-hiking-form" disabled={isPending}>
-              {isPending ? "Adding…" : "Add product"}
+            <Button type="submit" form="add-recipe-to-slot-form" disabled={isPending}>
+              {isPending ? "Adding…" : "Add"}
             </Button>
           </DialogFooter>
         </DialogContent>
