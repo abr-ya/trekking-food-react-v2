@@ -40,6 +40,16 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     return Math.max(...packsData.map((d) => d.maxPackNumber));
   }, [packsData]);
 
+  const columnTotals = useMemo(() => {
+    const totals = new Map<number, number>();
+    for (const day of packsData) {
+      for (const [packNum, pack] of day.packs) {
+        totals.set(packNum, (totals.get(packNum) || 0) + pack.totalWeight);
+      }
+    }
+    return totals;
+  }, [packsData]);
+
   if (!id) {
     return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
   }
@@ -73,7 +83,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
       {/* Scrollable container for the table */}
       <div className="overflow-x-auto">
         {/* Header row */}
-        {maxPackNumber > 0 && <PacksHeader maxPackNumber={maxPackNumber} />}
+        {maxPackNumber > 0 && <PacksHeader maxPackNumber={maxPackNumber} columnTotals={columnTotals} />}
 
         {/* Data rows */}
         <div>

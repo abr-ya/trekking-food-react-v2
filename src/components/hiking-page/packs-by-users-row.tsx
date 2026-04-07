@@ -27,7 +27,7 @@ export const PacksRow = ({ day, maxPackNumber }: PacksRowProps) => {
     >
       {/* Day column (sticky) */}
       <div className="text-sm font-medium text-foreground sticky left-0 bg-background px-2 py-1 rounded">
-        День {day.dayNumber}
+        Day {day.dayNumber}
       </div>
 
       {/* Pack columns */}

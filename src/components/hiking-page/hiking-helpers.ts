@@ -45,6 +45,7 @@ export type PackInfo = {
   totalWeight: number;
   products: ProductSummary[];
   itemCount: number;
+  member_slot: number | null;
 };
 
 /** Day with all its packs organized by pack number */
@@ -110,6 +111,7 @@ export const groupProductsByDayAndPack = (hikingProducts: HikingProduct[]): Pack
           totalQuantity: p.total_quantity,
         })),
         itemCount: packProducts.length,
+        member_slot: packProducts[0].hiking_day_pack?.member_slot ?? null,
       });
     }
 

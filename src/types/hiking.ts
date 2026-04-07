@@ -31,12 +31,14 @@ export type HikingDayPack = {
   id: string;
   day_number: number;
   pack_number: number;
+  member_slot: number | null;
 };
 
 export type HikingDayPackSummary = {
   id: string;
   day_number: number;
   pack_number: number;
+  member_slot: number | null;
 };
 
 export type HikingDetail = Hiking & {

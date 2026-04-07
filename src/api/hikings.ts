@@ -100,6 +100,7 @@ function normalizeHikingDayPack(row: unknown): HikingDayPack | null {
     pack_number: coalesceNumber(r.pack_number, r.packNumber),
     label: (r.label ?? null) as string | null,
     notes: (r.notes ?? null) as string | null,
+    member_slot: coalesceNumber(r.member_slot, r.memberSlot),
   };
 }
 
@@ -122,6 +123,7 @@ function normalizeHikingDayPackSummary(row: unknown): HikingDayPackSummary | nul
     id: String(r.id ?? ""),
     day_number: coalesceNumber(r.day_number, r.dayNumber),
     pack_number: coalesceNumber(r.pack_number, r.packNumber),
+    member_slot: coalesceNumber(r.member_slot, r.memberSlot),
   };
 }
 

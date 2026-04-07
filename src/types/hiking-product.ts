@@ -5,6 +5,7 @@ export type HikingDayPack = {
   pack_number: number;
   label: string | null;
   notes: string | null;
+  member_slot: number | null;
 };
 
 /** Row from hiking products API (meal lines for a day / slot). */
