@@ -1,4 +1,5 @@
 import type { HikingProduct } from "@/types/hiking-product";
+import type { HikingDayPackSummary } from "@/types/hiking";
 
 /** Groups rows that share the same recipe. Uses `recipe_id || id` so empty recipe ids do not merge unrelated rows. */
 export const groupProductsByRecipeId = (products: HikingProduct[]): HikingProduct[][] => {
@@ -63,9 +64,14 @@ export type PacksByDayData = {
  * - For each day, a Map of pack_number → PackInfo
  * - PackInfo contains weight, products list, and item count
  *
- * Products without a pack (hiking_day_pack_id = null) are excluded
+ * Products without a pack (hiking_day_pack_id = null) are excluded.
+ * Empty packs from `dayPacks` are included with zero weight/items.
  */
-export const groupProductsByDayAndPack = (hikingProducts: HikingProduct[]): PacksByDayData[] => {
+export const groupProductsByDayAndPack = (
+  hikingProducts: HikingProduct[],
+  dayPacks: HikingDayPackSummary[] = [],
+  daysTotal: number = 1,
+): PacksByDayData[] => {
   // Group by day_number first
   const byDay = new Map<number, HikingProduct[]>();
   let maxDay = 0;
@@ -79,10 +85,25 @@ export const groupProductsByDayAndPack = (hikingProducts: HikingProduct[]): Pack
     byDay.set(product.day_number, dayProducts);
   }
 
+  // Index dayPacks by (day, packNumber)
+  const packsByDay = new Map<string, HikingDayPackSummary>();
+  for (const pack of dayPacks) {
+    const key = `${pack.day_number}-${pack.pack_number}`;
+    packsByDay.set(key, pack);
+  }
+
+  // Also find max pack number from day_packs
+  let maxPackFromDefs = 0;
+  for (const pack of dayPacks) {
+    maxDay = Math.max(maxDay, pack.day_number);
+    maxPackFromDefs = Math.max(maxPackFromDefs, pack.pack_number);
+  }
+
   // For each day, group by pack
   const result: PacksByDayData[] = [];
+  const effectiveMaxDay = Math.max(maxDay, ...dayPacks.map((p) => p.day_number), daysTotal);
 
-  for (let day = 1; day <= maxDay; day++) {
+  for (let day = 1; day <= effectiveMaxDay; day++) {
     const dayProducts = byDay.get(day) ?? [];
     const packsByNumber = new Map<number, HikingProduct[]>();
     let maxPackNum = 0;
@@ -115,6 +136,25 @@ export const groupProductsByDayAndPack = (hikingProducts: HikingProduct[]): Pack
       });
     }
 
+    // Add empty packs from day_packs that aren't already in packs
+    for (const packDef of packsByDay.values()) {
+      if (packDef.day_number !== day) continue;
+      if (packs.has(packDef.pack_number)) continue;
+      packs.set(packDef.pack_number, {
+        packId: packDef.id,
+        packNumber: packDef.pack_number,
+        dayNumber: day,
+        totalWeight: 0,
+        products: [],
+        itemCount: 0,
+        member_slot: packDef.member_slot,
+      });
+    }
+
+    // Ensure we include all days up to daysTotal, even if no products/packs
+    maxPackNum = Math.max(maxPackNum, maxPackFromDefs, ...packs.keys(), 0);
+
+    // If no packs found for this day but day exists, still add empty result
     result.push({
       dayNumber: day,
       packs,

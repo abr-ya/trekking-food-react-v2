@@ -13,7 +13,6 @@ import type {
   HikingsListResponse,
   HikingsMeta,
   HikingDetail,
-  HikingDayPackSummary,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
 import type { HikingDayPack, HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
@@ -109,24 +108,6 @@ function normalizeHikingProductsList(raw: unknown): HikingProduct[] {
   return raw.map(normalizeHikingProduct);
 }
 
-function normalizeHikingDayPacksList(raw: unknown): HikingDayPackSummary[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .map((row) => normalizeHikingDayPackSummary(row))
-    .filter((pack): pack is HikingDayPackSummary => pack !== null);
-}
-
-function normalizeHikingDayPackSummary(row: unknown): HikingDayPackSummary | null {
-  if (!row || typeof row !== "object") return null;
-  const r = row as Record<string, unknown>;
-  return {
-    id: String(r.id ?? ""),
-    day_number: coalesceNumber(r.day_number, r.dayNumber),
-    pack_number: coalesceNumber(r.pack_number, r.packNumber),
-    member_slot: coalesceNumber(r.member_slot, r.memberSlot),
-  };
-}
-
 const metaFromListLength = (length: number): HikingsMeta => ({
   total: length,
   page: 1,
@@ -170,7 +151,7 @@ export async function getHiking(id: string): Promise<HikingDetail> {
   const base = normalizeHiking(row);
   const hiking_products = normalizeHikingProductsList(row.hiking_products);
   const admins = row.admins as HikingAdmin[];
-  const day_packs = normalizeHikingDayPacksList(row.day_packs);
+  const day_packs = row.day_packs;
   return { ...base, hiking_products, admins, day_packs };
 }
 

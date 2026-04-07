@@ -46,9 +46,9 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
 }) {
-  const handlePointerDownOutside: React.ComponentProps<
-    typeof DialogPrimitive.Content
-  >["onPointerDownOutside"] = (event) => {
+  const handlePointerDownOutside: React.ComponentProps<typeof DialogPrimitive.Content>["onPointerDownOutside"] = (
+    event,
+  ) => {
     const target = event.detail.originalEvent.target;
     if (isReactSelectMenuPortalTarget(target)) {
       event.preventDefault();

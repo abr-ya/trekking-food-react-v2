@@ -24,7 +24,11 @@ export {
   useUpdateRecipeIngredient,
   recipeQueryKeys,
 } from "./use-recipes";
-export type { AddRecipeIngredientVariables, DeleteRecipeIngredientVariables, UpdateRecipeIngredientVariables } from "./use-recipes";
+export type {
+  AddRecipeIngredientVariables,
+  DeleteRecipeIngredientVariables,
+  UpdateRecipeIngredientVariables,
+} from "./use-recipes";
 export {
   useAddHikingAdmin,
   useAddHikingProduct,

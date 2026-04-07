@@ -31,18 +31,18 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   const { data: hiking, isLoading, error } = useHiking(id);
 
   const packsData = useMemo(() => {
-    if (!hiking?.hiking_products) return null;
-    return groupProductsByDayAndPack(hiking.hiking_products);
-  }, [hiking?.hiking_products]);
+    if (!hiking) return null;
+    return groupProductsByDayAndPack(hiking.hiking_products ?? [], hiking.day_packs ?? [], hiking.daysTotal);
+  }, [hiking]);
 
   const maxPackNumber = useMemo(() => {
-    if (!packsData || packsData.length === 0) return 0;
-    return Math.max(...packsData.map((d) => d.maxPackNumber));
-  }, [packsData]);
+    if (!hiking) return 0;
+    return hiking.membersTotal;
+  }, [hiking]);
 
   const columnTotals = useMemo(() => {
     const totals = new Map<number, number>();
-    for (const day of packsData) {
+    for (const day of packsData ?? []) {
       for (const [packNum, pack] of day.packs) {
         totals.set(packNum, (totals.get(packNum) || 0) + pack.totalWeight);
       }
@@ -87,7 +87,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
 
         {/* Data rows */}
         <div>
-          {packsData.map((day) => (
+          {packsData?.map((day) => (
             <PacksRow key={`day-${day.dayNumber}`} day={day} maxPackNumber={maxPackNumber} />
           ))}
         </div>

@@ -32,8 +32,8 @@ export const PackCell = ({ pack, dayNumber, packNumber }: PackCellProps) => {
     );
   }
 
-  // Show orange indicator when member_slot doesn't match this column (including null)
-  const hasMismatch = pack && (pack.member_slot === null || pack.member_slot !== packNumber);
+  // Show orange indicator when member_slot doesn't match this column (including null or 0)
+  const hasMismatch = pack && (pack.member_slot == null || pack.member_slot === 0 || pack.member_slot !== packNumber);
 
   return (
     <div
