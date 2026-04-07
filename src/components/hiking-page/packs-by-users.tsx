@@ -1,39 +1,42 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { useHiking } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
-import { groupProductsByDayAndPack } from "./hiking-helpers";
+import { groupProductsByDayAndPack, type PackInfo, type PacksByDayData } from "./hiking-helpers";
 import { PacksHeader } from "./packs-by-users-header";
-import { resolvePacksByColumn, PacksRow } from "./packs-by-users-row";
+import { PacksRow } from "./packs-by-users-row";
 
 type PacksByUsersProps = {
   id: string;
 };
 
-/** Swap state for a single day: sourceColumn → targetColumn (permutation) */
-type DaySwaps = Map<number, number>;
+/** Column → packId for one day. Sentinel "empty-N" means no pack in that column. */
+type DayAssignments = Map<number, string>;
 
-/**
- * PacksByUsers — displays a table of packs organized by days and participants.
- *
- * Structure:
- * - Rows: days (1 to daysTotal)
- * - Columns: pack numbers (1 to membersTotal, typically one per participant)
- * - Cells: contain products grouped in packs, with total weight and item count
- *
- * Features:
- * - Compact display of weights, product names, and item counts
- * - Sticky day column for easy reference during horizontal scroll
- * - Supports drag-and-drop to swap packs between columns (within a day)
- *
- * Data flow:
- * 1. useHiking() fetches hiking data including hiking_products and day_packs
- * 2. groupProductsByDayAndPack() transforms flat product list into organized structure
- * 3. Display via PacksHeader + PacksRow for each day
- */
+/** Build base assignments: column → packId based on member_slot / unassigned */
+function buildBaseAssignments(day: PacksByDayData, maxPackNumber: number): DayAssignments {
+  const assignments = new Map<number, string>();
+  const unassigned = [...day.packs.values()]
+    .filter((p) => p.member_slot == null || p.member_slot === 0)
+    .sort((a, b) => a.packNumber - b.packNumber);
+  const unassignedQueue = [...unassigned];
+
+  for (let column = 1; column <= maxPackNumber; column++) {
+    const slotPack = [...day.packs.values()].find((p) => p.member_slot === column);
+    if (slotPack) {
+      assignments.set(column, slotPack.packId);
+      continue;
+    }
+    const next = unassignedQueue.shift();
+    assignments.set(column, next?.packId ?? `empty-${column}`);
+  }
+
+  return assignments;
+}
+
 export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   const { data: hiking, isLoading, error } = useHiking(id);
-  const [swaps, setSwaps] = useState<Map<number, DaySwaps>>(new Map());
+  const [assignments, setAssignments] = useState<Map<number, DayAssignments>>(new Map());
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -47,23 +50,40 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     return hiking.membersTotal;
   }, [hiking]);
 
-  const columnTotals = useMemo(() => {
-    if (!packsData) return new Map<number, number>();
-    const totals = new Map<number, number>();
-
-    // For each day, resolve packs per column (with swaps) and sum weights
+  // Initialize assignments on first data load
+  useEffect(() => {
+    if (!packsData || packsData.length === 0) return;
+    const newAssignments = new Map<number, DayAssignments>();
     for (const day of packsData) {
-      const daySwaps = swaps.get(day.dayNumber);
-      const resolved = resolvePacksByColumn(day, maxPackNumber, daySwaps);
-      for (const [col, pack] of resolved) {
+      newAssignments.set(day.dayNumber, buildBaseAssignments(day, maxPackNumber));
+    }
+    setAssignments(newAssignments);
+  }, [packsData, maxPackNumber]);
+
+  /** Resolve column → PackInfo using assignments */
+  const resolvePack = useCallback(
+    (day: PacksByDayData, column: number): PackInfo | undefined => {
+      const dayAssignments = assignments.get(day.dayNumber);
+      const packId = dayAssignments?.get(column);
+      if (!packId || packId.startsWith("empty-")) return undefined;
+      return [...day.packs.values()].find((p) => p.packId === packId);
+    },
+    [assignments],
+  );
+
+  const columnTotals = useMemo(() => {
+    const totals = new Map<number, number>();
+    if (!packsData) return totals;
+    for (const day of packsData) {
+      for (let col = 1; col <= maxPackNumber; col++) {
+        const pack = resolvePack(day, col);
         if (pack) {
           totals.set(col, (totals.get(col) || 0) + pack.totalWeight);
         }
       }
     }
-
     return totals;
-  }, [packsData, swaps, maxPackNumber]);
+  }, [packsData, maxPackNumber, resolvePack]);
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over) return;
@@ -77,11 +97,13 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     const to = Number(toParts[1]);
     if (dayNum !== Number(toParts[0]) || from === to) return;
 
-    setSwaps((prev) => {
-      const daySwaps = prev.get(dayNum) ?? new Map();
-      const next = new Map(daySwaps);
-      next.set(from, to);
-      next.set(to, from);
+    setAssignments((prev) => {
+      const dayAssignments = prev.get(dayNum) ?? new Map();
+      const fromPackId = dayAssignments.get(from) ?? `empty-${from}`;
+      const toPackId = dayAssignments.get(to) ?? `empty-${to}`;
+      const next = new Map(dayAssignments);
+      next.set(from, toPackId);
+      next.set(to, fromPackId);
       return new Map(prev).set(dayNum, next);
     });
   };
@@ -124,12 +146,12 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
 
           {/* Data rows */}
           <div>
-            {packsData?.map((day) => (
+            {packsData.map((day) => (
               <PacksRow
                 key={`day-${day.dayNumber}`}
                 day={day}
                 maxPackNumber={maxPackNumber}
-                daySwaps={swaps.get(day.dayNumber)}
+                resolvePack={resolvePack}
               />
             ))}
           </div>
