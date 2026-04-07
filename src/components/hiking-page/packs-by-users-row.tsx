@@ -1,3 +1,4 @@
+import { useDroppable } from "@dnd-kit/core";
 import type { PacksByDayData, PackInfo } from "./hiking-helpers";
 import { PackCell } from "./packs-by-users-cell";
 import { Button } from "@/components/ui/button";
@@ -5,33 +6,79 @@ import { Button } from "@/components/ui/button";
 type PacksRowProps = {
   day: PacksByDayData;
   maxPackNumber: number;
+  daySwaps?: Map<number, number>;
 };
 
 /**
  * Resolve which pack is displayed in each column.
  * Priority: 1) pack with member_slot === column, 2) first unassigned pack (member_slot === null or 0).
  * Each unassigned pack is used at most once.
+ * Then apply swaps: column → resolvedColumn permutation.
  */
-function resolvePacksByColumn(day: PacksByDayData, maxPackNumber: number): Map<number, PackInfo | undefined> {
-  const result = new Map<number, PackInfo | undefined>();
+export function resolvePacksByColumn(
+  day: PacksByDayData,
+  maxPackNumber: number,
+  daySwaps?: Map<number, number>,
+): Map<number, PackInfo | undefined> {
+  // Base resolution
+  const base = new Map<number, PackInfo | undefined>();
   const unassigned = [...day.packs.values()]
     .filter((p) => p.member_slot == null || p.member_slot === 0)
     .sort((a, b) => a.packNumber - b.packNumber);
   const unassignedQueue = [...unassigned];
 
   for (let column = 1; column <= maxPackNumber; column++) {
-    // 1) Pack assigned to this column
     const slotPack = [...day.packs.values()].find((p) => p.member_slot === column);
     if (slotPack) {
-      result.set(column, slotPack);
+      base.set(column, slotPack);
       continue;
     }
-    // 2) Next unassigned pack
     const next = unassignedQueue.shift();
-    result.set(column, next);
+    base.set(column, next);
   }
 
-  return result;
+  // Apply permutation: if column N → M in swaps, show what was resolved for M
+  if (daySwaps) {
+    const result = new Map<number, PackInfo | undefined>();
+    for (let column = 1; column <= maxPackNumber; column++) {
+      const targetCol = daySwaps.get(column);
+      if (targetCol !== undefined) {
+        result.set(column, base.get(targetCol));
+      } else {
+        result.set(column, base.get(column));
+      }
+    }
+    return result;
+  }
+
+  return base;
+}
+
+/** Droppable wrapper for a column cell — disabled when empty to prevent drop */
+function DroppableColumn({
+  dayNumber,
+  column,
+  disabled,
+  children,
+}: {
+  dayNumber: number;
+  column: number;
+  disabled: boolean;
+  children: React.ReactNode;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `${dayNumber}:${column}`,
+    disabled,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`${isOver && !disabled ? "ring-2 ring-primary/40 rounded-md transition-shadow" : ""}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -47,8 +94,8 @@ function resolvePacksByColumn(day: PacksByDayData, maxPackNumber: number): Map<n
  *
  * Uses CSS Grid matching PacksHeader column structure
  */
-export const PacksRow = ({ day, maxPackNumber }: PacksRowProps) => {
-  const packsByColumn = resolvePacksByColumn(day, maxPackNumber);
+export const PacksRow = ({ day, maxPackNumber, daySwaps }: PacksRowProps) => {
+  const packsByColumn = resolvePacksByColumn(day, maxPackNumber, daySwaps);
   const packNumbers = Array.from({ length: maxPackNumber }, (_, i) => i + 1);
 
   const handleTest = () => {
@@ -89,10 +136,16 @@ export const PacksRow = ({ day, maxPackNumber }: PacksRowProps) => {
       {/* Pack columns */}
       {packNumbers.map((column) => {
         const pack = packsByColumn.get(column);
+        const dragId = pack ? `${day.dayNumber}:${column}:${pack.packId}` : "";
         return (
-          <div key={`day-${day.dayNumber}-col-${column}`}>
-            <PackCell pack={pack} dayNumber={day.dayNumber} packNumber={column} />
-          </div>
+          <DroppableColumn
+            key={`day-${day.dayNumber}-col-${column}`}
+            dayNumber={day.dayNumber}
+            column={column}
+            disabled={!pack}
+          >
+            <PackCell pack={pack} dayNumber={day.dayNumber} packNumber={column} draggableId={dragId} />
+          </DroppableColumn>
         );
       })}
     </div>

@@ -1,3 +1,5 @@
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import type { PackInfo } from "./hiking-helpers";
 import { formatWeight } from "./hiking-helpers";
 
@@ -5,19 +7,20 @@ type PackCellProps = {
   pack?: PackInfo;
   dayNumber: number;
   packNumber: number;
+  draggableId: string;
 };
 
 /**
  * PackCell — displays a single pack's contents compactly.
  *
- * Shows:
- * - Total weight of the pack
- * - List of product names with individual weights
- * - Item count
- *
- * Prepared for future drag-and-drop integration via data-attributes.
+ * Shows total weight, product list with individual weights, and item count.
+ * The entire cell is draggable via useDraggable.
  */
-export const PackCell = ({ pack, dayNumber, packNumber }: PackCellProps) => {
+export const PackCell = ({ pack, dayNumber, packNumber, draggableId }: PackCellProps) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: draggableId,
+  });
+
   if (!pack) {
     return (
       <div
@@ -32,16 +35,25 @@ export const PackCell = ({ pack, dayNumber, packNumber }: PackCellProps) => {
     );
   }
 
-  // Show orange indicator when member_slot doesn't match this column (including null or 0)
-  const hasMismatch = pack && (pack.member_slot == null || pack.member_slot === 0 || pack.member_slot !== packNumber);
+  const hasMismatch = pack.member_slot == null || pack.member_slot === 0 || pack.member_slot !== packNumber;
+
+  const dragStyle: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : undefined,
+    zIndex: isDragging ? 999 : undefined,
+  };
 
   return (
     <div
-      className="bg-background rounded border p-2 space-y-1.5 relative"
+      ref={setNodeRef}
+      className="bg-background rounded border p-2 space-y-1.5 relative cursor-grab active:cursor-grabbing select-none"
       data-pack-id={pack.packId}
       data-day-number={dayNumber}
       data-pack-number={packNumber}
       data-droppable-id={pack.packId}
+      style={dragStyle}
+      {...attributes}
+      {...listeners}
     >
       {/* Orange indicator for slot mismatch */}
       {hasMismatch && (
@@ -54,18 +66,13 @@ export const PackCell = ({ pack, dayNumber, packNumber }: PackCellProps) => {
         <span className="text-xs text-muted-foreground">({pack.itemCount} products)</span>
       </div>
 
-      {/* Product List — with data structure ready for drag-and-drop */}
-      <div
-        className="space-y-0.5"
-        data-products-container="true"
-        // TODO: This container will become useDroppable in future drag-and-drop integration
-      >
+      {/* Product List */}
+      <div className="space-y-0.5" data-products-container="true">
         {pack.products.map((product) => (
           <div
             key={product.id}
             className="text-xs text-foreground pl-2 border-l-2 border-muted flex items-center justify-between gap-1"
             data-product-id={product.id}
-            // TODO: This element will become useDraggable in future drag-and-drop integration
           >
             <span>• {product.name}</span>
             <span className="text-muted-foreground">{formatWeight(product.totalQuantity)}</span>

@@ -1,13 +1,17 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
+import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { useHiking } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
 import { groupProductsByDayAndPack } from "./hiking-helpers";
 import { PacksHeader } from "./packs-by-users-header";
-import { PacksRow } from "./packs-by-users-row";
+import { resolvePacksByColumn, PacksRow } from "./packs-by-users-row";
 
 type PacksByUsersProps = {
   id: string;
 };
+
+/** Swap state for a single day: sourceColumn → targetColumn (permutation) */
+type DaySwaps = Map<number, number>;
 
 /**
  * PacksByUsers — displays a table of packs organized by days and participants.
@@ -20,7 +24,7 @@ type PacksByUsersProps = {
  * Features:
  * - Compact display of weights, product names, and item counts
  * - Sticky day column for easy reference during horizontal scroll
- * - Prepared for future drag-and-drop integration (data-attributes in place)
+ * - Supports drag-and-drop to swap packs between columns (within a day)
  *
  * Data flow:
  * 1. useHiking() fetches hiking data including hiking_products and day_packs
@@ -29,6 +33,9 @@ type PacksByUsersProps = {
  */
 export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   const { data: hiking, isLoading, error } = useHiking(id);
+  const [swaps, setSwaps] = useState<Map<number, DaySwaps>>(new Map());
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   const packsData = useMemo(() => {
     if (!hiking) return null;
@@ -41,14 +48,43 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   }, [hiking]);
 
   const columnTotals = useMemo(() => {
+    if (!packsData) return new Map<number, number>();
     const totals = new Map<number, number>();
-    for (const day of packsData ?? []) {
-      for (const [packNum, pack] of day.packs) {
-        totals.set(packNum, (totals.get(packNum) || 0) + pack.totalWeight);
+
+    // For each day, resolve packs per column (with swaps) and sum weights
+    for (const day of packsData) {
+      const daySwaps = swaps.get(day.dayNumber);
+      const resolved = resolvePacksByColumn(day, maxPackNumber, daySwaps);
+      for (const [col, pack] of resolved) {
+        if (pack) {
+          totals.set(col, (totals.get(col) || 0) + pack.totalWeight);
+        }
       }
     }
+
     return totals;
-  }, [packsData]);
+  }, [packsData, swaps, maxPackNumber]);
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over) return;
+
+    const fromParts = String(active.id).split(":");
+    const toParts = String(over.id).split(":");
+    if (fromParts.length < 3 || toParts.length < 2) return;
+
+    const dayNum = Number(fromParts[0]);
+    const from = Number(fromParts[1]);
+    const to = Number(toParts[1]);
+    if (dayNum !== Number(toParts[0]) || from === to) return;
+
+    setSwaps((prev) => {
+      const daySwaps = prev.get(dayNum) ?? new Map();
+      const next = new Map(daySwaps);
+      next.set(from, to);
+      next.set(to, from);
+      return new Map(prev).set(dayNum, next);
+    });
+  };
 
   if (!id) {
     return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
@@ -79,25 +115,32 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   }
 
   return (
-    <div className="rounded-md border p-4">
-      {/* Scrollable container for the table */}
-      <div className="overflow-x-auto">
-        {/* Header row */}
-        {maxPackNumber > 0 && <PacksHeader maxPackNumber={maxPackNumber} columnTotals={columnTotals} />}
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <div className="rounded-md border p-4">
+        {/* Scrollable container for the table */}
+        <div className="overflow-x-auto">
+          {/* Header row */}
+          {maxPackNumber > 0 && <PacksHeader maxPackNumber={maxPackNumber} columnTotals={columnTotals} />}
 
-        {/* Data rows */}
-        <div>
-          {packsData?.map((day) => (
-            <PacksRow key={`day-${day.dayNumber}`} day={day} maxPackNumber={maxPackNumber} />
-          ))}
+          {/* Data rows */}
+          <div>
+            {packsData?.map((day) => (
+              <PacksRow
+                key={`day-${day.dayNumber}`}
+                day={day}
+                maxPackNumber={maxPackNumber}
+                daySwaps={swaps.get(day.dayNumber)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Helper text */}
+        <div className="mt-4 text-xs text-muted-foreground space-y-1">
+          <p>The first column (Day) remains visible during horizontal scrolling.</p>
+          <p>Each cell shows the total pack weight and the list of items inside.</p>
         </div>
       </div>
-
-      {/* Helper text */}
-      <div className="mt-4 text-xs text-muted-foreground space-y-1">
-        <p>The first column (Day) remains visible during horizontal scrolling.</p>
-        <p>Each cell shows the total pack weight and the list of items inside.</p>
-      </div>
-    </div>
+    </DndContext>
   );
 };
