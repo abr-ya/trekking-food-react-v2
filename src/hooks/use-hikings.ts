@@ -10,6 +10,7 @@ import {
   postHiking,
   postHikingAdmin,
   postHikingDayPack,
+  postHikingPackMemberSlots,
   postHikingProduct,
   postHikingProductsFromRecipe,
   postHikingProductsToPack,
@@ -230,6 +231,22 @@ export const useDeleteHikingDayPack = () => {
 
   return useMutation({
     mutationFn: ({ hikingId, packId }: DeleteHikingDayPackVariables) => deleteHikingDayPack(hikingId, packId),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type SaveHikingPackMemberSlots = {
+  hikingId: string;
+  payload: { assignments: { packId: string; memberSlot: number | null }[] };
+};
+
+export const useSaveHikingPacksSlots = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: SaveHikingPackMemberSlots) => postHikingPackMemberSlots(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },

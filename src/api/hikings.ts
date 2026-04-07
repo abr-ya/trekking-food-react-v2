@@ -274,3 +274,16 @@ export async function postHikingProductsToPack(
     body: payload,
   });
 }
+
+/**
+ * `POST /hikings/:id/packs/member-slots` — update member slot assignments for multiple packs.
+ */
+export async function postHikingPackMemberSlots(
+  hikingId: string,
+  payload: { assignments: { packId: string; memberSlot: number | null }[] },
+): Promise<void> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/member-slots`, {
+    method: "POST",
+    body: payload,
+  });
+}

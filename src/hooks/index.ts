@@ -43,6 +43,7 @@ export {
   useHikings,
   useUpdateHikingDayPack,
   useUpdateHikingProduct,
+  useSaveHikingPacksSlots,
   hikingQueryKeys,
 } from "./use-hikings";
 export type {
@@ -53,6 +54,7 @@ export type {
   CreateHikingDayPackVariables,
   DeleteHikingDayPackVariables,
   DeleteHikingProductVariables,
+  SaveHikingPackMemberSlots,
   UpdateHikingDayPackVariables,
   UpdateHikingProductVariables,
 } from "./use-hikings";
