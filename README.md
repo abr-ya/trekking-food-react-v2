@@ -213,6 +213,49 @@ function HikingFlow({ hikingId }: { hikingId: string }) {
 
 After `useCreateHiking` or `useAddHikingProductsFromRecipe` succeeds, hiking list and detail queries are invalidated so the UI can refetch.
 
+### PacksByUsers: Save Member Slots
+
+The `PacksByUsers` component displays packs in a table grouped by day, allowing users to drag-and-drop packs between columns (member slots) and save the assignments.
+
+**Key features:**
+- **Drag-and-drop packs** between columns within the same day using `@dnd-kit/core`.
+- **Per-day Save button** — each day row has its own "Save" button that only sends changed slots for that specific day.
+- **Change detection** — button is disabled when no changes exist, enabled as soon as any pack's column differs from its server `member_slot`.
+- **Optimistic UI** — drag-and-drop updates local state immediately; saving sends only the delta.
+- **Blocked during save** — drag-and-drop is disabled while the mutation is in progress, and the button shows "Saving..." with a spinner.
+
+```tsx
+import { PacksByUsers } from "@/components";
+
+function HikingDetail({ id }: { id: string }) {
+  return <PacksByUsers id={id} />;
+}
+```
+
+**API:** `POST /hikings/:id/packs/member-slots` — body: `{ assignments: { packId: string; memberSlot: number | null }[] }`.
+
+**Hook:** `useSaveHikingPacksSlots()` — invalidates hiking detail query on success.
+
+```tsx
+import { useSaveHikingPacksSlots } from "@/hooks";
+
+function SaveSlotsButton({ hikingId, payload }: { hikingId: string; payload: { assignments: { packId: string; memberSlot: number | null }[] } }) {
+  const { mutate, isPending } = useSaveHikingPacksSlots();
+
+  return (
+    <button
+      type="button"
+      onClick={() => mutate({ hikingId, payload })}
+      disabled={isPending}
+    >
+      {isPending ? "Saving…" : "Save"}
+    </button>
+  );
+}
+```
+
+**Documentation:** See `docs/IMPLEMENTATION_SAVE_MUTATION_PACKS_BY_USERS_EN.md` for full implementation details, known issues, and fixes.
+
 ### Update hiking product quantities
 
 `useUpdateHikingProduct` — `PATCH /hikings/:hikingId/hiking-products/:hikingProductId`. Invalidates the hiking detail on success.

@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
-import { useHiking } from "@/hooks";
+import { useHiking, useSaveHikingPacksSlots } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
 import { groupProductsByDayAndPack, type PackInfo, type PacksByDayData } from "./hiking-helpers";
 import { PacksHeader } from "./packs-by-users-header";
@@ -36,6 +36,7 @@ function buildBaseAssignments(day: PacksByDayData, maxPackNumber: number): DayAs
 
 export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   const { data: hiking, isLoading, error } = useHiking(id);
+  const saveSlotsMutation = useSaveHikingPacksSlots();
   const [assignments, setAssignments] = useState<Map<number, DayAssignments>>(new Map());
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -70,6 +71,72 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     },
     [assignments],
   );
+
+  /** Build payload for save mutation — only changed slots for a specific day */
+  const buildSavePayload = useCallback(
+    (dayNumber: number): { assignments: { packId: string; memberSlot: number | null }[] } => {
+      const assignmentList: { packId: string; memberSlot: number | null }[] = [];
+      const dayAssignments = assignments.get(dayNumber) ?? new Map();
+
+      // Build reverse mapping: packId → column
+      const packToColumn = new Map<string, number>();
+      for (const [col, packId] of dayAssignments) {
+        if (!packId.startsWith("empty-")) {
+          packToColumn.set(packId, col);
+        }
+      }
+
+      // Find the day data to get server member_slot for each pack
+      const day = packsData?.find((d) => d.dayNumber === dayNumber);
+      if (!day) return { assignments: assignmentList };
+
+      // Compare each pack's server member_slot with its current column
+      for (const pack of day.packs.values()) {
+        const currentColumn = packToColumn.get(pack.packId);
+        const serverSlot = pack.member_slot;
+
+        // If pack is in a column but server slot differs → change
+        if (currentColumn != null && currentColumn !== serverSlot) {
+          assignmentList.push({ packId: pack.packId, memberSlot: currentColumn });
+        }
+      }
+
+      return { assignments: assignmentList };
+    },
+    [assignments, packsData],
+  );
+
+  /** Check if there are unsaved changes per day */
+  const hasChangesByDay = useMemo(() => {
+    const result = new Map<number, boolean>();
+    for (const day of packsData ?? []) {
+      let changed = false;
+      const dayAssignments = assignments.get(day.dayNumber) ?? new Map();
+
+      // Build reverse mapping: packId → column
+      const packToColumn = new Map<string, number>();
+      for (const [col, packId] of dayAssignments) {
+        if (!packId.startsWith("empty-")) {
+          packToColumn.set(packId, col);
+        }
+      }
+
+      // Check each pack: does its server member_slot match its current column?
+      for (const pack of day.packs.values()) {
+        const currentColumn = packToColumn.get(pack.packId);
+        const serverSlot = pack.member_slot;
+
+        // If pack is in a column but server slot differs → changed
+        if (currentColumn != null && currentColumn !== serverSlot) {
+          changed = true;
+          break;
+        }
+      }
+
+      result.set(day.dayNumber, changed);
+    }
+    return result;
+  }, [assignments, packsData]);
 
   const columnTotals = useMemo(() => {
     const totals = new Map<number, number>();
@@ -108,6 +175,12 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     });
   };
 
+  const handleSave = (dayNumber: number) => {
+    const payload = buildSavePayload(dayNumber);
+    console.log(`Save payload for Day ${dayNumber}:`, payload);
+    saveSlotsMutation.mutate({ hikingId: id, payload });
+  };
+
   if (!id) {
     return <p className="text-muted-foreground text-sm">Hiking id not correct.</p>;
   }
@@ -137,7 +210,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   }
 
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragEnd={saveSlotsMutation.isPending ? () => {} : handleDragEnd}>
       <div className="rounded-md border p-4">
         {/* Scrollable container for the table */}
         <div className="overflow-x-auto">
@@ -152,6 +225,9 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
                 day={day}
                 maxPackNumber={maxPackNumber}
                 resolvePack={resolvePack}
+                hasChanges={hasChangesByDay.get(day.dayNumber) ?? false}
+                isPending={saveSlotsMutation.isPending}
+                onSave={() => handleSave(day.dayNumber)}
               />
             ))}
           </div>

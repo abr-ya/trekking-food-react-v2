@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import { Loader2 } from "lucide-react";
 import type { PacksByDayData, PackInfo } from "./hiking-helpers";
 import { PackCell } from "./packs-by-users-cell";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,9 @@ type PacksRowProps = {
   day: PacksByDayData;
   maxPackNumber: number;
   resolvePack: (day: PacksByDayData, column: number) => PackInfo | undefined;
+  hasChanges: boolean;
+  isPending: boolean;
+  onSave: () => void;
 };
 
 /** Droppable wrapper for a column cell — disabled when empty to prevent drop */
@@ -36,27 +40,8 @@ function DroppableColumn({
 /**
  * PacksRow — displays a single day's row in the table.
  */
-export const PacksRow = ({ day, maxPackNumber, resolvePack }: PacksRowProps) => {
+export const PacksRow = ({ day, maxPackNumber, resolvePack, hasChanges, isPending, onSave }: PacksRowProps) => {
   const packNumbers = Array.from({ length: maxPackNumber }, (_, i) => i + 1);
-
-  const handleTest = () => {
-    const mismatched: Array<{
-      packId: string;
-      day: number;
-      member_slot: number | null;
-      column: number;
-    }> = [];
-
-    for (const column of packNumbers) {
-      const pack = resolvePack(day, column);
-      if (!pack) continue;
-      if (pack.member_slot == null || pack.member_slot === 0 || pack.member_slot !== column) {
-        mismatched.push({ packId: pack.packId, day: day.dayNumber, member_slot: pack.member_slot, column });
-      }
-    }
-
-    console.log("Mismatched packs for Day", day.dayNumber, mismatched);
-  };
 
   return (
     <div
@@ -68,8 +53,15 @@ export const PacksRow = ({ day, maxPackNumber, resolvePack }: PacksRowProps) => 
       {/* Day column (sticky) */}
       <div className="sticky left-0 bg-background px-2 py-1 rounded flex flex-col gap-1">
         <div className="text-sm font-medium text-foreground">Day {day.dayNumber}</div>
-        <Button variant="outline" size="sm" className="text-xs h-6 px-1" onClick={handleTest}>
-          Test
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-xs h-6 px-1"
+          disabled={!hasChanges || isPending}
+          onClick={onSave}
+        >
+          {isPending && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+          {isPending ? "Saving..." : "Save"}
         </Button>
       </div>
 
