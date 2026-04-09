@@ -1,16 +1,19 @@
 import { z } from "zod";
 
-const recipeIngredientSchema = z.object({
-  product: z
-    .object({
-      label: z.string(),
-      value: z.string(),
-    })
-    .refine((val) => val && val.value.trim() !== "", {
-      message: "Product is required",
-    }),
-  quantity: z.number().positive("Quantity must be greater than 0"),
-});
+const recipeIngredientSchema = z
+  .object({
+    product: z
+      .object({
+        label: z.string(),
+        value: z.string(),
+      })
+      .nullable(),
+    quantity: z.number().min(1, "Quantity must be greater than 0"),
+  })
+  .refine((data) => data.product !== null && data.product.value.trim() !== "", {
+    message: "Product is required",
+    path: ["product"],
+  });
 
 export const createRecipeSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),

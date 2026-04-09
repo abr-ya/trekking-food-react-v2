@@ -74,10 +74,9 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
   );
 
   const form = useForm<CreateRecipeFormData>({
-    resolver: zodResolver(createRecipeSchema),
     defaultValues: defaultFormValues,
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    mode: "all",
+    resolver: zodResolver(createRecipeSchema),
   });
 
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "ingredients" });
@@ -142,7 +141,7 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
             id="recipe-description"
             rows={3}
             {...register("description")}
-            className={cn(inputClassName, "min-h-[80px] py-2")}
+            className={cn(inputClassName, "min-h-20 py-2")}
             placeholder="Simple breakfast"
           />
           {errors.description ? <p className="text-destructive text-sm">{errors.description.message}</p> : null}
@@ -171,12 +170,12 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className="flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-end"
+              className="flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-start"
             >
               <div className="grid min-w-0 flex-1 gap-2">
                 {!productsLoading && !productsError && productOptions.length > 0 ? (
                   <RHFSelectWithSearch<Product, CreateRecipeFormData>
-                    name={`ingredients.${index}.productId` as Path<CreateRecipeFormData>}
+                    name={`ingredients.${index}.product` as Path<CreateRecipeFormData>}
                     label="Product"
                     placeholder="Type to search…"
                     searchRequest={searchProducts}
@@ -184,16 +183,13 @@ const CreateRecipeFormFields = ({ onCreated }: { onCreated: () => void }) => {
                     minForSearch={1}
                   />
                 ) : null}
-                {errors.ingredients?.[index]?.product ? (
-                  <p className="text-destructive text-sm">{errors.ingredients[index]?.product?.message}</p>
-                ) : null}
               </div>
               <div className="w-full sm:w-28">
                 <RHFInput<CreateRecipeFormData>
                   name={`ingredients.${index}.quantity` as Path<CreateRecipeFormData>}
                   label="Quantity"
                   id={`ingredient-qty-${field.id}`}
-                  isNumber
+                  valueAsNumber
                 />
               </div>
               {fields.length > 1 ? (
