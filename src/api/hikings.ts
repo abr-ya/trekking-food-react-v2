@@ -3,6 +3,7 @@ import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
   AssignHikingProductsToPackPayload,
+  CreateHikingDayCommentPayload,
   CreateHikingDayPackPayload,
   CreateHikingPayload,
   Hiking,
@@ -13,6 +14,7 @@ import type {
   HikingsListResponse,
   HikingsMeta,
   HikingDetail,
+  UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
 import type { HikingDayPack, HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
@@ -286,4 +288,43 @@ export async function postHikingPackMemberSlots(
     method: "POST",
     body: payload,
   });
+}
+
+/**
+ * `POST /hikings/:id/day-comments` — add a comment for a specific day.
+ */
+export async function postHikingDayComment(hikingId: string, payload: CreateHikingDayCommentPayload): Promise<void> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/day-comments`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `PATCH /hikings/:id/day-comments/:dayNumber` — update a day's comment.
+ */
+export async function patchHikingDayComment(
+  hikingId: string,
+  dayNumber: number,
+  payload: UpdateHikingDayCommentPayload,
+): Promise<void> {
+  return apiFetch(
+    `/hikings/${encodeURIComponent(hikingId)}/day-comments/${encodeURIComponent(dayNumber)}`,
+    {
+      method: "PATCH",
+      body: payload,
+    },
+  );
+}
+
+/**
+ * `DELETE /hikings/:id/day-comments/:dayNumber` — delete a day's comment.
+ */
+export async function deleteHikingDayComment(hikingId: string, dayNumber: number): Promise<void> {
+  return apiFetch(
+    `/hikings/${encodeURIComponent(hikingId)}/day-comments/${encodeURIComponent(dayNumber)}`,
+    {
+      method: "DELETE",
+    },
+  );
 }

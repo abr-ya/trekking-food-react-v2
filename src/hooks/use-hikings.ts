@@ -1,14 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteHikingDayComment,
   deleteHikingDayPack,
   deleteHikingProduct,
   getHiking,
   getHikingProductTotals,
   getHikings,
+  patchHikingDayComment,
   patchHikingDayPack,
   patchHikingProduct,
   postHiking,
   postHikingAdmin,
+  postHikingDayComment,
   postHikingDayPack,
   postHikingPackMemberSlots,
   postHikingProduct,
@@ -19,9 +22,11 @@ import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
   AssignHikingProductsToPackPayload,
+  CreateHikingDayCommentPayload,
   CreateHikingDayPackPayload,
   CreateHikingPayload,
   HikingProductsFromRecipePayload,
+  UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
 import type { UpdateHikingProductPayload } from "@/types/hiking-product";
@@ -247,6 +252,60 @@ export const useSaveHikingPacksSlots = () => {
 
   return useMutation({
     mutationFn: ({ hikingId, payload }: SaveHikingPackMemberSlots) => postHikingPackMemberSlots(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+// ─── Day Comments ────────────────────────────────────────────────
+
+export type CreateHikingDayCommentVariables = {
+  hikingId: string;
+  payload: CreateHikingDayCommentPayload;
+};
+
+export const useCreateHikingDayComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: CreateHikingDayCommentVariables) =>
+      postHikingDayComment(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type UpdateHikingDayCommentVariables = {
+  hikingId: string;
+  dayNumber: number;
+  payload: UpdateHikingDayCommentPayload;
+};
+
+export const useUpdateHikingDayComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, dayNumber, payload }: UpdateHikingDayCommentVariables) =>
+      patchHikingDayComment(hikingId, dayNumber, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type DeleteHikingDayCommentVariables = {
+  hikingId: string;
+  dayNumber: number;
+};
+
+export const useDeleteHikingDayComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, dayNumber }: DeleteHikingDayCommentVariables) =>
+      deleteHikingDayComment(hikingId, dayNumber),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },

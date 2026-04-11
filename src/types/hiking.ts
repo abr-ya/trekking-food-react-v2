@@ -116,3 +116,20 @@ export type HikingProductTotal = {
 export type HikingProductTotalsResponse = {
   items: HikingProductTotal[];
 };
+
+/** Day comment as returned inside hiking detail `day_comments`. */
+export type HikingDayComment = {
+  day_number: number;
+  comment: string;
+};
+
+/** Body for `POST /hikings/:id/day-comments`. */
+export type CreateHikingDayCommentPayload = {
+  dayNumber: number;
+  comment: string;
+};
+
+/** Body for `PATCH /hikings/:id/day-comments/:dayNumber`. */
+export type UpdateHikingDayCommentPayload = {
+  comment: string;
+};
