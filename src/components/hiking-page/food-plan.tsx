@@ -1,5 +1,5 @@
 import { useHiking } from "@/hooks";
-import { AddRecipeToHikingForm, DayEatings, LoadingSkeleton } from "@/components";
+import { AddRecipeToHikingForm, DayEatings, LoadingSkeleton, DayComment } from "@/components";
 import { DayTabs } from "./day-tabs";
 
 export const FoodPlan = ({ id }: { id: string }) => {
@@ -27,7 +27,12 @@ export const FoodPlan = ({ id }: { id: string }) => {
     <div className="rounded-md border p-3">
       <AddRecipeToHikingForm hikingId={id} />
       <DayTabs days={days} defaultValue={defaultDay}>
-        {(day) => <DayEatings hikingId={id} dayNumber={day} hikingProducts={hiking.hiking_products} />}
+        {(day) => (
+          <>
+            <DayComment dayNumber={day} comment={hiking.day_comments?.find((c) => c.day_number === day)?.comment} />
+            <DayEatings hikingId={id} dayNumber={day} hikingProducts={hiking.hiking_products} />
+          </>
+        )}
       </DayTabs>
     </div>
   );

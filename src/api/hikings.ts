@@ -8,6 +8,7 @@ import type {
   CreateHikingPayload,
   Hiking,
   HikingAdmin,
+  HikingDayComment,
   HikingProductsFromRecipePayload,
   HikingProductTotalsResponse,
   HikingsListParams,
@@ -64,6 +65,7 @@ type HikingDetailApiRow = HikingApiRow & {
   hiking_products: HikingProduct[];
   admins: HikingAdmin[];
   day_packs: HikingDayPack[];
+  day_comments: HikingDayComment[];
 };
 
 function unwrapHikingDetailResponse(raw: unknown): HikingDetailApiRow {
@@ -154,7 +156,8 @@ export async function getHiking(id: string): Promise<HikingDetail> {
   const hiking_products = normalizeHikingProductsList(row.hiking_products);
   const admins = row.admins as HikingAdmin[];
   const day_packs = row.day_packs;
-  return { ...base, hiking_products, admins, day_packs };
+  const day_comments = row.day_comments ?? [];
+  return { ...base, hiking_products, admins, day_packs, day_comments };
 }
 
 /**

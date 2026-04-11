@@ -55,6 +55,7 @@ export { HikingInfo } from "./hiking-page/hiking-info";
 export { FoodPlan } from "./hiking-page/food-plan";
 export { DayEatings } from "./hiking-page/day-eatings";
 export type { DayEatingsProps } from "./hiking-page/day-eatings";
+export { DayComment } from "./hiking-page/day-comment";
 export { ShoppingList } from "./hiking-page/shopping-list";
 export { PacksByUsers } from "./hiking-page/packs-by-users";
 export { PacksByDays } from "./hiking-page/packs-by-days";

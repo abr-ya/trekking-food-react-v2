@@ -45,6 +45,7 @@ export type HikingDetail = Hiking & {
   hiking_products: HikingProduct[];
   admins: HikingAdmin[];
   day_packs: HikingDayPackSummary[];
+  day_comments: HikingDayComment[];
 };
 
 export type HikingsMeta = {
