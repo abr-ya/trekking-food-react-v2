@@ -9,6 +9,7 @@ import {
   patchHikingDayComment,
   patchHikingDayPack,
   patchHikingProduct,
+  postAutoDistributePacks,
   postHiking,
   postHikingAdmin,
   postHikingDayComment,
@@ -22,6 +23,7 @@ import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
   AssignHikingProductsToPackPayload,
+  AutoDistributePacksPayload,
   CreateHikingDayCommentPayload,
   CreateHikingDayPackPayload,
   CreateHikingPayload,
@@ -30,6 +32,7 @@ import type {
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
 import type { UpdateHikingProductPayload } from "@/types/hiking-product";
+import { z } from "zod";
 
 const HIKINGS_STALE_TIME_MS = 2 * 60 * 1000;
 
@@ -306,6 +309,33 @@ export const useDeleteHikingDayComment = () => {
   return useMutation({
     mutationFn: ({ hikingId, dayNumber }: DeleteHikingDayCommentVariables) =>
       deleteHikingDayComment(hikingId, dayNumber),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+// ─── Auto-Distribute Packs ────────────────────────────────────────
+
+/**
+ * Zod-схема для валидации auto-distribute payload.
+ * Фабрика, т.к. max зависит от daysTotal конкретного похода.
+ */
+export const createAutoDistributeSchema = (daysTotal: number) =>
+  z.object({
+    dayNumber: z.number().min(1, "День должен быть >= 1").max(daysTotal, `День должен быть <= ${daysTotal}`),
+  });
+
+export type AutoDistributePacksVariables = {
+  hikingId: string;
+  payload: AutoDistributePacksPayload;
+};
+
+export const useAutoDistributePacks = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: AutoDistributePacksVariables) => postAutoDistributePacks(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },

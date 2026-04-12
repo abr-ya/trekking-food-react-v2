@@ -3,6 +3,7 @@ import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
   AssignHikingProductsToPackPayload,
+  AutoDistributePacksPayload,
   CreateHikingDayCommentPayload,
   CreateHikingDayPackPayload,
   CreateHikingPayload,
@@ -288,6 +289,19 @@ export async function postHikingPackMemberSlots(
   payload: { assignments: { packId: string; memberSlot: number | null }[] },
 ): Promise<void> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/member-slots`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `POST /hikings/:id/packs/auto-distribute` — auto-distribute packs for a specific day.
+ */
+export async function postAutoDistributePacks(
+  hikingId: string,
+  payload: AutoDistributePacksPayload,
+): Promise<HikingDetail> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/auto-distribute`, {
     method: "POST",
     body: payload,
   });

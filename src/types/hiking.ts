@@ -134,3 +134,8 @@ export type CreateHikingDayCommentPayload = {
 export type UpdateHikingDayCommentPayload = {
   comment: string;
 };
+
+/** Body for `POST /hikings/:id/packs/auto-distribute`. */
+export type AutoDistributePacksPayload = {
+  dayNumber: number;
+};

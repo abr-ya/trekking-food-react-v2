@@ -256,6 +256,34 @@ function SaveSlotsButton({ hikingId, payload }: { hikingId: string; payload: { a
 
 **Documentation:** See `docs/IMPLEMENTATION_SAVE_MUTATION_PACKS_BY_USERS_EN.md` for full implementation details, known issues, and fixes.
 
+### Auto-Distribute Packs for a Day
+
+`useAutoDistributePacks` — `POST /hikings/:id/packs/auto-distribute`. Automatically distributes packs for a specific day. Invalidates the hiking detail query on success.
+
+**Validation:** Use `createAutoDistributeSchema(daysTotal)` to create a Zod schema that validates `dayNumber` between `1` and `daysTotal`.
+
+```tsx
+import { useAutoDistributePacks, createAutoDistributeSchema } from "@/hooks";
+
+function AutoDistributeButton({ hikingId, daysTotal }: { hikingId: string; daysTotal: number }) {
+  const { mutate, isPending } = useAutoDistributePacks();
+  const schema = createAutoDistributeSchema(daysTotal);
+
+  const handleDistribute = () => {
+    const result = schema.safeParse({ dayNumber: 1 });
+    if (!result.success) return; // validation failed
+
+    mutate({ hikingId, payload: { dayNumber: 1 } });
+  };
+
+  return (
+    <button onClick={handleDistribute} disabled={isPending}>
+      {isPending ? "Distributing…" : "Auto-distribute day 1"}
+    </button>
+  );
+}
+```
+
 ### Update hiking product quantities
 
 `useUpdateHikingProduct` — `PATCH /hikings/:hikingId/hiking-products/:hikingProductId`. Invalidates the hiking detail on success.
