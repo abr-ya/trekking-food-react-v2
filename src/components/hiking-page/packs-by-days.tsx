@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { DndContext, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { AlertTriangle, Loader2 } from "lucide-react";
 
-import { useAutoDistributePacks, useHiking } from "@/hooks";
+import { useHiking } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components";
-import type { HikingDayPackSummary } from "@/types/hiking";
-import type { HikingProduct } from "@/types/hiking-product";
+import { AutoDistributeButton } from "./auto-distribute-button";
 import { DayTabs } from "./day-tabs";
 import { DayPackCard } from "./day-pack-card";
 import { DayProductCard } from "./day-product-card";
-import { toastError, toastSuccess } from "@/lib/toast";
+
+import type { HikingDayPackSummary, HikingProduct, HikingDetail } from "@/types";
 
 type ColumnId = "unassigned" | `pack-${number}`;
 type ItemsByColumn = Record<ColumnId, string[]>;
@@ -61,7 +59,6 @@ function buildDayColumns(
 export const PacksByDays = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
   const [itemsByDay, setItemsByDay] = useState<Record<number, ItemsByColumn>>({});
-  const [pendingAutoDistributeDay, setPendingAutoDistributeDay] = useState<number | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -114,34 +111,12 @@ export const PacksByDays = ({ id }: { id: string }) => {
       <DayTabs days={days}>
         {(day) => {
           const items = itemsByDay[day] ?? createEmptyColumns(hiking.membersTotal);
-          const autoDistribute = useAutoDistributePacks();
 
-          const handleAutoDistributeClick = () => {
-            setPendingAutoDistributeDay(day);
-          };
-
-          const confirmAutoDistribute = () => {
-            const dayToDistribute = pendingAutoDistributeDay ?? day;
-            setPendingAutoDistributeDay(null);
-
-            autoDistribute.mutate(
-              { hikingId: id, payload: { dayNumber: dayToDistribute } },
-              {
-                onSuccess: (data) => {
-                  // Rebuild columns for this day from server response
-                  setItemsByDay((prev) => ({
-                    ...prev,
-                    [dayToDistribute]: buildDayColumns(data, dayToDistribute),
-                  }));
-                  toastSuccess(`Packs auto-distributed for Day ${dayToDistribute}`);
-                },
-                onError: (err) => {
-                  toastError(
-                    `Failed to auto-distribute packs: ${err instanceof Error ? err.message : "Unknown error"}`,
-                  );
-                },
-              },
-            );
+          const handleDistribute = (data: HikingDetail) => {
+            setItemsByDay((prev) => ({
+              ...prev,
+              [day]: buildDayColumns(data, day),
+            }));
           };
 
           const handleDragEnd = ({ active, over }: { active: { id: unknown }; over: { id: unknown } | null }) => {
@@ -186,15 +161,12 @@ export const PacksByDays = ({ id }: { id: string }) => {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-sm">Day {day}</h3>
-                    <button
-                      type="button"
-                      onClick={handleAutoDistributeClick}
-                      disabled={autoDistribute.isPending || (items.unassigned ?? []).length === 0}
-                      className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {autoDistribute.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                      {autoDistribute.isPending ? "Distributing…" : "Auto-distribute"}
-                    </button>
+                    <AutoDistributeButton
+                      hikingId={id}
+                      dayNumber={day}
+                      unassignedCount={items.unassigned?.length ?? 0}
+                      onDistribute={handleDistribute}
+                    />
                   </div>
 
                   <DroppableUnassignedColumn itemIds={items.unassigned ?? []} renderItem={renderProduct} />
@@ -224,44 +196,6 @@ export const PacksByDays = ({ id }: { id: string }) => {
                   </div>
                 </div>
               </DndContext>
-
-              <Dialog
-                open={pendingAutoDistributeDay === day}
-                onOpenChange={(open) => {
-                  if (!open) setPendingAutoDistributeDay(null);
-                }}
-              >
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5 text-amber-500" />
-                      Auto-distribute Day {day}
-                    </DialogTitle>
-                    <DialogDescription>
-                      This will reset all packs for this day and redistribute products automatically. Any manual changes
-                      you made will be lost.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <button
-                      type="button"
-                      onClick={() => setPendingAutoDistributeDay(null)}
-                      className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium border bg-background hover:bg-accent"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={confirmAutoDistribute}
-                      disabled={autoDistribute.isPending}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {autoDistribute.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                      {autoDistribute.isPending ? "Distributing…" : "OK, Distribute"}
-                    </button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
             </>
           );
         }}

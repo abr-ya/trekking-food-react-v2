@@ -272,8 +272,7 @@ export const useCreateHikingDayComment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ hikingId, payload }: CreateHikingDayCommentVariables) =>
-      postHikingDayComment(hikingId, payload),
+    mutationFn: ({ hikingId, payload }: CreateHikingDayCommentVariables) => postHikingDayComment(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
     },

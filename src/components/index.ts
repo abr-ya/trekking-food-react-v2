@@ -67,3 +67,4 @@ export { DayComment } from "./hiking-page/day-comment";
 export { ShoppingList } from "./hiking-page/shopping-list";
 export { PacksByUsers } from "./hiking-page/packs-by-users";
 export { PacksByDays } from "./hiking-page/packs-by-days";
+export { AutoDistributeButton } from "./hiking-page/auto-distribute-button";

@@ -1,5 +1,4 @@
-import type { HikingProduct } from "@/types/hiking-product";
-import type { HikingDayPackSummary } from "@/types/hiking";
+import type { HikingDayPackSummary, HikingProduct } from "@/types";
 
 /** Groups rows that share the same recipe. Uses `recipe_id || id` so empty recipe ids do not merge unrelated rows. */
 export const groupProductsByRecipeId = (products: HikingProduct[]): HikingProduct[][] => {

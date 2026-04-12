@@ -1,15 +1,19 @@
-/** Hiking Day Pack — logical grouping of products for a specific day. */
-export type HikingDayPack = {
+// This file defines types related to hiking products, which are meals or items associated with specific days and packs during a hiking trip. These types are used throughout the application to ensure type safety when working with hiking products.
+export interface HikingDayPackSummary {
   id: string;
   day_number: number;
   pack_number: number;
+  member_slot: number | null;
+}
+
+/** Hiking Day Pack — logical grouping of products for a specific day. */
+export interface HikingDayPack extends HikingDayPackSummary {
   label: string | null;
   notes: string | null;
-  member_slot: number | null;
-};
+}
 
 /** Row from hiking products API (meal lines for a day / slot). */
-export type HikingProduct = {
+export interface HikingProduct {
   id: string;
   hiking_id: string;
   day_number: number;
@@ -23,10 +27,10 @@ export type HikingProduct = {
   total_quantity: number;
   hiking_day_pack_id: string | null;
   hiking_day_pack?: HikingDayPack | null;
-};
+}
 
 /** Body for `PATCH /hikings/:hikingId/hiking-products/:hikingProductId`. */
-export type UpdateHikingProductPayload = {
+export interface UpdateHikingProductPayload {
   personalQuantity?: number;
   totalQuantity?: number;
-};
+}

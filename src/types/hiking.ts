@@ -1,4 +1,4 @@
-import type { HikingProduct } from "./hiking-product";
+import type { HikingDayPackSummary, HikingProduct } from "./hiking-product";
 
 export type CreateHikingPayload = {
   name: string;
@@ -25,20 +25,6 @@ export type HikingAdmin = {
 export type HikingWithProducts = Hiking & {
   hiking_products: HikingProduct[];
   admins: HikingAdmin[];
-};
-
-export type HikingDayPack = {
-  id: string;
-  day_number: number;
-  pack_number: number;
-  member_slot: number | null;
-};
-
-export type HikingDayPackSummary = {
-  id: string;
-  day_number: number;
-  pack_number: number;
-  member_slot: number | null;
 };
 
 export type HikingDetail = Hiking & {
