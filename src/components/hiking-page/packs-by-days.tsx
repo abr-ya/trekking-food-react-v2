@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { DndContext, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 import { useAutoDistributePacks, useHiking } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components";
+import type { HikingDayPackSummary } from "@/types/hiking";
+import type { HikingProduct } from "@/types/hiking-product";
 import { DayTabs } from "./day-tabs";
 import { DayPackCard } from "./day-pack-card";
 import { DayProductCard } from "./day-product-card";
@@ -23,18 +26,10 @@ function createEmptyColumns(membersTotal: number): ItemsByColumn {
 
 /**
  * Build column assignments for a specific day from hiking data.
+ * Expects normalized snake_case data (from getHiking or postAutoDistributePacks).
  */
 function buildDayColumns(
-  hiking: {
-    membersTotal: number;
-    day_packs: { id: string; day_number: number; pack_number: number; member_slot: number | null }[];
-    hiking_products: {
-      id: string;
-      day_number: number;
-      hiking_day_pack_id: string | null;
-      hiking_day_pack?: { pack_number: number } | null;
-    }[];
-  },
+  hiking: { membersTotal: number; day_packs: HikingDayPackSummary[]; hiking_products: HikingProduct[] },
   day: number,
 ): ItemsByColumn {
   const cols = createEmptyColumns(hiking.membersTotal);
@@ -66,6 +61,7 @@ function buildDayColumns(
 export const PacksByDays = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
   const [itemsByDay, setItemsByDay] = useState<Record<number, ItemsByColumn>>({});
+  const [pendingAutoDistributeDay, setPendingAutoDistributeDay] = useState<number | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -120,20 +116,29 @@ export const PacksByDays = ({ id }: { id: string }) => {
           const items = itemsByDay[day] ?? createEmptyColumns(hiking.membersTotal);
           const autoDistribute = useAutoDistributePacks();
 
-          const handleAutoDistribute = () => {
+          const handleAutoDistributeClick = () => {
+            setPendingAutoDistributeDay(day);
+          };
+
+          const confirmAutoDistribute = () => {
+            const dayToDistribute = pendingAutoDistributeDay ?? day;
+            setPendingAutoDistributeDay(null);
+
             autoDistribute.mutate(
-              { hikingId: id, payload: { dayNumber: day } },
+              { hikingId: id, payload: { dayNumber: dayToDistribute } },
               {
                 onSuccess: (data) => {
                   // Rebuild columns for this day from server response
                   setItemsByDay((prev) => ({
                     ...prev,
-                    [day]: buildDayColumns(data, day),
+                    [dayToDistribute]: buildDayColumns(data, dayToDistribute),
                   }));
-                  toastSuccess(`Packs auto-distributed for Day ${day}`);
+                  toastSuccess(`Packs auto-distributed for Day ${dayToDistribute}`);
                 },
                 onError: (err) => {
-                  toastError(`Failed to auto-distribute packs: ${err instanceof Error ? err.message : "Unknown error"}`);
+                  toastError(
+                    `Failed to auto-distribute packs: ${err instanceof Error ? err.message : "Unknown error"}`,
+                  );
                 },
               },
             );
@@ -176,50 +181,88 @@ export const PacksByDays = ({ id }: { id: string }) => {
           };
 
           return (
-            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-sm">
-                    Day {day}
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={handleAutoDistribute}
-                    disabled={autoDistribute.isPending || (items.unassigned ?? []).length === 0}
-                    className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {autoDistribute.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                    {autoDistribute.isPending ? "Distributing…" : "Auto-distribute"}
-                  </button>
+            <>
+              <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-sm">Day {day}</h3>
+                    <button
+                      type="button"
+                      onClick={handleAutoDistributeClick}
+                      disabled={autoDistribute.isPending || (items.unassigned ?? []).length === 0}
+                      className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {autoDistribute.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                      {autoDistribute.isPending ? "Distributing…" : "Auto-distribute"}
+                    </button>
+                  </div>
+
+                  <DroppableUnassignedColumn itemIds={items.unassigned ?? []} renderItem={renderProduct} />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {Array.from({ length: hiking.membersTotal }, (_, participantIndex) => {
+                      const packNumber = participantIndex + 1;
+                      const dayPack = hiking.day_packs.find(
+                        (pack) => pack.day_number === day && pack.pack_number === packNumber,
+                      );
+                      const columnId = `pack-${packNumber}` as ColumnId;
+
+                      return (
+                        <DroppablePackCard
+                          key={packNumber}
+                          columnId={columnId}
+                          dayNumber={day}
+                          participantIndex={participantIndex}
+                          packId={dayPack?.id}
+                          hikingId={hiking.id}
+                          itemIds={items[columnId] ?? []}
+                          renderItem={renderProduct}
+                          allProducts={productsById}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
+              </DndContext>
 
-                <DroppableUnassignedColumn itemIds={items.unassigned ?? []} renderItem={renderProduct} />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {Array.from({ length: hiking.membersTotal }, (_, participantIndex) => {
-                    const packNumber = participantIndex + 1;
-                    const dayPack = hiking.day_packs.find(
-                      (pack) => pack.day_number === day && pack.pack_number === packNumber,
-                    );
-                    const columnId = `pack-${packNumber}` as ColumnId;
-
-                    return (
-                      <DroppablePackCard
-                        key={packNumber}
-                        columnId={columnId}
-                        dayNumber={day}
-                        participantIndex={participantIndex}
-                        packId={dayPack?.id}
-                        hikingId={hiking.id}
-                        itemIds={items[columnId] ?? []}
-                        renderItem={renderProduct}
-                        allProducts={productsById}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </DndContext>
+              <Dialog
+                open={pendingAutoDistributeDay === day}
+                onOpenChange={(open) => {
+                  if (!open) setPendingAutoDistributeDay(null);
+                }}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-amber-500" />
+                      Auto-distribute Day {day}
+                    </DialogTitle>
+                    <DialogDescription>
+                      This will reset all packs for this day and redistribute products automatically. Any manual changes
+                      you made will be lost.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <button
+                      type="button"
+                      onClick={() => setPendingAutoDistributeDay(null)}
+                      className="inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium border bg-background hover:bg-accent"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={confirmAutoDistribute}
+                      disabled={autoDistribute.isPending}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {autoDistribute.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                      {autoDistribute.isPending ? "Distributing…" : "OK, Distribute"}
+                    </button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </>
           );
         }}
       </DayTabs>

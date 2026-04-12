@@ -296,15 +296,23 @@ export async function postHikingPackMemberSlots(
 
 /**
  * `POST /hikings/:id/packs/auto-distribute` — auto-distribute packs for a specific day.
+ * Returns normalized HikingDetail (handles both snake_case and camelCase from API).
  */
 export async function postAutoDistributePacks(
   hikingId: string,
   payload: AutoDistributePacksPayload,
 ): Promise<HikingDetail> {
-  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/auto-distribute`, {
+  const raw = await apiFetch<unknown>(`/hikings/${encodeURIComponent(hikingId)}/packs/auto-distribute`, {
     method: "POST",
     body: payload,
   });
+  const row = unwrapHikingDetailResponse(raw);
+  const base = normalizeHiking(row);
+  const hiking_products = normalizeHikingProductsList(row.hiking_products);
+  const admins = row.admins as HikingAdmin[];
+  const day_packs = row.day_packs;
+  const day_comments = row.day_comments ?? [];
+  return { ...base, hiking_products, admins, day_packs, day_comments };
 }
 
 /**
