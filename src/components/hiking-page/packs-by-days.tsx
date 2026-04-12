@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { DndContext, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { Loader2 } from "lucide-react";
 
-import { useHiking } from "@/hooks";
+import { useAutoDistributePacks, useHiking } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
 import { DayTabs } from "./day-tabs";
 import { DayPackCard } from "./day-pack-card";
 import { DayProductCard } from "./day-product-card";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 type ColumnId = "unassigned" | `pack-${number}`;
 type ItemsByColumn = Record<ColumnId, string[]>;
@@ -17,6 +19,48 @@ function createEmptyColumns(membersTotal: number): ItemsByColumn {
     base[`pack-${i}`] = [];
   }
   return base as ItemsByColumn;
+}
+
+/**
+ * Build column assignments for a specific day from hiking data.
+ */
+function buildDayColumns(
+  hiking: {
+    membersTotal: number;
+    day_packs: { id: string; day_number: number; pack_number: number; member_slot: number | null }[];
+    hiking_products: {
+      id: string;
+      day_number: number;
+      hiking_day_pack_id: string | null;
+      hiking_day_pack?: { pack_number: number } | null;
+    }[];
+  },
+  day: number,
+): ItemsByColumn {
+  const cols = createEmptyColumns(hiking.membersTotal);
+  const dayProducts = hiking.hiking_products.filter((p) => p.day_number === day);
+
+  for (const p of dayProducts) {
+    if (p.hiking_day_pack_id == null) {
+      cols.unassigned.push(p.id);
+      continue;
+    }
+
+    const packNumber =
+      p.hiking_day_pack?.pack_number ??
+      hiking.day_packs.find((pack) => pack.id === p.hiking_day_pack_id)?.pack_number ??
+      null;
+
+    if (packNumber == null) {
+      cols.unassigned.push(p.id);
+      continue;
+    }
+
+    const colId = `pack-${packNumber}` as ColumnId;
+    (cols[colId] ?? cols.unassigned).push(p.id);
+  }
+
+  return cols;
 }
 
 export const PacksByDays = ({ id }: { id: string }) => {
@@ -35,30 +79,7 @@ export const PacksByDays = ({ id }: { id: string }) => {
       for (const day of initDays) {
         if (next[day]) continue;
 
-        const cols = createEmptyColumns(hiking.membersTotal);
-        const dayProducts = hiking.hiking_products.filter((p) => p.day_number === day);
-
-        for (const p of dayProducts) {
-          if (p.hiking_day_pack_id == null) {
-            cols.unassigned.push(p.id);
-            continue;
-          }
-
-          const packNumber =
-            p.hiking_day_pack?.pack_number ??
-            hiking.day_packs.find((pack) => pack.id === p.hiking_day_pack_id)?.pack_number ??
-            null;
-
-          if (packNumber == null) {
-            cols.unassigned.push(p.id);
-            continue;
-          }
-
-          const colId = `pack-${packNumber}` as ColumnId;
-          (cols[colId] ?? cols.unassigned).push(p.id);
-        }
-
-        next[day] = cols;
+        next[day] = buildDayColumns(hiking, day);
       }
 
       return next;
@@ -97,6 +118,26 @@ export const PacksByDays = ({ id }: { id: string }) => {
       <DayTabs days={days}>
         {(day) => {
           const items = itemsByDay[day] ?? createEmptyColumns(hiking.membersTotal);
+          const autoDistribute = useAutoDistributePacks();
+
+          const handleAutoDistribute = () => {
+            autoDistribute.mutate(
+              { hikingId: id, payload: { dayNumber: day } },
+              {
+                onSuccess: (data) => {
+                  // Rebuild columns for this day from server response
+                  setItemsByDay((prev) => ({
+                    ...prev,
+                    [day]: buildDayColumns(data, day),
+                  }));
+                  toastSuccess(`Packs auto-distributed for Day ${day}`);
+                },
+                onError: (err) => {
+                  toastError(`Failed to auto-distribute packs: ${err instanceof Error ? err.message : "Unknown error"}`);
+                },
+              },
+            );
+          };
 
           const handleDragEnd = ({ active, over }: { active: { id: unknown }; over: { id: unknown } | null }) => {
             const activeId = String(active.id);
@@ -137,6 +178,21 @@ export const PacksByDays = ({ id }: { id: string }) => {
           return (
             <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
               <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-sm">
+                    Day {day}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={handleAutoDistribute}
+                    disabled={autoDistribute.isPending || (items.unassigned ?? []).length === 0}
+                    className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {autoDistribute.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    {autoDistribute.isPending ? "Distributing…" : "Auto-distribute"}
+                  </button>
+                </div>
+
                 <DroppableUnassignedColumn itemIds={items.unassigned ?? []} renderItem={renderProduct} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
