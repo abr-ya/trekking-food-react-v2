@@ -29,7 +29,7 @@ export const FoodPlan = ({ id }: { id: string }) => {
       <DayTabs days={days} defaultValue={defaultDay}>
         {(day) => (
           <>
-            <DayComment dayNumber={day} comment={hiking.day_comments?.find((c) => c.day_number === day)?.comment} />
+            <DayComment hikingId={id} dayNumber={day} comment={hiking.day_comments?.find((c) => c.day_number === day)?.comment} />
             <DayEatings hikingId={id} dayNumber={day} hikingProducts={hiking.hiking_products} />
           </>
         )}

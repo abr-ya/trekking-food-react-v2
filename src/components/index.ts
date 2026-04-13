@@ -45,6 +45,8 @@ export { EditProductDialog } from "./dialogs/edit-product-dialog";
 export { EditProductCategoryDialog } from "./dialogs/edit-product-category-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";
 export type { CategoryDialogProps } from "./dialogs/category-dialog";
+export { DayCommentDialog } from "./dialogs/day-comment-dialog";
+export type { DayCommentDialogProps } from "./dialogs/day-comment-dialog";
 export { RemoveProductDialog } from "./dialogs/remove-product-dialog";
 export type { RemoveProductDialogProps } from "./dialogs/remove-product-dialog";
 
