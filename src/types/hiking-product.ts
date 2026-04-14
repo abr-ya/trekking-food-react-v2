@@ -12,6 +12,16 @@ export interface HikingDayPack extends HikingDayPackSummary {
   notes: string | null;
 }
 
+/** Hiking Trip Pack — grouping of products for a trip pack (shared across days). */
+export interface HikingTripPack {
+  id: string;
+  label: string | null;
+  notes: string | null;
+}
+
+/** Type of packaging for hiking products. */
+export type PackagingKind = "DAY_PACK" | "TRIP_PACK";
+
 /** Row from hiking products API (meal lines for a day / slot). */
 export interface HikingProduct {
   id: string;
@@ -27,6 +37,9 @@ export interface HikingProduct {
   total_quantity: number;
   hiking_day_pack_id: string | null;
   hiking_day_pack?: HikingDayPack | null;
+  hiking_trip_pack_id: string | null;
+  hiking_trip_pack?: HikingTripPack | null;
+  packagingKind: PackagingKind;
 }
 
 /** Body for `PATCH /hikings/:hikingId/hiking-products/:hikingProductId`. */

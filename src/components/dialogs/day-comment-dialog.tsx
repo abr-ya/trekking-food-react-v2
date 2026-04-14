@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  useCreateHikingDayComment,
-  useUpdateHikingDayComment,
-} from "@/hooks";
+import { useCreateHikingDayComment, useUpdateHikingDayComment } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -91,9 +88,7 @@ export function DayCommentDialog({
             {isEdit ? "Edit comment" : "Add comment"} for day {dayNumber}
           </DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? "Update the comment for this day."
-              : "Add a note for this day of the hiking."}
+            {isEdit ? "Update the comment for this day." : "Add a note for this day of the hiking."}
           </DialogDescription>
         </DialogHeader>
         <FormProvider {...form}>

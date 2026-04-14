@@ -22,6 +22,14 @@ export type HikingAdmin = {
   image?: string;
 };
 
+/** Trip pack entry — product assigned to a specific pack number and member slot. */
+export type TripPack = {
+  id: string;
+  product_id: string;
+  pack_number: number;
+  member_slot: number;
+};
+
 export type HikingWithProducts = Hiking & {
   hiking_products: HikingProduct[];
   admins: HikingAdmin[];
@@ -32,6 +40,7 @@ export type HikingDetail = Hiking & {
   admins: HikingAdmin[];
   day_packs: HikingDayPackSummary[];
   day_comments: HikingDayComment[];
+  trip_packs: TripPack[];
 };
 
 export type HikingsMeta = {

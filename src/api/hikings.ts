@@ -16,10 +16,11 @@ import type {
   HikingsListResponse,
   HikingsMeta,
   HikingDetail,
+  TripPack,
   UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
-import type { HikingDayPack, HikingProduct, UpdateHikingProductPayload } from "@/types/hiking-product";
+import type { HikingDayPack, HikingProduct, HikingTripPack, UpdateHikingProductPayload } from "@/types/hiking-product";
 
 /** Row as returned by the API (camelCase or snake_case; numeric fields may be strings). */
 type HikingApiRow = {
@@ -67,6 +68,7 @@ type HikingDetailApiRow = HikingApiRow & {
   admins: HikingAdmin[];
   day_packs: HikingDayPack[];
   day_comments: HikingDayComment[];
+  trip_packs: TripPack[];
 };
 
 function unwrapHikingDetailResponse(raw: unknown): HikingDetailApiRow {
@@ -92,6 +94,9 @@ function normalizeHikingProduct(row: unknown): HikingProduct {
     total_quantity: coalesceNumber(r.total_quantity, r.totalQuantity),
     hiking_day_pack_id: (r.hiking_day_pack_id ?? r.hikingDayPackId ?? null) as string | null,
     hiking_day_pack: normalizeHikingDayPack(r.hiking_day_pack ?? r.hikingDayPack),
+    hiking_trip_pack_id: (r.hiking_trip_pack_id ?? r.hikingTripPackId ?? null) as string | null,
+    hiking_trip_pack: normalizeHikingTripPack(r.hiking_trip_pack ?? r.hikingTripPack),
+    packagingKind: String(r.packagingKind ?? r.packaging_kind ?? "DAY_PACK") as HikingProduct["packagingKind"],
   };
 }
 
@@ -105,6 +110,16 @@ function normalizeHikingDayPack(row: unknown): HikingDayPack | null {
     label: (r.label ?? null) as string | null,
     notes: (r.notes ?? null) as string | null,
     member_slot: coalesceNumber(r.member_slot, r.memberSlot),
+  };
+}
+
+function normalizeHikingTripPack(row: unknown): HikingTripPack | null {
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  return {
+    id: String(r.id ?? ""),
+    label: (r.label ?? null) as string | null,
+    notes: (r.notes ?? null) as string | null,
   };
 }
 
@@ -158,7 +173,8 @@ export async function getHiking(id: string): Promise<HikingDetail> {
   const admins = row.admins as HikingAdmin[];
   const day_packs = row.day_packs;
   const day_comments = row.day_comments ?? [];
-  return { ...base, hiking_products, admins, day_packs, day_comments };
+  const trip_packs = row.trip_packs ?? [];
+  return { ...base, hiking_products, admins, day_packs, day_comments, trip_packs };
 }
 
 /**
@@ -312,7 +328,8 @@ export async function postAutoDistributePacks(
   const admins = row.admins as HikingAdmin[];
   const day_packs = row.day_packs;
   const day_comments = row.day_comments ?? [];
-  return { ...base, hiking_products, admins, day_packs, day_comments };
+  const trip_packs = row.trip_packs ?? [];
+  return { ...base, hiking_products, admins, day_packs, day_comments, trip_packs };
 }
 
 /**
@@ -333,23 +350,17 @@ export async function patchHikingDayComment(
   dayNumber: number,
   payload: UpdateHikingDayCommentPayload,
 ): Promise<void> {
-  return apiFetch(
-    `/hikings/${encodeURIComponent(hikingId)}/day-comments/${encodeURIComponent(dayNumber)}`,
-    {
-      method: "PATCH",
-      body: payload,
-    },
-  );
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/day-comments/${encodeURIComponent(dayNumber)}`, {
+    method: "PATCH",
+    body: payload,
+  });
 }
 
 /**
  * `DELETE /hikings/:id/day-comments/:dayNumber` — delete a day's comment.
  */
 export async function deleteHikingDayComment(hikingId: string, dayNumber: number): Promise<void> {
-  return apiFetch(
-    `/hikings/${encodeURIComponent(hikingId)}/day-comments/${encodeURIComponent(dayNumber)}`,
-    {
-      method: "DELETE",
-    },
-  );
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/day-comments/${encodeURIComponent(dayNumber)}`, {
+    method: "DELETE",
+  });
 }
