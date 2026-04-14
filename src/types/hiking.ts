@@ -134,3 +134,9 @@ export type UpdateHikingDayCommentPayload = {
 export type AutoDistributePacksPayload = {
   dayNumber: number;
 };
+
+/** Body for `POST /hikings/:id/hiking-products/promote-to-trip-pack`. */
+export type AddTripPackPayload = {
+  productId: string;
+  packCount?: number;
+};

@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api-client";
 import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
+  AddTripPackPayload,
   AssignHikingProductsToPackPayload,
   AutoDistributePacksPayload,
   CreateHikingDayCommentPayload,
@@ -216,6 +217,19 @@ export async function postHikingAdmin(hikingId: string, payload: AddHikingAdminP
  */
 export async function postHikingProduct(hikingId: string, payload: AddHikingProductPayload): Promise<unknown> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `POST /hikings/:id/hiking-products/promote-to-trip-pack` — promote a product to a trip pack.
+ */
+export async function postPromoteToTripPack(
+  hikingId: string,
+  payload: AddTripPackPayload,
+): Promise<unknown> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/promote-to-trip-pack`, {
     method: "POST",
     body: payload,
   });

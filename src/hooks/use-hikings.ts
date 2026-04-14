@@ -18,10 +18,12 @@ import {
   postHikingProduct,
   postHikingProductsFromRecipe,
   postHikingProductsToPack,
+  postPromoteToTripPack,
 } from "@/api/hikings";
 import type {
   AddHikingAdminPayload,
   AddHikingProductPayload,
+  AddTripPackPayload,
   AssignHikingProductsToPackPayload,
   AutoDistributePacksPayload,
   CreateHikingDayCommentPayload,
@@ -141,6 +143,22 @@ export const useAddHikingProduct = () => {
 
   return useMutation({
     mutationFn: ({ hikingId, payload }: AddHikingProductVariables) => postHikingProduct(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
+    },
+  });
+};
+
+export type PromoteToTripPackVariables = {
+  hikingId: string;
+  payload: AddTripPackPayload;
+};
+
+export const usePromoteToTripPack = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: PromoteToTripPackVariables) => postPromoteToTripPack(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
     },
