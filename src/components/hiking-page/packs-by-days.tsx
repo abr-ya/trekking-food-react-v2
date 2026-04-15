@@ -8,6 +8,7 @@ import { AutoDistributeButton } from "./auto-distribute-button";
 import { DayTabs } from "./day-tabs";
 import { DayPackCard } from "./day-pack-card";
 import { DayProductCard } from "./day-product-card";
+import { TripPackProducts } from "./trip-pack-products";
 
 import type { HikingDayPackSummary, HikingProduct, HikingDetail } from "@/types";
 
@@ -31,7 +32,8 @@ function buildDayColumns(
   day: number,
 ): ItemsByColumn {
   const cols = createEmptyColumns(hiking.membersTotal);
-  const dayProducts = hiking.hiking_products.filter((p) => p.day_number === day);
+  // Exclude TRIP_PACK products — they are displayed in a separate read-only block.
+  const dayProducts = hiking.hiking_products.filter((p) => p.day_number === day && p.packagingKind !== "TRIP_PACK");
 
   for (const p of dayProducts) {
     if (p.hiking_day_pack_id == null) {
@@ -86,6 +88,7 @@ export const PacksByDays = ({ id }: { id: string }) => {
 
     const map = new Map<string, (typeof hiking.hiking_products)[number]>();
     for (const p of hiking.hiking_products) map.set(p.id, p);
+
     return map;
   }, [hiking]);
 
@@ -111,6 +114,11 @@ export const PacksByDays = ({ id }: { id: string }) => {
       <DayTabs days={days}>
         {(day) => {
           const items = itemsByDay[day] ?? createEmptyColumns(hiking.membersTotal);
+
+          // TRIP_PACK products for the current day (displayed in read-only block below packs)
+          const tripPackProducts = hiking.hiking_products.filter(
+            (p) => p.day_number === day && p.packagingKind === "TRIP_PACK",
+          );
 
           const handleDistribute = (data: HikingDetail) => {
             setItemsByDay((prev) => ({
@@ -194,6 +202,8 @@ export const PacksByDays = ({ id }: { id: string }) => {
                       );
                     })}
                   </div>
+
+                  {tripPackProducts.length > 0 && <TripPackProducts products={tripPackProducts} />}
                 </div>
               </DndContext>
             </>

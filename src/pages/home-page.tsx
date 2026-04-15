@@ -32,7 +32,13 @@ export const HomePage = () => {
   const [promotePackCount, setPromotePackCount] = useState("");
 
   const { mutate: updateProduct, isPending, isSuccess, isError, error } = useUpdateHikingProduct();
-  const { mutate: promoteToTripPack, isPending: isPromotePending, isSuccess: isPromoteSuccess, isError: isPromoteError, error: promoteError } = usePromoteToTripPack();
+  const {
+    mutate: promoteToTripPack,
+    isPending: isPromotePending,
+    isSuccess: isPromoteSuccess,
+    isError: isPromoteError,
+    error: promoteError,
+  } = usePromoteToTripPack();
 
   const searchProducts = useCallback(
     async (query: string) => {
@@ -196,13 +202,12 @@ export const HomePage = () => {
                 />
               </Field>
 
-              {isPromoteError ? <FieldError>{promoteError instanceof Error ? promoteError.message : "Request failed."}</FieldError> : null}
+              {isPromoteError ? (
+                <FieldError>{promoteError instanceof Error ? promoteError.message : "Request failed."}</FieldError>
+              ) : null}
               {isPromoteSuccess ? <p className="text-sm text-green-600">Promoted successfully.</p> : null}
 
-              <Button
-                onClick={handlePromote}
-                disabled={isPromotePending || !selected || !promoteHikingId}
-              >
+              <Button onClick={handlePromote} disabled={isPromotePending || !selected || !promoteHikingId}>
                 {isPromotePending ? "Promoting…" : "Promote to trip pack"}
               </Button>
             </CardContent>

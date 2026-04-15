@@ -225,10 +225,7 @@ export async function postHikingProduct(hikingId: string, payload: AddHikingProd
 /**
  * `POST /hikings/:id/hiking-products/promote-to-trip-pack` — promote a product to a trip pack.
  */
-export async function postPromoteToTripPack(
-  hikingId: string,
-  payload: AddTripPackPayload,
-): Promise<unknown> {
+export async function postPromoteToTripPack(hikingId: string, payload: AddTripPackPayload): Promise<unknown> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/promote-to-trip-pack`, {
     method: "POST",
     body: payload,
