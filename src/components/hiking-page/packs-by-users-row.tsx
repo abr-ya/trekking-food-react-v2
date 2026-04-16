@@ -1,6 +1,7 @@
+import { useMemo } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { Loader2 } from "lucide-react";
-import type { PacksByDayData, PackInfo } from "./hiking-helpers";
+import { formatWeight, type PacksByDayData, type PackInfo } from "./hiking-helpers";
 import { PackCell } from "./packs-by-users-cell";
 import { Button } from "@/components/ui/button";
 
@@ -43,6 +44,14 @@ function DroppableColumn({
 export const PacksRow = ({ day, maxPackNumber, resolvePack, hasChanges, isPending, onSave }: PacksRowProps) => {
   const packNumbers = Array.from({ length: maxPackNumber }, (_, i) => i + 1);
 
+  const dayTotalGrams = useMemo(() => {
+    let sum = 0;
+    for (let col = 1; col <= maxPackNumber; col += 1) {
+      sum += resolvePack(day, col)?.totalWeight ?? 0;
+    }
+    return sum;
+  }, [day, maxPackNumber, resolvePack]);
+
   return (
     <div
       className="inline-grid gap-2 border-b py-2 items-start w-full"
@@ -53,6 +62,7 @@ export const PacksRow = ({ day, maxPackNumber, resolvePack, hasChanges, isPendin
       {/* Day column (sticky) */}
       <div className="sticky left-0 bg-background px-2 py-1 rounded flex flex-col gap-1">
         <div className="text-sm font-medium text-foreground">Day {day.dayNumber}</div>
+        <div className="text-xs text-muted-foreground tabular-nums">{formatWeight(dayTotalGrams)}</div>
         <Button
           variant="outline"
           size="sm"
