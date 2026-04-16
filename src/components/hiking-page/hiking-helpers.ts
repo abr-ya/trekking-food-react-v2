@@ -20,12 +20,14 @@ export const calculatePackWeight = (products: HikingProduct[]): number => {
 
 /**
  * Converts weight in grams to a readable format.
- * If >= 1000g, shows as kg (e.g., "2.5 kg")
- * Otherwise shows as grams (e.g., "500 g")
+ * If >= 1000g, shows as kg with gram-level precision (up to 3 decimal places; trailing zeros trimmed).
+ * Otherwise shows as grams (e.g., "500 g").
  */
 export const formatWeight = (grams: number): string => {
   if (grams >= 1000) {
-    return `${(grams / 1000).toFixed(1)} kg`;
+    const kg = grams / 1000;
+    const exact = Number.parseFloat(kg.toFixed(3));
+    return `${exact} kg`;
   }
   return `${grams} g`;
 };
