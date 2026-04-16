@@ -49,6 +49,8 @@ export { DayCommentDialog } from "./dialogs/day-comment-dialog";
 export type { DayCommentDialogProps } from "./dialogs/day-comment-dialog";
 export { RemoveProductDialog } from "./dialogs/remove-product-dialog";
 export type { RemoveProductDialogProps } from "./dialogs/remove-product-dialog";
+export { PromoteProductToTripPackDialog } from "./dialogs/promote-product-to-trip-pack-dialog";
+export type { PromoteProductToTripPackDialogProps } from "./dialogs/promote-product-to-trip-pack-dialog";
 
 // Lists
 export { ProductsList } from "./lists/products-list";

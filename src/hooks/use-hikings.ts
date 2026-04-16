@@ -161,6 +161,7 @@ export const usePromoteToTripPack = () => {
     mutationFn: ({ hikingId, payload }: PromoteToTripPackVariables) => postPromoteToTripPack(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.productTotals(hikingId), refetchType: "all" });
     },
   });
 };

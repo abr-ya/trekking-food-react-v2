@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { HikingProduct } from "@/types/hiking-product";
-import { groupProductsByRecipeId } from "./hiking-helpers";
+import { getProductPackagingAggregate, groupProductsByRecipeId } from "./hiking-helpers";
 
 function product(partial: Partial<HikingProduct> & Pick<HikingProduct, "id">): HikingProduct {
   return {
@@ -15,6 +15,8 @@ function product(partial: Partial<HikingProduct> & Pick<HikingProduct, "id">): H
     personal_quantity: 1,
     total_quantity: 4,
     hiking_day_pack_id: null,
+    hiking_trip_pack_id: null,
+    packagingKind: "DAY_PACK",
     ...partial,
   };
 }
@@ -49,5 +51,34 @@ describe("groupProductsByRecipeId", () => {
     const a = product({ id: "row-a", recipe_id: "", recipe_name: "" });
     const b = product({ id: "row-b", recipe_id: "", recipe_name: "" });
     expect(groupProductsByRecipeId([a, b])).toEqual([[a], [b]]);
+  });
+});
+
+describe("getProductPackagingAggregate", () => {
+  const pid = "product-x";
+
+  it("returns em dash when there are no lines for that product", () => {
+    expect(getProductPackagingAggregate(pid, [])).toEqual({ label: "—", canPromoteToTripPack: false });
+  });
+
+  it("returns Day pack and can promote when all lines are DAY_PACK", () => {
+    const lines = [
+      product({ id: "1", product_id: pid, packagingKind: "DAY_PACK" }),
+      product({ id: "2", product_id: pid, packagingKind: "DAY_PACK" }),
+    ];
+    expect(getProductPackagingAggregate(pid, lines)).toEqual({ label: "Day pack", canPromoteToTripPack: true });
+  });
+
+  it("returns Trip pack and cannot promote when all lines are TRIP_PACK", () => {
+    const lines = [product({ id: "1", product_id: pid, packagingKind: "TRIP_PACK" })];
+    expect(getProductPackagingAggregate(pid, lines)).toEqual({ label: "Trip pack", canPromoteToTripPack: false });
+  });
+
+  it("returns Mixed and can promote when both kinds exist", () => {
+    const lines = [
+      product({ id: "1", product_id: pid, packagingKind: "DAY_PACK" }),
+      product({ id: "2", product_id: pid, packagingKind: "TRIP_PACK" }),
+    ];
+    expect(getProductPackagingAggregate(pid, lines)).toEqual({ label: "Mixed", canPromoteToTripPack: true });
   });
 });

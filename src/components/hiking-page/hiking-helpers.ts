@@ -1,5 +1,37 @@
 import type { HikingDayPackSummary, HikingProduct } from "@/types";
 
+/** Shopping List: aggregate packaging kinds for all hiking lines of one catalog product. */
+export type ProductPackagingAggregate = {
+  label: string;
+  canPromoteToTripPack: boolean;
+};
+
+/**
+ * Derives a display label (Day pack / Trip pack / Mixed) and whether promote-to-trip-pack applies
+ * (at least one DAY_PACK line). If there are no lines, label is "—" and promote is false.
+ */
+export function getProductPackagingAggregate(
+  productId: string,
+  hikingProducts: HikingProduct[],
+): ProductPackagingAggregate {
+  const lines = hikingProducts.filter((p) => p.product_id === productId);
+  if (lines.length === 0) {
+    return { label: "—", canPromoteToTripPack: false };
+  }
+
+  const kinds = new Set(lines.map((p) => p.packagingKind));
+  const hasDay = kinds.has("DAY_PACK");
+
+  let label: string;
+  if (kinds.size === 1) {
+    label = [...kinds][0] === "DAY_PACK" ? "Day pack" : "Trip pack";
+  } else {
+    label = "Mixed";
+  }
+
+  return { label, canPromoteToTripPack: hasDay };
+}
+
 /** Groups rows that share the same recipe. Uses `recipe_id || id` so empty recipe ids do not merge unrelated rows. */
 export const groupProductsByRecipeId = (products: HikingProduct[]): HikingProduct[][] => {
   const map = new Map<string, HikingProduct[]>();

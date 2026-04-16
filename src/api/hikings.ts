@@ -198,7 +198,7 @@ export async function patchHikingProduct(
 ): Promise<unknown> {
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/hiking-products/${encodeURIComponent(hikingProductId)}`, {
     method: "PATCH",
-    body: payload,
+    body: { ...payload },
   });
 }
 
