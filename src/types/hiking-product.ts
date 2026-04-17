@@ -17,6 +17,8 @@ export interface HikingTripPack {
   id: string;
   label: string | null;
   notes: string | null;
+  /** Member column (1..n) when assigned; null if unassigned. */
+  member_slot: number | null;
 }
 
 /** Type of packaging for hiking products. */

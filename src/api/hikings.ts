@@ -18,6 +18,7 @@ import type {
   HikingsMeta,
   HikingDetail,
   TripPack,
+  TripPackMemberSlotsPayload,
   UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
@@ -117,10 +118,17 @@ function normalizeHikingDayPack(row: unknown): HikingDayPack | null {
 function normalizeHikingTripPack(row: unknown): HikingTripPack | null {
   if (!row || typeof row !== "object") return null;
   const r = row as Record<string, unknown>;
+  const raw = r.member_slot ?? r.memberSlot;
+  let member_slot: number | null = null;
+  if (raw !== null && raw !== undefined && raw !== "") {
+    const n = typeof raw === "number" ? raw : Number(raw);
+    member_slot = Number.isNaN(n) ? null : n;
+  }
   return {
     id: String(r.id ?? ""),
     label: (r.label ?? null) as string | null,
     notes: (r.notes ?? null) as string | null,
+    member_slot,
   };
 }
 
@@ -318,6 +326,16 @@ export async function postHikingPackMemberSlots(
   return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/packs/member-slots`, {
     method: "POST",
     body: payload,
+  });
+}
+
+/**
+ * `POST /hikings/:id/trip-packs/member-slots` — bulk update HikingTripPack member slot assignments.
+ */
+export async function postTripPackMemberSlots(hikingId: string, payload: TripPackMemberSlotsPayload): Promise<void> {
+  return apiFetch(`/hikings/${encodeURIComponent(hikingId)}/trip-packs/member-slots`, {
+    method: "POST",
+    body: { ...payload },
   });
 }
 

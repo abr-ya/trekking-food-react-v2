@@ -197,3 +197,66 @@ export const groupProductsByDayAndPack = (
 
   return result;
 };
+
+/** Trip pack row: one entry per `hiking_trip_pack_id` (products with TRIP_PACK). */
+export type TripPacksRowData = {
+  /** keyed by hiking trip pack id (`packId` on PackInfo) */
+  packs: Map<string, PackInfo>;
+};
+
+/**
+ * Groups TRIP_PACK hiking products by `hiking_trip_pack_id` for the Packs by Users trip row.
+ */
+export function groupTripPacksForUsers(hikingProducts: HikingProduct[]): TripPacksRowData {
+  const byTrip = new Map<string, HikingProduct[]>();
+  for (const p of hikingProducts) {
+    if (p.packagingKind !== "TRIP_PACK" || !p.hiking_trip_pack_id) continue;
+    const key = p.hiking_trip_pack_id;
+    const arr = byTrip.get(key) ?? [];
+    arr.push(p);
+    byTrip.set(key, arr);
+  }
+
+  const packs = new Map<string, PackInfo>();
+  for (const [tripPackId, prods] of byTrip) {
+    const first = prods[0];
+    const ms = first.hiking_trip_pack?.member_slot ?? null;
+    const packNumber = typeof ms === "number" && ms > 0 ? ms : 1;
+    packs.set(tripPackId, {
+      packId: tripPackId,
+      packNumber,
+      dayNumber: 0,
+      totalWeight: calculatePackWeight(prods),
+      products: prods.map((p) => ({
+        id: p.id,
+        name: p.product_name,
+        totalQuantity: p.total_quantity,
+      })),
+      itemCount: prods.length,
+      member_slot: ms,
+    });
+  }
+
+  return { packs };
+}
+
+/** Column → trip pack id. Sentinel `empty-N` means no pack in that column. */
+export function buildBaseTripAssignments(tripData: TripPacksRowData, maxPackNumber: number): Map<number, string> {
+  const assignments = new Map<number, string>();
+  const unassigned = [...tripData.packs.values()]
+    .filter((p) => p.member_slot == null || p.member_slot === 0)
+    .sort((a, b) => a.packNumber - b.packNumber);
+  const unassignedQueue = [...unassigned];
+
+  for (let column = 1; column <= maxPackNumber; column++) {
+    const slotPack = [...tripData.packs.values()].find((p) => p.member_slot === column);
+    if (slotPack) {
+      assignments.set(column, slotPack.packId);
+      continue;
+    }
+    const next = unassignedQueue.shift();
+    assignments.set(column, next?.packId ?? `empty-${column}`);
+  }
+
+  return assignments;
+}

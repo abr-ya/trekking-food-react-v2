@@ -1,10 +1,19 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
-import { useHiking, useSaveHikingPacksSlots } from "@/hooks";
+import type { TripPackMemberSlotsPayload } from "@/types/hiking";
+import { useHiking, useSaveHikingPacksSlots, useSaveTripPackMemberSlots } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
-import { groupProductsByDayAndPack, type PackInfo, type PacksByDayData } from "./hiking-helpers";
+import {
+  buildBaseTripAssignments,
+  groupProductsByDayAndPack,
+  groupTripPacksForUsers,
+  type PackInfo,
+  type PacksByDayData,
+  type TripPacksRowData,
+} from "./hiking-helpers";
 import { PacksHeader } from "./packs-by-users-header";
 import { PacksRow } from "./packs-by-users-row";
+import { TripPacksUsersRow } from "./trip-packs-users-row";
 
 type PacksByUsersProps = {
   id: string;
@@ -37,13 +46,20 @@ function buildBaseAssignments(day: PacksByDayData, maxPackNumber: number): DayAs
 export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   const { data: hiking, isLoading, error } = useHiking(id);
   const saveSlotsMutation = useSaveHikingPacksSlots();
+  const saveTripSlotsMutation = useSaveTripPackMemberSlots();
   const [assignments, setAssignments] = useState<Map<number, DayAssignments>>(new Map());
+  const [tripAssignments, setTripAssignments] = useState<Map<number, string>>(new Map());
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   const packsData = useMemo(() => {
     if (!hiking) return null;
     return groupProductsByDayAndPack(hiking.hiking_products ?? [], hiking.day_packs ?? [], hiking.daysTotal);
+  }, [hiking]);
+
+  const tripPacksData = useMemo((): TripPacksRowData | null => {
+    if (!hiking) return null;
+    return groupTripPacksForUsers(hiking.hiking_products ?? []);
   }, [hiking]);
 
   const maxPackNumber = useMemo(() => {
@@ -61,6 +77,14 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     setAssignments(newAssignments);
   }, [packsData, maxPackNumber]);
 
+  useEffect(() => {
+    if (!tripPacksData || tripPacksData.packs.size === 0 || maxPackNumber === 0) {
+      setTripAssignments(new Map());
+      return;
+    }
+    setTripAssignments(buildBaseTripAssignments(tripPacksData, maxPackNumber));
+  }, [tripPacksData, maxPackNumber]);
+
   /** Resolve column → PackInfo using assignments */
   const resolvePack = useCallback(
     (day: PacksByDayData, column: number): PackInfo | undefined => {
@@ -70,6 +94,15 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
       return [...day.packs.values()].find((p) => p.packId === packId);
     },
     [assignments],
+  );
+
+  const resolveTripPack = useCallback(
+    (column: number): PackInfo | undefined => {
+      const packId = tripAssignments.get(column);
+      if (!packId || packId.startsWith("empty-")) return undefined;
+      return tripPacksData?.packs.get(packId);
+    },
+    [tripAssignments, tripPacksData],
   );
 
   /** Build payload for save mutation — only changed slots for a specific day */
@@ -106,6 +139,27 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     [assignments, packsData],
   );
 
+  const buildTripSavePayload = useCallback((): TripPackMemberSlotsPayload => {
+    const assignmentList: { packId: string; memberSlot: number | null }[] = [];
+    const packToColumn = new Map<string, number>();
+    for (const [col, packId] of tripAssignments) {
+      if (!packId.startsWith("empty-")) {
+        packToColumn.set(packId, col);
+      }
+    }
+    if (!tripPacksData) return { assignments: assignmentList };
+
+    for (const pack of tripPacksData.packs.values()) {
+      const currentColumn = packToColumn.get(pack.packId);
+      const serverSlot = pack.member_slot;
+      if (currentColumn != null && currentColumn !== serverSlot) {
+        assignmentList.push({ packId: pack.packId, memberSlot: currentColumn });
+      }
+    }
+
+    return { assignments: assignmentList };
+  }, [tripAssignments, tripPacksData]);
+
   /** Check if there are unsaved changes per day */
   const hasChangesByDay = useMemo(() => {
     const result = new Map<number, boolean>();
@@ -138,6 +192,24 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     return result;
   }, [assignments, packsData]);
 
+  const hasTripChanges = useMemo(() => {
+    if (!tripPacksData?.packs.size) return false;
+    const packToColumn = new Map<string, number>();
+    for (const [col, packId] of tripAssignments) {
+      if (!packId.startsWith("empty-")) {
+        packToColumn.set(packId, col);
+      }
+    }
+    for (const pack of tripPacksData.packs.values()) {
+      const currentColumn = packToColumn.get(pack.packId);
+      const serverSlot = pack.member_slot;
+      if (currentColumn != null && currentColumn !== serverSlot) {
+        return true;
+      }
+    }
+    return false;
+  }, [tripAssignments, tripPacksData]);
+
   const columnTotals = useMemo(() => {
     const totals = new Map<number, number>();
     if (!packsData) return totals;
@@ -149,14 +221,46 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
         }
       }
     }
+    if (tripPacksData?.packs.size) {
+      for (let col = 1; col <= maxPackNumber; col++) {
+        const pack = resolveTripPack(col);
+        if (pack) {
+          totals.set(col, (totals.get(col) || 0) + pack.totalWeight);
+        }
+      }
+    }
     return totals;
-  }, [packsData, maxPackNumber, resolvePack]);
+  }, [packsData, maxPackNumber, resolvePack, tripPacksData, resolveTripPack]);
+
+  const dndLocked = saveSlotsMutation.isPending || saveTripSlotsMutation.isPending;
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over) return;
 
-    const fromParts = String(active.id).split(":");
-    const toParts = String(over.id).split(":");
+    const activeId = String(active.id);
+    const overId = String(over.id);
+
+    if (activeId.startsWith("trip:")) {
+      const fromParts = activeId.split(":");
+      const toParts = overId.split(":");
+      if (fromParts.length < 3 || toParts[0] !== "trip" || toParts.length < 2) return;
+      const from = Number(fromParts[1]);
+      const to = Number(toParts[1]);
+      if (from === to) return;
+
+      setTripAssignments((prev) => {
+        const fromPackId = prev.get(from) ?? `empty-${from}`;
+        const toPackId = prev.get(to) ?? `empty-${to}`;
+        const next = new Map(prev);
+        next.set(from, toPackId);
+        next.set(to, fromPackId);
+        return next;
+      });
+      return;
+    }
+
+    const fromParts = activeId.split(":");
+    const toParts = overId.split(":");
     if (fromParts.length < 3 || toParts.length < 2) return;
 
     const dayNum = Number(fromParts[0]);
@@ -177,8 +281,12 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
 
   const handleSave = (dayNumber: number) => {
     const payload = buildSavePayload(dayNumber);
-    console.log(`Save payload for Day ${dayNumber}:`, payload);
     saveSlotsMutation.mutate({ hikingId: id, payload });
+  };
+
+  const handleSaveTrip = () => {
+    const payload = buildTripSavePayload();
+    saveTripSlotsMutation.mutate({ hikingId: id, payload });
   };
 
   if (!id) {
@@ -210,7 +318,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   }
 
   return (
-    <DndContext sensors={sensors} onDragEnd={saveSlotsMutation.isPending ? () => {} : handleDragEnd}>
+    <DndContext sensors={sensors} onDragEnd={dndLocked ? () => {} : handleDragEnd}>
       <div className="rounded-md border p-4">
         {/* Scrollable container for the table */}
         <div className="overflow-x-auto">
@@ -226,10 +334,20 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
                 maxPackNumber={maxPackNumber}
                 resolvePack={resolvePack}
                 hasChanges={hasChangesByDay.get(day.dayNumber) ?? false}
-                isPending={saveSlotsMutation.isPending}
+                isPending={saveSlotsMutation.isPending || saveTripSlotsMutation.isPending}
                 onSave={() => handleSave(day.dayNumber)}
               />
             ))}
+
+            {tripPacksData && tripPacksData.packs.size > 0 && maxPackNumber > 0 ? (
+              <TripPacksUsersRow
+                maxPackNumber={maxPackNumber}
+                resolveTripPack={resolveTripPack}
+                hasChanges={hasTripChanges}
+                isPending={saveTripSlotsMutation.isPending || saveSlotsMutation.isPending}
+                onSave={handleSaveTrip}
+              />
+            ) : null}
           </div>
         </div>
 

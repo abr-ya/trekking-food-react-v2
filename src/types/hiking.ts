@@ -140,3 +140,8 @@ export type AddTripPackPayload = {
   productId: string;
   packCount?: number;
 };
+
+/** Body for `POST /hikings/:id/trip-packs/member-slots` — bulk update HikingTripPack member slots. */
+export type TripPackMemberSlotsPayload = {
+  assignments: { packId: string; memberSlot: number | null }[];
+};

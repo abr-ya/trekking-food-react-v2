@@ -16,6 +16,7 @@ import {
   postHikingDayPack,
   postHikingPackMemberSlots,
   postHikingProduct,
+  postTripPackMemberSlots,
   postHikingProductsFromRecipe,
   postHikingProductsToPack,
   postPromoteToTripPack,
@@ -30,6 +31,7 @@ import type {
   CreateHikingDayPackPayload,
   CreateHikingPayload,
   HikingProductsFromRecipePayload,
+  TripPackMemberSlotsPayload,
   UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
 } from "@/types/hiking";
@@ -276,6 +278,22 @@ export const useSaveHikingPacksSlots = () => {
     mutationFn: ({ hikingId, payload }: SaveHikingPackMemberSlots) => postHikingPackMemberSlots(hikingId, payload),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+export type SaveTripPackMemberSlotsVariables = {
+  hikingId: string;
+  payload: TripPackMemberSlotsPayload;
+};
+
+export const useSaveTripPackMemberSlots = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: SaveTripPackMemberSlotsVariables) => postTripPackMemberSlots(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId), refetchType: "all" });
     },
   });
 };
