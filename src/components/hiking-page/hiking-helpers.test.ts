@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
-import type { HikingProduct } from "@/types/hiking-product";
-import { getProductPackagingAggregate, groupProductsByRecipeId } from "./hiking-helpers";
+import type { HikingProduct, HikingTripPack } from "@/types/hiking-product";
+import {
+  buildBaseTripAssignments,
+  findTripPackColumn,
+  getProductPackagingAggregate,
+  groupProductsByRecipeId,
+  groupTripPacksForUsers,
+} from "./hiking-helpers";
 
 function product(partial: Partial<HikingProduct> & Pick<HikingProduct, "id">): HikingProduct {
   return {
@@ -20,6 +26,70 @@ function product(partial: Partial<HikingProduct> & Pick<HikingProduct, "id">): H
     ...partial,
   };
 }
+
+function tripProduct(
+  partial: Partial<HikingProduct> & Pick<HikingProduct, "id" | "hiking_trip_pack_id">,
+  tripPack: HikingTripPack,
+): HikingProduct {
+  return product({
+    packagingKind: "TRIP_PACK",
+    hiking_day_pack_id: null,
+    hiking_trip_pack_id: tripPack.id,
+    hiking_trip_pack: tripPack,
+    ...partial,
+  });
+}
+
+describe("buildBaseTripAssignments", () => {
+  it("groups all trip packs with the same member_slot into that column", () => {
+    const tp1: HikingTripPack = { id: "tp-1", label: null, notes: null, member_slot: 1 };
+    const tp2: HikingTripPack = { id: "tp-2", label: null, notes: null, member_slot: 1 };
+    const data = groupTripPacksForUsers([
+      tripProduct({ id: "l1", hiking_trip_pack_id: "tp-1", product_id: "p1" }, tp1),
+      tripProduct({ id: "l2", hiking_trip_pack_id: "tp-2", product_id: "p2" }, tp2),
+    ]);
+    const ass = buildBaseTripAssignments(data, 3);
+    expect(ass.get(1)).toEqual(["tp-1", "tp-2"]);
+    expect(ass.get(2)).toEqual([]);
+    expect(ass.get(3)).toEqual([]);
+  });
+
+  it("round-robins unassigned trip packs across member columns", () => {
+    const tpa: HikingTripPack = { id: "tp-a", label: null, notes: null, member_slot: null };
+    const tpb: HikingTripPack = { id: "tp-b", label: null, notes: null, member_slot: null };
+    const data = groupTripPacksForUsers([
+      tripProduct({ id: "l1", hiking_trip_pack_id: "tp-a" }, tpa),
+      tripProduct({ id: "l2", hiking_trip_pack_id: "tp-b" }, tpb),
+    ]);
+    const ass = buildBaseTripAssignments(data, 2);
+    expect(ass.get(1)).toEqual(["tp-a"]);
+    expect(ass.get(2)).toEqual(["tp-b"]);
+  });
+
+  it("continues round-robin when there are more packs than columns", () => {
+    const tpa: HikingTripPack = { id: "tp-a", label: null, notes: null, member_slot: null };
+    const tpb: HikingTripPack = { id: "tp-b", label: null, notes: null, member_slot: null };
+    const tpc: HikingTripPack = { id: "tp-c", label: null, notes: null, member_slot: null };
+    const data = groupTripPacksForUsers([
+      tripProduct({ id: "l1", hiking_trip_pack_id: "tp-a" }, tpa),
+      tripProduct({ id: "l2", hiking_trip_pack_id: "tp-b" }, tpb),
+      tripProduct({ id: "l3", hiking_trip_pack_id: "tp-c" }, tpc),
+    ]);
+    const ass = buildBaseTripAssignments(data, 2);
+    expect(ass.get(1)).toEqual(["tp-a", "tp-c"]);
+    expect(ass.get(2)).toEqual(["tp-b"]);
+  });
+
+  it("findTripPackColumn returns the column index for a pack id", () => {
+    const ass = new Map<number, string[]>([
+      [1, ["a", "b"]],
+      [2, ["c"]],
+    ]);
+    expect(findTripPackColumn(ass, "b")).toBe(1);
+    expect(findTripPackColumn(ass, "c")).toBe(2);
+    expect(findTripPackColumn(ass, "x")).toBeUndefined();
+  });
+});
 
 describe("groupProductsByRecipeId", () => {
   it("returns an empty array for an empty input", () => {

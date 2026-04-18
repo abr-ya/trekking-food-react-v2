@@ -5,6 +5,7 @@ import { useHiking, useSaveHikingPacksSlots, useSaveTripPackMemberSlots } from "
 import { LoadingSkeleton } from "@/components";
 import {
   buildBaseTripAssignments,
+  findTripPackColumn,
   groupProductsByDayAndPack,
   groupTripPacksForUsers,
   type PackInfo,
@@ -48,7 +49,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
   const saveSlotsMutation = useSaveHikingPacksSlots();
   const saveTripSlotsMutation = useSaveTripPackMemberSlots();
   const [assignments, setAssignments] = useState<Map<number, DayAssignments>>(new Map());
-  const [tripAssignments, setTripAssignments] = useState<Map<number, string>>(new Map());
+  const [tripAssignments, setTripAssignments] = useState<Map<number, string[]>>(new Map());
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -96,11 +97,13 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     [assignments],
   );
 
-  const resolveTripPack = useCallback(
-    (column: number): PackInfo | undefined => {
-      const packId = tripAssignments.get(column);
-      if (!packId || packId.startsWith("empty-")) return undefined;
-      return tripPacksData?.packs.get(packId);
+  const resolveTripPacks = useCallback(
+    (column: number): PackInfo[] => {
+      const ids = tripAssignments.get(column) ?? [];
+      if (!tripPacksData) return [];
+      return ids
+        .map((packId) => tripPacksData.packs.get(packId))
+        .filter((p): p is PackInfo => p != null);
     },
     [tripAssignments, tripPacksData],
   );
@@ -141,16 +144,10 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
 
   const buildTripSavePayload = useCallback((): TripPackMemberSlotsPayload => {
     const assignmentList: { packId: string; memberSlot: number | null }[] = [];
-    const packToColumn = new Map<string, number>();
-    for (const [col, packId] of tripAssignments) {
-      if (!packId.startsWith("empty-")) {
-        packToColumn.set(packId, col);
-      }
-    }
     if (!tripPacksData) return { assignments: assignmentList };
 
     for (const pack of tripPacksData.packs.values()) {
-      const currentColumn = packToColumn.get(pack.packId);
+      const currentColumn = findTripPackColumn(tripAssignments, pack.packId);
       const serverSlot = pack.member_slot;
       if (currentColumn != null && currentColumn !== serverSlot) {
         assignmentList.push({ packId: pack.packId, memberSlot: currentColumn });
@@ -194,14 +191,8 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
 
   const hasTripChanges = useMemo(() => {
     if (!tripPacksData?.packs.size) return false;
-    const packToColumn = new Map<string, number>();
-    for (const [col, packId] of tripAssignments) {
-      if (!packId.startsWith("empty-")) {
-        packToColumn.set(packId, col);
-      }
-    }
     for (const pack of tripPacksData.packs.values()) {
-      const currentColumn = packToColumn.get(pack.packId);
+      const currentColumn = findTripPackColumn(tripAssignments, pack.packId);
       const serverSlot = pack.member_slot;
       if (currentColumn != null && currentColumn !== serverSlot) {
         return true;
@@ -223,14 +214,13 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     }
     if (tripPacksData?.packs.size) {
       for (let col = 1; col <= maxPackNumber; col++) {
-        const pack = resolveTripPack(col);
-        if (pack) {
+        for (const pack of resolveTripPacks(col)) {
           totals.set(col, (totals.get(col) || 0) + pack.totalWeight);
         }
       }
     }
     return totals;
-  }, [packsData, maxPackNumber, resolvePack, tripPacksData, resolveTripPack]);
+  }, [packsData, maxPackNumber, resolvePack, tripPacksData, resolveTripPacks]);
 
   const dndLocked = saveSlotsMutation.isPending || saveTripSlotsMutation.isPending;
 
@@ -246,14 +236,22 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
       if (fromParts.length < 3 || toParts[0] !== "trip" || toParts.length < 2) return;
       const from = Number(fromParts[1]);
       const to = Number(toParts[1]);
+      const packId = fromParts.slice(2).join(":");
       if (from === to) return;
 
       setTripAssignments((prev) => {
-        const fromPackId = prev.get(from) ?? `empty-${from}`;
-        const toPackId = prev.get(to) ?? `empty-${to}`;
-        const next = new Map(prev);
-        next.set(from, toPackId);
-        next.set(to, fromPackId);
+        const fromList = [...(prev.get(from) ?? [])];
+        const idx = fromList.indexOf(packId);
+        if (idx === -1) return prev;
+        const next = new Map<number, string[]>();
+        for (let c = 1; c <= maxPackNumber; c += 1) {
+          next.set(c, [...(prev.get(c) ?? [])]);
+        }
+        const newFrom = [...fromList];
+        newFrom.splice(idx, 1);
+        next.set(from, newFrom);
+        const toList = next.get(to) ?? [];
+        next.set(to, [...toList, packId]);
         return next;
       });
       return;
@@ -342,7 +340,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
             {tripPacksData && tripPacksData.packs.size > 0 && maxPackNumber > 0 ? (
               <TripPacksUsersRow
                 maxPackNumber={maxPackNumber}
-                resolveTripPack={resolveTripPack}
+                resolveTripPacks={resolveTripPacks}
                 hasChanges={hasTripChanges}
                 isPending={saveTripSlotsMutation.isPending || saveSlotsMutation.isPending}
                 onSave={handleSaveTrip}

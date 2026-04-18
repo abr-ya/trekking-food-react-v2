@@ -7,28 +7,19 @@ import { Button } from "@/components/ui/button";
 
 type TripPacksUsersRowProps = {
   maxPackNumber: number;
-  resolveTripPack: (column: number) => PackInfo | undefined;
+  resolveTripPacks: (column: number) => PackInfo[];
   hasChanges: boolean;
   isPending: boolean;
   onSave: () => void;
 };
 
-function TripDroppableColumn({
-  column,
-  disabled,
-  children,
-}: {
-  column: number;
-  disabled: boolean;
-  children: React.ReactNode;
-}) {
+function TripDroppableColumn({ column, children }: { column: number; children: React.ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({
     id: `trip:${column}`,
-    disabled,
   });
 
   return (
-    <div ref={setNodeRef} className={isOver && !disabled ? "ring-2 ring-primary/40 rounded-md transition-shadow" : ""}>
+    <div ref={setNodeRef} className={isOver ? "ring-2 ring-primary/40 rounded-md transition-shadow" : ""}>
       {children}
     </div>
   );
@@ -37,7 +28,7 @@ function TripDroppableColumn({
 /** Trip pack row — same grid as day rows; draggable ids use `trip:column:packId`. */
 export const TripPacksUsersRow = ({
   maxPackNumber,
-  resolveTripPack,
+  resolveTripPacks,
   hasChanges,
   isPending,
   onSave,
@@ -47,10 +38,12 @@ export const TripPacksUsersRow = ({
   const rowTotalGrams = useMemo(() => {
     let sum = 0;
     for (let col = 1; col <= maxPackNumber; col += 1) {
-      sum += resolveTripPack(col)?.totalWeight ?? 0;
+      for (const pack of resolveTripPacks(col)) {
+        sum += pack.totalWeight;
+      }
     }
     return sum;
-  }, [maxPackNumber, resolveTripPack]);
+  }, [maxPackNumber, resolveTripPacks]);
 
   return (
     <div
@@ -75,12 +68,24 @@ export const TripPacksUsersRow = ({
       </div>
 
       {packNumbers.map((column) => {
-        const pack = resolveTripPack(column);
-        const packId = pack?.packId ?? `empty-trip-${column}`;
-        const dragId = pack ? `trip:${column}:${packId}` : "";
+        const packs = resolveTripPacks(column);
         return (
-          <TripDroppableColumn key={`trip-col-${column}`} column={column} disabled={!pack}>
-            <PackCell pack={pack} dayNumber={0} packNumber={column} draggableId={dragId} />
+          <TripDroppableColumn key={`trip-col-${column}`} column={column}>
+            <div className="flex flex-col gap-2">
+              {packs.length === 0 ? (
+                <PackCell pack={undefined} dayNumber={0} packNumber={column} draggableId="" />
+              ) : (
+                packs.map((pack) => (
+                  <PackCell
+                    key={pack.packId}
+                    pack={pack}
+                    dayNumber={0}
+                    packNumber={column}
+                    draggableId={`trip:${column}:${pack.packId}`}
+                  />
+                ))
+              )}
+            </div>
           </TripDroppableColumn>
         );
       })}

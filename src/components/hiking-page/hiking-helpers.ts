@@ -237,26 +237,56 @@ export function groupTripPacksForUsers(hikingProducts: HikingProduct[]): TripPac
     });
   }
 
-  return { packs };
+   return { packs };
 }
 
-/** Column → trip pack id. Sentinel `empty-N` means no pack in that column. */
-export function buildBaseTripAssignments(tripData: TripPacksRowData, maxPackNumber: number): Map<number, string> {
-  const assignments = new Map<number, string>();
-  const unassigned = [...tripData.packs.values()]
-    .filter((p) => p.member_slot == null || p.member_slot === 0)
-    .sort((a, b) => a.packNumber - b.packNumber);
-  const unassignedQueue = [...unassigned];
+/** Trip row: column (member slot 1…N) → ordered list of hiking trip pack ids in that zone. */
+export type TripColumnAssignments = Map<number, string[]>;
 
-  for (let column = 1; column <= maxPackNumber; column++) {
-    const slotPack = [...tripData.packs.values()].find((p) => p.member_slot === column);
-    if (slotPack) {
-      assignments.set(column, slotPack.packId);
-      continue;
-    }
-    const next = unassignedQueue.shift();
-    assignments.set(column, next?.packId ?? `empty-${column}`);
+/**
+ * Builds initial column → pack id lists from server `member_slot` and unassigned packs.
+ * Packs with `member_slot` in 1…maxPackNumber are grouped into that column (multiple allowed).
+ * Others are placed round-robin across columns.
+ */
+export function buildBaseTripAssignments(
+  tripData: TripPacksRowData,
+  maxPackNumber: number,
+): TripColumnAssignments {
+  const columns = new Map<number, string[]>();
+  if (maxPackNumber <= 0) {
+    return columns;
+  }
+  for (let c = 1; c <= maxPackNumber; c += 1) {
+    columns.set(c, []);
   }
 
-  return assignments;
+  const assignedIds = new Set<string>();
+  for (const p of tripData.packs.values()) {
+    const ms = p.member_slot;
+    if (typeof ms === "number" && ms >= 1 && ms <= maxPackNumber) {
+      columns.get(ms)!.push(p.packId);
+      assignedIds.add(p.packId);
+    }
+  }
+
+  const unassigned = [...tripData.packs.values()]
+    .filter((p) => !assignedIds.has(p.packId))
+    .sort((a, b) => a.packNumber - b.packNumber);
+
+  let rr = 0;
+  for (const p of unassigned) {
+    const col = (rr % maxPackNumber) + 1;
+    rr += 1;
+    columns.get(col)!.push(p.packId);
+  }
+
+  return columns;
+}
+
+/** Returns the member column (1-based) that currently contains `packId`, if any. */
+export function findTripPackColumn(assignments: TripColumnAssignments, packId: string): number | undefined {
+  for (const [col, ids] of assignments) {
+    if (ids.includes(packId)) return col;
+  }
+  return undefined;
 }
