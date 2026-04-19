@@ -32,11 +32,11 @@ function tripProduct(
   tripPack: HikingTripPack,
 ): HikingProduct {
   return product({
+    ...partial,
     packagingKind: "TRIP_PACK",
     hiking_day_pack_id: null,
     hiking_trip_pack_id: tripPack.id,
     hiking_trip_pack: tripPack,
-    ...partial,
   });
 }
 

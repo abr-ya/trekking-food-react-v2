@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
+import { EditHikingProductDialog } from "@/components";
 import { useDeleteHikingProduct } from "@/hooks";
 import type { HikingProduct } from "@/types/hiking-product";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ type EatingCardProps = {
 export const EatingCard = ({ hikingId, items }: EatingCardProps) => {
   const recipeName = items[0].recipe_name;
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [editingItem, setEditingItem] = useState<HikingProduct | null>(null);
   const { mutate: deleteProduct, isPending } = useDeleteHikingProduct();
 
   const handleConfirmDelete = () => {
@@ -46,7 +48,7 @@ export const EatingCard = ({ hikingId, items }: EatingCardProps) => {
                   </span>
                   <button
                     type="button"
-                    onClick={() => console.log("edit hiking product", item.id)}
+                    onClick={() => setEditingItem(item)}
                     className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
                     aria-label={`Edit quantities for ${item.product_name}`}
                   >
@@ -66,6 +68,15 @@ export const EatingCard = ({ hikingId, items }: EatingCardProps) => {
           ))}
         </div>
       </div>
+
+      <EditHikingProductDialog
+        hikingId={hikingId}
+        item={editingItem}
+        open={editingItem !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditingItem(null);
+        }}
+      />
 
       <Dialog open={pendingDeleteId !== null} onOpenChange={(open) => !open && setPendingDeleteId(null)}>
         <DialogContent showCloseButton>

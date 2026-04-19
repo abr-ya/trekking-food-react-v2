@@ -37,6 +37,8 @@ export { AddRecipeToSlotForm } from "./forms/add-recipe-to-slot-form";
 // Dialogs
 export { AddHikingAdminDialog } from "./dialogs/add-hiking-admin-dialog";
 export { AddProductToHikingDialog } from "./dialogs/add-product-to-hiking-dialog";
+export { EditHikingProductDialog } from "./dialogs/edit-hiking-product-dialog";
+export type { EditHikingProductDialogProps } from "./dialogs/edit-hiking-product-dialog";
 export { AddRecipeIngredientDialog } from "./dialogs/add-recipe-ingredient-dialog";
 export { AddRecipeToHikingDialog } from "./dialogs/add-recipe-to-hiking-dialog";
 export { EditRecipeIngredientDialog } from "./dialogs/edit-recipe-ingredient-dialog";
