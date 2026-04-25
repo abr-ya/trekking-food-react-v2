@@ -19,6 +19,7 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/t
 export { SelectWithSearch, type SelectWithSearchOption } from "./common/select-with-search";
 export { LoadingSkeleton } from "./common/loading-skeleton";
 export { MultiCategoryFilter } from "./common/multi-category-filter";
+export { Pagination, type PaginationProps } from "./common/pagination";
 
 // Layout
 export { Layout } from "./layout/layout";

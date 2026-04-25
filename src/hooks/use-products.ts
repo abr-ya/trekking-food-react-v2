@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct, getProducts, patchProduct, postProduct } from "@/api/products";
 import type { CreateProductPayload, ProductsListParams, UpdateProductPayload } from "@/types/product";
 
@@ -27,6 +27,7 @@ export const useProducts = (params: ProductsListParams = {}) =>
     queryKey: productQueryKeys.list(params),
     queryFn: () => getProducts(params),
     staleTime: PRODUCTS_STALE_TIME_MS,
+    placeholderData: keepPreviousData,
   });
 
 /**
