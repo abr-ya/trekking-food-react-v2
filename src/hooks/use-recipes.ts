@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addRecipeIngredient,
   deleteRecipeIngredient,
@@ -39,6 +39,7 @@ export const useRecipes = (params: UseRecipesParams = {}) => {
     queryKey: recipeQueryKeys.list({ page, limit, search }),
     queryFn: () => getRecipes({ page, limit, search: search.trim() || undefined }),
     staleTime: RECIPES_STALE_TIME_MS,
+    placeholderData: keepPreviousData,
   });
 };
 
