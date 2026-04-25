@@ -5,6 +5,7 @@ import {
   findTripPackColumn,
   getProductPackagingAggregate,
   groupProductsByRecipeId,
+  groupRecipesByDays,
   groupTripPacksForUsers,
 } from "./hiking-helpers";
 
@@ -121,6 +122,40 @@ describe("groupProductsByRecipeId", () => {
     const a = product({ id: "row-a", recipe_id: "", recipe_name: "" });
     const b = product({ id: "row-b", recipe_id: "", recipe_name: "" });
     expect(groupProductsByRecipeId([a, b])).toEqual([[a], [b]]);
+  });
+});
+
+describe("groupRecipesByDays", () => {
+  it("returns an empty array for an empty input", () => {
+    expect(groupRecipesByDays([])).toEqual([]);
+  });
+
+  it("collects unique day numbers per recipe and sorts them ascending", () => {
+    const a = product({ id: "a", recipe_id: "r1", recipe_name: "Borscht", day_number: 3 });
+    const b = product({ id: "b", recipe_id: "r1", recipe_name: "Borscht", day_number: 1 });
+    const c = product({ id: "c", recipe_id: "r1", recipe_name: "Borscht", day_number: 5 });
+    const dup = product({ id: "d", recipe_id: "r1", recipe_name: "Borscht", day_number: 3 });
+    const result = groupRecipesByDays([a, b, c, dup]);
+    expect(result).toEqual([{ recipeId: "r1", recipeName: "Borscht", days: [1, 3, 5] }]);
+  });
+
+  it("ignores rows with empty recipe_id", () => {
+    const a = product({ id: "a", recipe_id: "", recipe_name: "Snack", day_number: 1 });
+    const b = product({ id: "b", recipe_id: "r2", recipe_name: "Buckwheat", day_number: 4 });
+    expect(groupRecipesByDays([a, b])).toEqual([
+      { recipeId: "r2", recipeName: "Buckwheat", days: [4] },
+    ]);
+  });
+
+  it("sorts recipes alphabetically case-insensitively within Latin and Cyrillic alphabets", () => {
+    const a = product({ id: "1", recipe_id: "r-a", recipe_name: "borscht", day_number: 1 });
+    const b = product({ id: "2", recipe_id: "r-b", recipe_name: "Apple pie", day_number: 1 });
+    const c = product({ id: "3", recipe_id: "r-c", recipe_name: "Каша", day_number: 1 });
+    const d = product({ id: "4", recipe_id: "r-d", recipe_name: "арбуз", day_number: 1 });
+    const latin = groupRecipesByDays([a, b]).map((r) => r.recipeId);
+    const cyrillic = groupRecipesByDays([c, d]).map((r) => r.recipeId);
+    expect(latin).toEqual(["r-b", "r-a"]);
+    expect(cyrillic).toEqual(["r-d", "r-c"]);
   });
 });
 

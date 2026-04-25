@@ -72,3 +72,5 @@ export type {
   UpdateHikingProductVariables,
 } from "./use-hikings";
 export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";
+export { useHiddenRecipes } from "./use-hidden-recipes";
+export type { UseHiddenRecipesResult } from "./use-hidden-recipes";

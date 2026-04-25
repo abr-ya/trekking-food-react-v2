@@ -32,6 +32,41 @@ export function getProductPackagingAggregate(
   return { label, canPromoteToTripPack: hasDay };
 }
 
+/** Recipe assigned to one or more days within a hiking plan. */
+export type RecipeDays = {
+  recipeId: string;
+  recipeName: string;
+  days: number[];
+};
+
+/**
+ * Builds a list of recipes that appear in the hiking plan together with the unique day numbers
+ * each recipe is scheduled for. Rows with empty `recipe_id` are ignored. Recipes are sorted by
+ * `recipeName` using locale-aware case-insensitive comparison so Russian and Latin names mix
+ * naturally; days within each recipe are unique and sorted ascending.
+ */
+export const groupRecipesByDays = (products: HikingProduct[]): RecipeDays[] => {
+  const byRecipe = new Map<string, { recipeName: string; days: Set<number> }>();
+  for (const p of products) {
+    const id = p.recipe_id;
+    if (!id) continue;
+    const entry = byRecipe.get(id);
+    if (entry) {
+      entry.days.add(p.day_number);
+    } else {
+      byRecipe.set(id, { recipeName: p.recipe_name, days: new Set([p.day_number]) });
+    }
+  }
+
+  return Array.from(byRecipe.entries())
+    .map(([recipeId, { recipeName, days }]) => ({
+      recipeId,
+      recipeName,
+      days: [...days].sort((a, b) => a - b),
+    }))
+    .sort((a, b) => a.recipeName.localeCompare(b.recipeName, undefined, { sensitivity: "base" }));
+};
+
 /** Groups rows that share the same recipe. Uses `recipe_id || id` so empty recipe ids do not merge unrelated rows. */
 export const groupProductsByRecipeId = (products: HikingProduct[]): HikingProduct[][] => {
   const map = new Map<string, HikingProduct[]>();
