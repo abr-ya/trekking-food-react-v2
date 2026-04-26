@@ -23,7 +23,7 @@ fragments extracted from the existing `createRecipeSchema`.
 | [`src/hooks/use-recipes.ts`](../src/hooks/use-recipes.ts) | Added `useUpdateRecipe()` and the `UpdateRecipeVariables` type. |
 | [`src/hooks/index.ts`](../src/hooks/index.ts) | Re-exported `useUpdateRecipe` and `UpdateRecipeVariables`. |
 | [`src/schemas/recipe.ts`](../src/schemas/recipe.ts) | Extracted `recipeNameSchema`, `recipeDescriptionSchema`, `recipeCategoryIdSchema`. Added `editRecipeSchema` and `editRecipeCategorySchema`. |
-| `src/components/forms/recipe-form.tsx` | New file: `EditRecipeForm`. |
+| `src/components/forms/edit-recipe-form.tsx` | New file: `EditRecipeForm`. |
 | `src/components/dialogs/edit-recipe-dialog.tsx` | New dialog: `EditRecipeDialog` (pencil trigger). |
 | `src/components/dialogs/edit-recipe-category-dialog.tsx` | New dialog: `EditRecipeCategoryDialog` (tag icon / "Set category" trigger). |
 | [`src/components/index.ts`](../src/components/index.ts) | Re-exported `EditRecipeForm`, `EditRecipeDialog`, `EditRecipeCategoryDialog`. |
@@ -84,7 +84,7 @@ export const editRecipeCategorySchema = z.object({
 
 ## Dialogs and form
 
-### `EditRecipeForm` (`src/components/forms/recipe-form.tsx`)
+### `EditRecipeForm` (`src/components/forms/edit-recipe-form.tsx`)
 
 - Props: `{ recipe: Recipe; onSuccess: () => void }`.
 - `useForm` with `zodResolver(editRecipeSchema)`, defaults from the current recipe.
@@ -171,7 +171,11 @@ together.
   `EditProductCategoryDialog` exactly. Combobox-based `RHFSelect` is fine in inline forms,
   but inside a Radix Dialog the portal-based variant is the safer pick.
 - We intentionally did **not** rewrite `create-recipe-form.tsx` to share a single
-  `recipe-form.tsx`. Doing so would broaden the diff with no immediate UX benefit; the
+  combined recipe form. Doing so would broaden the diff with no immediate UX benefit; the
+  shared surface between create and edit is just two fields (`name`, `description`), and
+  the create form carries heavy logic (`useFieldArray`, async product search) that does
+  not belong in the edit dialog. The new file is therefore named
+  `edit-recipe-form.tsx` to match its content. The
   shared schema fragments give us deduplication where it matters.
 - Cache invalidation uses `recipeQueryKeys.all` rather than only the detail key. This
   keeps the recipes list (and any future list-side display of category/name) in sync with

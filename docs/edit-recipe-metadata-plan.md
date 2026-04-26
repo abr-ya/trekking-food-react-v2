@@ -63,10 +63,10 @@ Props: `{ recipe: Recipe }`. Internally renders `EditRecipeForm` with
 `form="edit-recipe-form"` and a `DialogFooter` with Cancel / Save. Trigger is a small ghost
 icon button (`Pencil` from `lucide-react`).
 
-### `src/components/forms/recipe-form.tsx`
+### `src/components/forms/edit-recipe-form.tsx`
 
-A small new file that hosts only `EditRecipeForm` (recipes do not have a generic
-`recipe-form.tsx` yet; we deliberately do **not** rewrite `create-recipe-form.tsx`). It uses:
+A small new file that hosts only `EditRecipeForm` (named after its content; we deliberately
+do **not** rewrite `create-recipe-form.tsx`). It uses:
 
 - `react-hook-form` with `zodResolver(editRecipeSchema)` and `id="edit-recipe-form"`.
 - A `RHFInput` for `name`.
@@ -164,7 +164,7 @@ Both files are English-only.
 | [`src/hooks/use-recipes.ts`](../src/hooks/use-recipes.ts) | + `useUpdateRecipe` |
 | [`src/hooks/index.ts`](../src/hooks/index.ts) | export `useUpdateRecipe` |
 | [`src/schemas/recipe.ts`](../src/schemas/recipe.ts) | + `editRecipeSchema`, `editRecipeCategorySchema` (extract reusable fragments) |
-| `src/components/forms/recipe-form.tsx` | new file: `EditRecipeForm` |
+| `src/components/forms/edit-recipe-form.tsx` | new file: `EditRecipeForm` |
 | `src/components/dialogs/edit-recipe-dialog.tsx` | new dialog (name + description) |
 | `src/components/dialogs/edit-recipe-category-dialog.tsx` | new dialog (categoryId) |
 | [`src/components/index.ts`](../src/components/index.ts) | export new dialogs and form |
