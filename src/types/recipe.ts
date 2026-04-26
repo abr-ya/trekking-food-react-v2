@@ -12,6 +12,13 @@ export type CreateRecipePayload = {
   isCommon: boolean;
 };
 
+/** Fields allowed on `PATCH /recipes/:id` (server may accept a subset). */
+export type UpdateRecipePayload = Partial<{
+  name: string;
+  description: string;
+  categoryId: string;
+}>;
+
 /** Nested category on a recipe (from the API). */
 export type RecipeCategory = {
   id: string;

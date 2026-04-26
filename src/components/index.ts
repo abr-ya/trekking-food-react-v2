@@ -29,6 +29,7 @@ export { ProtectedPage } from "./layout/protected-page";
 // Forms
 export { CreateProductForm, EditProductForm } from "./forms/product-form";
 export { CreateRecipeForm } from "./forms/create-recipe-form";
+export { EditRecipeForm } from "./forms/recipe-form";
 export { CreateHikingForm } from "./forms/create-hiking-form";
 export { AddRecipeToHikingForm } from "./forms/add-recipe-to-hiking-form";
 export { AddProductToHikingForm } from "./forms/add-product-to-hiking-form";
@@ -46,6 +47,8 @@ export { EditRecipeIngredientDialog } from "./dialogs/edit-recipe-ingredient-dia
 export { DeleteCategoryDialog } from "./dialogs/delete-category-dialog";
 export { EditProductDialog } from "./dialogs/edit-product-dialog";
 export { EditProductCategoryDialog } from "./dialogs/edit-product-category-dialog";
+export { EditRecipeDialog } from "./dialogs/edit-recipe-dialog";
+export { EditRecipeCategoryDialog } from "./dialogs/edit-recipe-category-dialog";
 export { CategoryDialog } from "./dialogs/category-dialog";
 export type { CategoryDialogProps } from "./dialogs/category-dialog";
 export { DayCommentDialog } from "./dialogs/day-comment-dialog";

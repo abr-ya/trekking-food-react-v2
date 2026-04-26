@@ -15,12 +15,29 @@ const recipeIngredientSchema = z
     path: ["product"],
   });
 
+export const recipeNameSchema = z.string().trim().min(1, "Name is required");
+export const recipeDescriptionSchema = z.string().trim().min(1, "Description is required");
+export const recipeCategoryIdSchema = z.string().min(1, "Recipe category is required");
+
 export const createRecipeSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
-  categoryId: z.string().min(1, "Recipe category is required"),
-  description: z.string().trim().min(1, "Description is required"),
+  name: recipeNameSchema,
+  categoryId: recipeCategoryIdSchema,
+  description: recipeDescriptionSchema,
   ingredients: z.array(recipeIngredientSchema).min(1, "Add at least one ingredient"),
   isCommon: z.boolean(),
 });
 
 export type CreateRecipeFormData = z.infer<typeof createRecipeSchema>;
+
+export const editRecipeSchema = z.object({
+  name: recipeNameSchema,
+  description: recipeDescriptionSchema,
+});
+
+export type EditRecipeFormData = z.infer<typeof editRecipeSchema>;
+
+export const editRecipeCategorySchema = z.object({
+  categoryId: recipeCategoryIdSchema,
+});
+
+export type EditRecipeCategoryFormData = z.infer<typeof editRecipeCategorySchema>;

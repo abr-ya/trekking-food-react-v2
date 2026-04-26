@@ -1,6 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecipe } from "@/hooks";
-import { IngredientCard, AddRecipeIngredientDialog, ProtectedPage } from "@/components";
+import {
+  AddRecipeIngredientDialog,
+  EditRecipeCategoryDialog,
+  EditRecipeDialog,
+  IngredientCard,
+  ProtectedPage,
+} from "@/components";
 
 export const RecipeDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,10 +35,16 @@ export const RecipeDetailPage = () => {
         <div className="space-y-6">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold">{recipe.name}</h1>
-            {recipe.category && (
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {recipe.category.name}
-              </span>
+            <EditRecipeDialog recipe={recipe} />
+            {recipe.category ? (
+              <div className="flex items-center gap-0.5">
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                  {recipe.category.name}
+                </span>
+                <EditRecipeCategoryDialog recipe={recipe} />
+              </div>
+            ) : (
+              <EditRecipeCategoryDialog recipe={recipe} />
             )}
             {recipe.isCommon && (
               <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-400">

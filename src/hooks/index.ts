@@ -19,6 +19,7 @@ export {
   useCreateRecipe,
   useRecipe,
   useRecipes,
+  useUpdateRecipe,
   useDeleteRecipeIngredient,
   useAddRecipeIngredient,
   useUpdateRecipeIngredient,
@@ -28,6 +29,7 @@ export type {
   AddRecipeIngredientVariables,
   DeleteRecipeIngredientVariables,
   UpdateRecipeIngredientVariables,
+  UpdateRecipeVariables,
 } from "./use-recipes";
 export {
   useAddHikingAdmin,

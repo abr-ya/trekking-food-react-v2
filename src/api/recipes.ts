@@ -8,6 +8,7 @@ import type {
   RecipesListParams,
   RecipesListResponse,
   RecipesMeta,
+  UpdateRecipePayload,
 } from "@/types/recipe";
 
 function metaFromListLength(length: number): RecipesMeta {
@@ -98,6 +99,16 @@ export async function getRecipe(id: string): Promise<Recipe> {
 export async function postRecipe(payload: CreateRecipePayload): Promise<unknown> {
   return apiFetch("/recipes", {
     method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * `PATCH /recipes/:id` — update recipe metadata (name, description, categoryId). Server may accept a subset.
+ */
+export async function patchRecipe(id: string, payload: UpdateRecipePayload): Promise<unknown> {
+  return apiFetch(`/recipes/${encodeURIComponent(id)}`, {
+    method: "PATCH",
     body: payload,
   });
 }

@@ -4,10 +4,11 @@ import {
   deleteRecipeIngredient,
   getRecipe,
   getRecipes,
+  patchRecipe,
   postRecipe,
   updateRecipeIngredient,
 } from "@/api/recipes";
-import type { CreateRecipePayload } from "@/types/recipe";
+import type { CreateRecipePayload, UpdateRecipePayload } from "@/types/recipe";
 
 const RECIPES_STALE_TIME_MS = 2 * 60 * 1000; // 2 minutes — match `useProducts`
 
@@ -59,6 +60,24 @@ export const useCreateRecipe = () => {
 
   return useMutation({
     mutationFn: (payload: CreateRecipePayload) => postRecipe(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: recipeQueryKeys.all }),
+  });
+};
+
+export type UpdateRecipeVariables = {
+  id: string;
+  payload: UpdateRecipePayload;
+};
+
+/**
+ * Update recipe metadata (`PATCH /recipes/:id`). On success, invalidates recipe queries so
+ * both the detail and list views re-fetch.
+ */
+export const useUpdateRecipe = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: UpdateRecipeVariables) => patchRecipe(id, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: recipeQueryKeys.all }),
   });
 };
