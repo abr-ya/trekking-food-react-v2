@@ -325,3 +325,59 @@ export function findTripPackColumn(assignments: TripColumnAssignments, packId: s
   }
   return undefined;
 }
+
+/**
+ * Builds a plain-text export of one Packs-by-Users column.
+ *
+ * Format (UTF-8, one product per line):
+ *
+ *   {hikingName} — Pack {N}
+ *
+ *   Day {n}: {product name} — {formatted weight}
+ *   ...
+ *   Trip: {product name} — {formatted weight}
+ *
+ *   Total: {formatted column total}
+ *
+ * The first line is a header identifying the hiking and the column. When `hikingName`
+ * is empty/blank, the header degrades to `Pack {N}` to keep the output well-formed.
+ *
+ * Days are emitted in `packsData` order (`1..daysTotal`) and only when the column has a
+ * resolved pack on that day. Trip packs follow all days; if the column has more than one
+ * trip pack, all their products are merged into a single `Trip:` block. The result always
+ * ends with a single trailing newline so it concatenates cleanly when copied.
+ */
+export const buildPackColumnTextExport = (params: {
+  column: number;
+  hikingName: string;
+  packsData: PacksByDayData[];
+  resolvePack: (day: PacksByDayData, column: number) => PackInfo | undefined;
+  resolveTripPacks: (column: number) => PackInfo[];
+  totalGrams: number;
+}): string => {
+  const { column, hikingName, packsData, resolvePack, resolveTripPacks, totalGrams } = params;
+  const lines: string[] = [];
+
+  const trimmedName = hikingName.trim();
+  lines.push(trimmedName ? `${trimmedName} — Pack ${column}` : `Pack ${column}`);
+  lines.push("");
+
+  for (const day of packsData) {
+    const pack = resolvePack(day, column);
+    if (!pack) continue;
+    for (const product of pack.products) {
+      lines.push(`Day ${day.dayNumber}: ${product.name} — ${formatWeight(product.totalQuantity)}`);
+    }
+  }
+
+  for (const tripPack of resolveTripPacks(column)) {
+    for (const product of tripPack.products) {
+      lines.push(`Trip: ${product.name} — ${formatWeight(product.totalQuantity)}`);
+    }
+  }
+
+  lines.push("");
+  lines.push(`Total: ${formatWeight(totalGrams)}`);
+
+  return `${lines.join("\n")}\n`;
+};

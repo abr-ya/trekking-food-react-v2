@@ -3,8 +3,10 @@ import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } f
 import type { TripPackMemberSlotsPayload } from "@/types/hiking";
 import { useHiking, useSaveHikingPacksSlots, useSaveTripPackMemberSlots } from "@/hooks";
 import { LoadingSkeleton } from "@/components";
+import { downloadTextFile } from "@/lib/download";
 import {
   buildBaseTripAssignments,
+  buildPackColumnTextExport,
   findTripPackColumn,
   groupProductsByDayAndPack,
   groupTripPacksForUsers,
@@ -222,6 +224,24 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     return totals;
   }, [packsData, maxPackNumber, resolvePack, tripPacksData, resolveTripPacks]);
 
+  const handleSavePackList = useCallback(
+    (column: number) => {
+      if (!packsData) return;
+      const total = columnTotals.get(column) ?? 0;
+      if (total === 0) return;
+      const content = buildPackColumnTextExport({
+        column,
+        hikingName: hiking?.name ?? "",
+        packsData,
+        resolvePack,
+        resolveTripPacks,
+        totalGrams: total,
+      });
+      downloadTextFile(`pack-${column}.txt`, content);
+    },
+    [packsData, columnTotals, hiking?.name, resolvePack, resolveTripPacks],
+  );
+
   const dndLocked = saveSlotsMutation.isPending || saveTripSlotsMutation.isPending;
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -321,7 +341,13 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
         {/* Scrollable container for the table */}
         <div className="overflow-x-auto">
           {/* Header row */}
-          {maxPackNumber > 0 && <PacksHeader maxPackNumber={maxPackNumber} columnTotals={columnTotals} />}
+          {maxPackNumber > 0 && (
+            <PacksHeader
+              maxPackNumber={maxPackNumber}
+              columnTotals={columnTotals}
+              onSave={handleSavePackList}
+            />
+          )}
 
           {/* Data rows */}
           <div>

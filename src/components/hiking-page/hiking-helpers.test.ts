@@ -2,11 +2,14 @@ import { describe, expect, it } from "vitest";
 import type { HikingProduct, HikingTripPack } from "@/types/hiking-product";
 import {
   buildBaseTripAssignments,
+  buildPackColumnTextExport,
   findTripPackColumn,
   getProductPackagingAggregate,
   groupProductsByRecipeId,
   groupRecipesByDays,
   groupTripPacksForUsers,
+  type PackInfo,
+  type PacksByDayData,
 } from "./hiking-helpers";
 
 function product(partial: Partial<HikingProduct> & Pick<HikingProduct, "id">): HikingProduct {
@@ -156,6 +159,125 @@ describe("groupRecipesByDays", () => {
     const cyrillic = groupRecipesByDays([c, d]).map((r) => r.recipeId);
     expect(latin).toEqual(["r-b", "r-a"]);
     expect(cyrillic).toEqual(["r-d", "r-c"]);
+  });
+});
+
+describe("buildPackColumnTextExport", () => {
+  const pack = (
+    dayNumber: number,
+    packNumber: number,
+    products: { id: string; name: string; totalQuantity: number }[],
+  ): PackInfo => ({
+    packId: `pack-${dayNumber}-${packNumber}`,
+    packNumber,
+    dayNumber,
+    totalWeight: products.reduce((sum, p) => sum + p.totalQuantity, 0),
+    products,
+    itemCount: products.length,
+    member_slot: packNumber,
+  });
+
+  const dayData = (dayNumber: number, packs: PackInfo[]): PacksByDayData => ({
+    dayNumber,
+    packs: new Map(packs.map((p) => [p.packNumber, p])),
+    maxPackNumber: packs.reduce((m, p) => Math.max(m, p.packNumber), 0),
+  });
+
+  it("emits header then days then trip section then total, formatted via formatWeight", () => {
+    const day1Pack = pack(1, 1, [
+      { id: "a", name: "Buckwheat", totalQuantity: 200 },
+      { id: "b", name: "Salt", totalQuantity: 10 },
+    ]);
+    const day2Pack = pack(2, 1, [{ id: "c", name: "Pasta", totalQuantity: 300 }]);
+    const tripPack = pack(0, 1, [{ id: "d", name: "Stove fuel", totalQuantity: 250 }]);
+
+    const packsData: PacksByDayData[] = [dayData(1, [day1Pack]), dayData(2, [day2Pack])];
+
+    const output = buildPackColumnTextExport({
+      column: 1,
+      hikingName: "Carpathians 2026",
+      packsData,
+      resolvePack: (day) => day.packs.get(1),
+      resolveTripPacks: () => [tripPack],
+      totalGrams: 760,
+    });
+
+    expect(output).toBe(
+      [
+        "Carpathians 2026 — Pack 1",
+        "",
+        "Day 1: Buckwheat — 200 g",
+        "Day 1: Salt — 10 g",
+        "Day 2: Pasta — 300 g",
+        "Trip: Stove fuel — 250 g",
+        "",
+        "Total: 760 g",
+        "",
+      ].join("\n"),
+    );
+  });
+
+  it("silently skips days where the column has no pack and renders kg total", () => {
+    const day1Pack = pack(1, 1, [{ id: "a", name: "Oats", totalQuantity: 1500 }]);
+    const day3Pack = pack(3, 1, [{ id: "b", name: "Rice", totalQuantity: 500 }]);
+    const packsData: PacksByDayData[] = [
+      dayData(1, [day1Pack]),
+      dayData(2, []),
+      dayData(3, [day3Pack]),
+    ];
+
+    const output = buildPackColumnTextExport({
+      column: 1,
+      hikingName: "Test trip",
+      packsData,
+      resolvePack: (day) => day.packs.get(1),
+      resolveTripPacks: () => [],
+      totalGrams: 2000,
+    });
+
+    expect(output).toBe(
+      ["Test trip — Pack 1", "", "Day 1: Oats — 1.5 kg", "Day 3: Rice — 500 g", "", "Total: 2 kg", ""].join("\n"),
+    );
+  });
+
+  it("works for trip-only columns (no Day lines)", () => {
+    const tripPack = pack(0, 2, [
+      { id: "x", name: "Tent stake", totalQuantity: 90 },
+      { id: "y", name: "Rope", totalQuantity: 60 },
+    ]);
+    const output = buildPackColumnTextExport({
+      column: 2,
+      hikingName: "Trip-only hike",
+      packsData: [dayData(1, [])],
+      resolvePack: () => undefined,
+      resolveTripPacks: () => [tripPack],
+      totalGrams: 150,
+    });
+
+    expect(output).toBe(
+      [
+        "Trip-only hike — Pack 2",
+        "",
+        "Trip: Tent stake — 90 g",
+        "Trip: Rope — 60 g",
+        "",
+        "Total: 150 g",
+        "",
+      ].join("\n"),
+    );
+  });
+
+  it("falls back to plain `Pack {N}` header when the hiking name is blank", () => {
+    const day1Pack = pack(1, 1, [{ id: "a", name: "Oats", totalQuantity: 100 }]);
+    const output = buildPackColumnTextExport({
+      column: 3,
+      hikingName: "   ",
+      packsData: [dayData(1, [day1Pack])],
+      resolvePack: (day) => day.packs.get(1),
+      resolveTripPacks: () => [],
+      totalGrams: 100,
+    });
+    expect(output.startsWith("Pack 3\n\n")).toBe(true);
   });
 });
 

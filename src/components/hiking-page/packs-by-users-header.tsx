@@ -1,14 +1,17 @@
+import { Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { formatWeight } from "./hiking-helpers";
 
 type PacksHeaderProps = {
   maxPackNumber: number;
   columnTotals: Map<number, number>;
+  onSave?: (packNumber: number) => void;
 };
 
 /**
  * PacksHeader — displays column headers for the table.
  */
-export const PacksHeader = ({ maxPackNumber, columnTotals }: PacksHeaderProps) => {
+export const PacksHeader = ({ maxPackNumber, columnTotals, onSave }: PacksHeaderProps) => {
   const packNumbers = Array.from({ length: maxPackNumber }, (_, i) => i + 1);
 
   return (
@@ -26,6 +29,19 @@ export const PacksHeader = ({ maxPackNumber, columnTotals }: PacksHeaderProps) =
           <div key={`pack-${num}`} className="text-center px-1 py-1">
             <div className="text-xs font-semibold text-foreground">Pack {num}</div>
             <div className="text-xs text-muted-foreground">{formatWeight(total)}</div>
+            {onSave && total > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="mt-0.5 h-6 gap-1 px-2 text-xs"
+                aria-label={`Save Pack ${num} as text`}
+                onClick={() => onSave(num)}
+              >
+                <Download className="size-3" />
+                Save .txt
+              </Button>
+            )}
           </div>
         );
       })}
