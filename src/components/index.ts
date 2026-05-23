@@ -22,6 +22,7 @@ export { FeaturesAccordion, type FeaturesAccordionProps } from "./features/featu
 // Common
 export { SelectWithSearch, type SelectWithSearchOption } from "./common/select-with-search";
 export { LoadingSkeleton } from "./common/loading-skeleton";
+export { MarkdownContent, type MarkdownContentProps } from "./common/markdown-content";
 export { MultiCategoryFilter } from "./common/multi-category-filter";
 export { Pagination, type PaginationProps } from "./common/pagination";
 

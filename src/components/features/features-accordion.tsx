@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
+import { MarkdownContent } from "@/components/common/markdown-content";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useFeatures } from "@/hooks";
 import { cn } from "@/lib/utils";
@@ -57,11 +58,7 @@ export const FeaturesAccordion = ({ status = "DONE", isMain = true, lang, classN
           </AccordionTrigger>
           <AccordionContent className="space-y-2">
             {feature.description ? <p className="text-muted-foreground">{feature.description}</p> : null}
-            {feature.fullText ? (
-              <div className="text-muted-foreground whitespace-pre-wrap text-xs leading-relaxed">
-                {feature.fullText}
-              </div>
-            ) : null}
+            {feature.fullText ? <MarkdownContent source={feature.fullText} /> : null}
           </AccordionContent>
         </AccordionItem>
       ))}
