@@ -55,9 +55,7 @@ export const EditRecipeDialog = ({ recipe }: Props) => {
             <DialogDescription>Update the name and description for {recipe.name}.</DialogDescription>
           </DialogHeader>
 
-          {isOpen && (
-            <EditRecipeForm recipe={recipe} onSubmit={handleSubmit} isSaving={updateRecipe.isPending} />
-          )}
+          {isOpen && <EditRecipeForm recipe={recipe} onSubmit={handleSubmit} isSaving={updateRecipe.isPending} />}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose} disabled={updateRecipe.isPending}>

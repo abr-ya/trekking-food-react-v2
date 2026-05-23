@@ -272,7 +272,7 @@ export function groupTripPacksForUsers(hikingProducts: HikingProduct[]): TripPac
     });
   }
 
-   return { packs };
+  return { packs };
 }
 
 /** Trip row: column (member slot 1…N) → ordered list of hiking trip pack ids in that zone. */
@@ -283,10 +283,7 @@ export type TripColumnAssignments = Map<number, string[]>;
  * Packs with `member_slot` in 1…maxPackNumber are grouped into that column (multiple allowed).
  * Others are placed round-robin across columns.
  */
-export function buildBaseTripAssignments(
-  tripData: TripPacksRowData,
-  maxPackNumber: number,
-): TripColumnAssignments {
+export function buildBaseTripAssignments(tripData: TripPacksRowData, maxPackNumber: number): TripColumnAssignments {
   const columns = new Map<number, string[]>();
   if (maxPackNumber <= 0) {
     return columns;

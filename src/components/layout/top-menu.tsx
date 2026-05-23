@@ -18,6 +18,9 @@ export const TopMenu = () => {
       <Link to={"/hikings"} className="hover:underline">
         Hikings
       </Link>
+      <Link to={"/about"} className="hover:underline">
+        About
+      </Link>
     </div>
   );
 };

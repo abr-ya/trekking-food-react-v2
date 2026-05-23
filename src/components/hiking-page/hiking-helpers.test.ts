@@ -145,9 +145,7 @@ describe("groupRecipesByDays", () => {
   it("ignores rows with empty recipe_id", () => {
     const a = product({ id: "a", recipe_id: "", recipe_name: "Snack", day_number: 1 });
     const b = product({ id: "b", recipe_id: "r2", recipe_name: "Buckwheat", day_number: 4 });
-    expect(groupRecipesByDays([a, b])).toEqual([
-      { recipeId: "r2", recipeName: "Buckwheat", days: [4] },
-    ]);
+    expect(groupRecipesByDays([a, b])).toEqual([{ recipeId: "r2", recipeName: "Buckwheat", days: [4] }]);
   });
 
   it("sorts recipes alphabetically case-insensitively within Latin and Cyrillic alphabets", () => {
@@ -220,11 +218,7 @@ describe("buildPackColumnTextExport", () => {
   it("silently skips days where the column has no pack and renders kg total", () => {
     const day1Pack = pack(1, 1, [{ id: "a", name: "Oats", totalQuantity: 1500 }]);
     const day3Pack = pack(3, 1, [{ id: "b", name: "Rice", totalQuantity: 500 }]);
-    const packsData: PacksByDayData[] = [
-      dayData(1, [day1Pack]),
-      dayData(2, []),
-      dayData(3, [day3Pack]),
-    ];
+    const packsData: PacksByDayData[] = [dayData(1, [day1Pack]), dayData(2, []), dayData(3, [day3Pack])];
 
     const output = buildPackColumnTextExport({
       column: 1,
@@ -255,15 +249,9 @@ describe("buildPackColumnTextExport", () => {
     });
 
     expect(output).toBe(
-      [
-        "Trip-only hike — Pack 2",
-        "",
-        "Trip: Tent stake — 90 g",
-        "Trip: Rope — 60 g",
-        "",
-        "Total: 150 g",
-        "",
-      ].join("\n"),
+      ["Trip-only hike — Pack 2", "", "Trip: Tent stake — 90 g", "Trip: Rope — 60 g", "", "Total: 150 g", ""].join(
+        "\n",
+      ),
     );
   });
 

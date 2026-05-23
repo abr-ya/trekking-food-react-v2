@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import {
+  AboutPage,
   CategoriesPage,
   HikingDetailPage,
   HikingsPage,
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/recipes" element={<RecipesPage />} />
                 <Route path="/hikings/:id" element={<HikingDetailPage />} />
                 <Route path="/hikings" element={<HikingsPage />} />
+                <Route path="/about" element={<AboutPage />} />
               </Routes>
             </Layout>
           </ThemeProvider>

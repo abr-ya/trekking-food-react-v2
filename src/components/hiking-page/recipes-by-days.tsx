@@ -66,9 +66,7 @@ export const RecipesByDays = ({ hikingId, hikingProducts }: RecipesByDaysProps) 
                   <span className="min-w-0 flex-1 truncate font-medium" title={recipe.recipeName}>
                     {recipe.recipeName}
                   </span>
-                  <span className="text-muted-foreground tabular-nums text-xs">
-                    Days: {recipe.days.join(", ")}
-                  </span>
+                  <span className="text-muted-foreground tabular-nums text-xs">Days: {recipe.days.join(", ")}</span>
                   <button
                     type="button"
                     onClick={() => hide(recipe.recipeId)}

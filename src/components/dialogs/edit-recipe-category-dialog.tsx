@@ -22,11 +22,7 @@ type Props = { recipe: Recipe };
 export const EditRecipeCategoryDialog = ({ recipe }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const {
-    data: categoriesData,
-    isLoading: categoriesLoading,
-    error: categoriesError,
-  } = useRecipeCategories();
+  const { data: categoriesData, isLoading: categoriesLoading, error: categoriesError } = useRecipeCategories();
   const categoryOptions = useMemo(
     () => (categoriesData?.data ?? []).map((c) => ({ label: c.name, value: c.id })),
     [categoriesData?.data],
@@ -45,10 +41,7 @@ export const EditRecipeCategoryDialog = ({ recipe }: Props) => {
   };
 
   const onSubmit = (data: EditRecipeCategoryFormData) => {
-    updateRecipe.mutate(
-      { id: recipe.id, payload: { categoryId: data.categoryId } },
-      { onSuccess: handleClose },
-    );
+    updateRecipe.mutate({ id: recipe.id, payload: { categoryId: data.categoryId } }, { onSuccess: handleClose });
   };
 
   const hasCategory = Boolean(recipe.category);

@@ -17,14 +17,7 @@ export type PaginationProps = {
  * Reusable list pagination: prev/next and “Page x of y” (and optional total count).
  * Parent owns `page` and passes it into the data hook together with `limit`.
  */
-export function Pagination({
-  page,
-  totalPages,
-  onPageChange,
-  disabled,
-  className,
-  totalItems,
-}: PaginationProps) {
+export function Pagination({ page, totalPages, onPageChange, disabled, className, totalItems }: PaginationProps) {
   if (totalPages <= 1) {
     return null;
   }

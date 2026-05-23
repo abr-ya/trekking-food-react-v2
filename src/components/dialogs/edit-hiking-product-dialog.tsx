@@ -73,18 +73,15 @@ export const EditHikingProductDialog = ({ hikingId, item, open, onOpenChange }: 
           <DialogDescription>
             {item ? (
               <>
-                Update per-person and total grams for <span className="font-medium text-foreground">{item.product_name}</span>.
+                Update per-person and total grams for{" "}
+                <span className="font-medium text-foreground">{item.product_name}</span>.
               </>
             ) : null}
           </DialogDescription>
         </DialogHeader>
 
         <FormProvider {...form}>
-          <form
-            id="edit-hiking-product-form"
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
+          <form id="edit-hiking-product-form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="flex gap-3">
               <div className="flex-1">
                 <RHFInput<HikingProductQuantitiesFormData> name="personalQuantity" label="Personal qty (g)" isNumber />

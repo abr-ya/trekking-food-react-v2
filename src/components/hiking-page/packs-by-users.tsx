@@ -103,9 +103,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
     (column: number): PackInfo[] => {
       const ids = tripAssignments.get(column) ?? [];
       if (!tripPacksData) return [];
-      return ids
-        .map((packId) => tripPacksData.packs.get(packId))
-        .filter((p): p is PackInfo => p != null);
+      return ids.map((packId) => tripPacksData.packs.get(packId)).filter((p): p is PackInfo => p != null);
     },
     [tripAssignments, tripPacksData],
   );
@@ -342,11 +340,7 @@ export const PacksByUsers = ({ id }: PacksByUsersProps) => {
         <div className="overflow-x-auto">
           {/* Header row */}
           {maxPackNumber > 0 && (
-            <PacksHeader
-              maxPackNumber={maxPackNumber}
-              columnTotals={columnTotals}
-              onSave={handleSavePackList}
-            />
+            <PacksHeader maxPackNumber={maxPackNumber} columnTotals={columnTotals} onSave={handleSavePackList} />
           )}
 
           {/* Data rows */}
