@@ -1,5 +1,12 @@
 import { apiFetch } from "@/lib/api-client";
-import type { Feature, FeatureApiRow, FeaturesListParams, FeaturesListResponse, FeaturesMeta } from "@/types/feature";
+import type {
+  CreateFeaturePayload,
+  Feature,
+  FeatureApiRow,
+  FeaturesListParams,
+  FeaturesListResponse,
+  FeaturesMeta,
+} from "@/types/feature";
 
 function normalizeFeature(row: FeatureApiRow): Feature {
   return {
@@ -52,4 +59,15 @@ export async function getFeatures(params: FeaturesListParams = {}): Promise<Feat
     data,
     meta: raw.meta ?? metaFromListLength(data.length),
   };
+}
+
+/**
+ * `POST /features` — create a feature. Request body uses camelCase (`fullText`, `isMain`, …).
+ */
+export async function postFeature(payload: CreateFeaturePayload): Promise<Feature> {
+  const raw = await apiFetch<FeatureApiRow>("/features", {
+    method: "POST",
+    body: payload,
+  });
+  return normalizeFeature(raw);
 }

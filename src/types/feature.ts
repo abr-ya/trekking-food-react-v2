@@ -45,6 +45,16 @@ export type FeaturesListResponse = {
   meta: FeaturesMeta;
 };
 
+/** Body for `POST /features`. */
+export type CreateFeaturePayload = {
+  name: string;
+  description: string;
+  fullText: string;
+  status: FeatureStatus;
+  isMain: boolean;
+  lang: FeatureLang;
+};
+
 /** Query params for `GET /features`. */
 export type FeaturesListParams = {
   page?: number;
