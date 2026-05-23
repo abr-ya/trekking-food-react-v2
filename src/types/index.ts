@@ -1,3 +1,4 @@
+export * from "./feature";
 export * from "./hiking";
 export * from "./product";
 export * from "./recipe";
