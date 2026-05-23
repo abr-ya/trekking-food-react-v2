@@ -1,8 +1,12 @@
 /** Feature lifecycle status (`GET /features`, filter `status`). */
 export type FeatureStatus = "DRAFT" | "TODO" | "IN_PROGRESS" | "IN_TEST" | "DONE";
 
+export const FEATURE_STATUSES: FeatureStatus[] = ["DRAFT", "TODO", "IN_PROGRESS", "IN_TEST", "DONE"];
+
 /** Feature content language (`GET /features`, filter `lang`). */
 export type FeatureLang = "EN" | "RU";
+
+export const FEATURE_LANGS: FeatureLang[] = ["EN", "RU"];
 
 export type Feature = {
   id: string;

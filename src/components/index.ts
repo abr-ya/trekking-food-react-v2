@@ -65,6 +65,7 @@ export type { PromoteProductToTripPackDialogProps } from "./dialogs/promote-prod
 
 // Lists
 export { ProductsList } from "./lists/products-list";
+export { FeaturesList } from "./lists/features-list";
 export { RecipesList } from "./lists/recipes-list";
 export { HikingsList } from "./lists/hikings-list";
 export { CategoriesList } from "./lists/categories-list";
