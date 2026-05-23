@@ -1,11 +1,5 @@
 import { apiFetch } from "@/lib/api-client";
-import type {
-  Feature,
-  FeatureApiRow,
-  FeaturesListParams,
-  FeaturesListResponse,
-  FeaturesMeta,
-} from "@/types/feature";
+import type { Feature, FeatureApiRow, FeaturesListParams, FeaturesListResponse, FeaturesMeta } from "@/types/feature";
 
 function normalizeFeature(row: FeatureApiRow): Feature {
   return {
@@ -15,6 +9,7 @@ function normalizeFeature(row: FeatureApiRow): Feature {
     fullText: row.full_text,
     status: row.status,
     lang: row.lang,
+    isMain: row.is_main,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -35,6 +30,7 @@ function featuresListQueryString(params: FeaturesListParams): string {
   if (params.limit != null) sp.set("limit", String(params.limit));
   if (params.status != null) sp.set("status", params.status);
   if (params.lang != null) sp.set("lang", params.lang);
+  if (params.isMain != null) sp.set("is_main", String(params.isMain));
   const s = sp.toString();
   return s ? `?${s}` : "";
 }

@@ -1,4 +1,5 @@
 // UI
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 export { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 export { Button, buttonVariants } from "./ui/button";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
@@ -14,6 +15,9 @@ export {
 export { Input } from "./ui/input";
 export { Skeleton } from "./ui/skeleton";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
+
+// Features
+export { FeaturesAccordion, type FeaturesAccordionProps } from "./features/features-accordion";
 
 // Common
 export { SelectWithSearch, type SelectWithSearchOption } from "./common/select-with-search";

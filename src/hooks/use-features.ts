@@ -14,6 +14,7 @@ export const featureQueryKeys = {
       params.limit ?? null,
       params.status ?? null,
       params.lang ?? null,
+      params.isMain ?? null,
     ] as const,
 };
 

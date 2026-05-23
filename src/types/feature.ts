@@ -11,6 +11,7 @@ export type Feature = {
   fullText: string;
   status: FeatureStatus;
   lang: FeatureLang;
+  isMain: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -23,6 +24,7 @@ export type FeatureApiRow = {
   full_text: string;
   status: FeatureStatus;
   lang: FeatureLang;
+  is_main: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -45,4 +47,5 @@ export type FeaturesListParams = {
   limit?: number;
   status?: FeatureStatus;
   lang?: FeatureLang;
+  isMain?: boolean;
 };

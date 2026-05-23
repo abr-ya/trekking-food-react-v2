@@ -1,3 +1,5 @@
+import { FeaturesAccordion } from "@/components";
+
 export const AboutPage = () => (
   <>
     <div className="space-y-2">
@@ -19,9 +21,9 @@ export const AboutPage = () => (
         was created in 2025.
       </p>
     </div>
-    <div className="space-y-2 mt-4">
+    <div className="mt-4 max-w-2xl space-y-2">
       <h2 className="text-lg font-bold">Main features</h2>
-      <p className="text-muted-foreground">todo: List of main features</p>
+      <FeaturesAccordion status="DONE" isMain />
     </div>
   </>
 );
