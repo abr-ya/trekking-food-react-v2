@@ -3,6 +3,8 @@ export type User = {
   email: string;
   name?: string;
   avatarUrl?: string;
+  /** App-level role from Better Auth session (e.g. `"admin"`). */
+  role?: string;
 };
 
 export type Session = {

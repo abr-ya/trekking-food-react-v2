@@ -19,12 +19,19 @@ type AuthActions = {
 
 type AuthContextValue = AuthState & AuthActions;
 
-function mapBetterAuthUser(baUser: { id: string; email: string; name?: string | null; image?: string | null }): User {
+function mapBetterAuthUser(baUser: {
+  id: string;
+  email: string;
+  name?: string | null;
+  image?: string | null;
+  role?: string | null;
+}): User {
   return {
     id: baUser.id,
     email: baUser.email,
     name: baUser.name ?? undefined,
     avatarUrl: baUser.image ?? undefined,
+    role: baUser.role ?? undefined,
   };
 }
 

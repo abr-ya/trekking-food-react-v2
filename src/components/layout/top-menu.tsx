@@ -1,26 +1,21 @@
 import { Link } from "react-router-dom";
 
+import { MAIN_NAV } from "@/config/nav";
+import { isAppAdmin } from "@/lib/auth-roles";
+import { useAuth } from "@/providers/auth-provider";
+
 export const TopMenu = () => {
+  const { user } = useAuth();
+
+  const visibleItems = MAIN_NAV.filter((item) => !item.requiresAppAdmin || isAppAdmin(user));
+
   return (
     <div className="flex gap-2">
-      <Link to={"/"} className="hover:underline">
-        Home
-      </Link>
-      <Link to={"/products"} className="hover:underline">
-        Products
-      </Link>
-      <Link to={"/recipes"} className="hover:underline">
-        Recipes
-      </Link>
-      <Link to={"/categories"} className="hover:underline">
-        Categories
-      </Link>
-      <Link to={"/hikings"} className="hover:underline">
-        Hikings
-      </Link>
-      <Link to={"/about"} className="hover:underline">
-        About
-      </Link>
+      {visibleItems.map((item) => (
+        <Link key={item.path} to={item.path} className="hover:underline">
+          {item.label}
+        </Link>
+      ))}
     </div>
   );
 };

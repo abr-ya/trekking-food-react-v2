@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { AdminIndexRedirect, AdminLayout } from "@/components/admin/layout";
 import {
   AboutPage,
   CategoriesPage,
@@ -10,6 +11,7 @@ import {
   RecipeDetailPage,
   RecipesPage,
 } from "./pages";
+import { FeaturesPage } from "@/pages/admin";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -34,6 +36,10 @@ const App = () => {
                 <Route path="/hikings/:id" element={<HikingDetailPage />} />
                 <Route path="/hikings" element={<HikingsPage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminIndexRedirect />} />
+                  <Route path="features" element={<FeaturesPage />} />
+                </Route>
               </Routes>
             </Layout>
           </ThemeProvider>
