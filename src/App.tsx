@@ -11,7 +11,7 @@ import {
   RecipeDetailPage,
   RecipesPage,
 } from "./pages";
-import { FeaturesPage } from "@/pages/admin";
+import { FeatureCreatePage, FeatureDetailPage, FeatureEditPage, FeaturesPage } from "@/pages/admin";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -39,6 +39,9 @@ const App = () => {
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminIndexRedirect />} />
                   <Route path="features" element={<FeaturesPage />} />
+                  <Route path="features/new" element={<FeatureCreatePage />} />
+                  <Route path="features/:id" element={<FeatureDetailPage />} />
+                  <Route path="features/:id/edit" element={<FeatureEditPage />} />
                 </Route>
               </Routes>
             </Layout>

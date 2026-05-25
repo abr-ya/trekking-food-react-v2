@@ -1,8 +1,8 @@
-# Admin feature editor
+# Admin feature detail and editor
 
 ## Goals
 
-- Add admin routes for creating and editing application features.
+- Add admin routes for viewing, creating, and editing application features.
 - Reuse one form component for both create and edit flows.
 - Keep the API contract based on Markdown strings (`fullText`) so the public read-only renderer can keep using `MarkdownContent`.
 - Keep `/admin/features` as the list page with filters and pagination.
@@ -14,6 +14,7 @@ Use two explicit routes under the existing `/admin` layout:
 | URL | Purpose |
 |-----|---------|
 | `/admin/features` | List and filter existing features |
+| `/admin/features/:id` | View one feature in the admin area |
 | `/admin/features/new` | Create a new feature |
 | `/admin/features/:id/edit` | Edit an existing feature |
 
@@ -23,6 +24,17 @@ Separate create/edit URLs keep the flows clear:
 - edit mode requires loading a specific feature and handling loading/error/not-found states.
 
 Both routes should reuse the same feature form.
+
+## Navigation
+
+Admin navigation into feature editing stays inside the Features section:
+
+- add a `New feature` button to the `/admin/features` page header;
+- link that button to `/admin/features/new`;
+- make the feature name in each card link to `/admin/features/:id`;
+- add an `Edit` action to each feature card in the list;
+- link that action to `/admin/features/:id/edit`;
+- do not add `New feature` as a separate sidebar item, because it is an action inside the Features section rather than a top-level admin area.
 
 ## Shared form
 
@@ -90,7 +102,15 @@ Admin preview should use the existing `MarkdownContent` component so admin previ
   - `lang: "EN"`
   - `isMain: false`
 - Submit through `useCreateFeature()`.
-- On success, navigate back to `/admin/features` or to the new edit route.
+- On success, navigate back to `/admin/features`.
+
+### Detail page
+
+- Read `id` from route params.
+- Load the feature through `useFeature(id)`.
+- Show loading/error/not-found states.
+- Render feature metadata and `fullText` through `MarkdownContent`.
+- Provide an `Edit` action linking to `/admin/features/:id/edit`.
 
 ### Edit page
 
@@ -105,6 +125,7 @@ Admin preview should use the existing `MarkdownContent` component so admin previ
 
 - `npm run build`
 - Admin can open `/admin/features/new` and see an empty form.
+- Admin can open `/admin/features/:id` and see feature details.
 - Admin can open `/admin/features/:id/edit` and see a populated form.
 - Create submits `POST /features` with camelCase body.
 - Edit submits `PATCH /features/:id` with camelCase body.

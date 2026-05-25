@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Feature } from "@/types/feature";
 import { cn } from "@/lib/utils";
@@ -18,7 +21,12 @@ export const FeatureCard = ({ feature }: FeatureCardProps) => (
   <Card className="py-3 px-4">
     <CardContent className="space-y-2 p-0">
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="min-w-0 flex-1 font-medium">{feature.name}</p>
+        <Link
+          to={`/admin/features/${encodeURIComponent(feature.id)}`}
+          className="min-w-0 flex-1 font-medium hover:underline"
+        >
+          {feature.name}
+        </Link>
         <div className="flex shrink-0 flex-wrap items-center gap-1.5">
           {feature.isMain ? (
             <span className="bg-primary/15 text-primary rounded px-1.5 py-0.5 text-xs font-medium">Main</span>
@@ -36,9 +44,16 @@ export const FeatureCard = ({ feature }: FeatureCardProps) => (
           </span>
         </div>
       </div>
-      {feature.description ? (
-        <p className="text-muted-foreground line-clamp-2 text-sm">{feature.description}</p>
-      ) : null}
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        {feature.description ? (
+          <p className="text-muted-foreground line-clamp-2 min-w-0 flex-1 text-sm">{feature.description}</p>
+        ) : (
+          <span />
+        )}
+        <Button asChild variant="outline" size="sm">
+          <Link to={`/admin/features/${encodeURIComponent(feature.id)}/edit`}>Edit</Link>
+        </Button>
+      </div>
     </CardContent>
   </Card>
 );
