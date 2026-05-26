@@ -33,6 +33,7 @@ export { ProtectedPage } from "./layout/protected-page";
 
 // Forms
 export { CreateProductForm, EditProductForm } from "./forms/product-form";
+export { FeatureForm, type FeatureFormProps } from "./forms/feature-form";
 export { CreateRecipeForm } from "./forms/create-recipe-form";
 export { EditRecipeForm } from "./forms/edit-recipe-form";
 export { CreateHikingForm } from "./forms/create-hiking-form";
