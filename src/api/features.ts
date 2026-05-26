@@ -6,6 +6,7 @@ import type {
   FeaturesListParams,
   FeaturesListResponse,
   FeaturesMeta,
+  UpdateFeaturePayload,
 } from "@/types/feature";
 
 function normalizeFeature(row: FeatureApiRow): Feature {
@@ -62,11 +63,30 @@ export async function getFeatures(params: FeaturesListParams = {}): Promise<Feat
 }
 
 /**
+ * `GET /features/:id` — load one feature by id.
+ */
+export async function getFeature(id: string): Promise<Feature> {
+  const raw = await apiFetch<FeatureApiRow>(`/features/${encodeURIComponent(id)}`, { method: "GET" });
+  return normalizeFeature(raw);
+}
+
+/**
  * `POST /features` — create a feature. Request body uses camelCase (`fullText`, `isMain`, …).
  */
 export async function postFeature(payload: CreateFeaturePayload): Promise<Feature> {
   const raw = await apiFetch<FeatureApiRow>("/features", {
     method: "POST",
+    body: payload,
+  });
+  return normalizeFeature(raw);
+}
+
+/**
+ * `PATCH /features/:id` — update a feature. Request body uses camelCase (`fullText`, `isMain`, …).
+ */
+export async function patchFeature(id: string, payload: UpdateFeaturePayload): Promise<Feature> {
+  const raw = await apiFetch<FeatureApiRow>(`/features/${encodeURIComponent(id)}`, {
+    method: "PATCH",
     body: payload,
   });
   return normalizeFeature(raw);

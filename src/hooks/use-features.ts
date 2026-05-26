@@ -1,7 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getFeatures, postFeature } from "@/api/features";
-import type { CreateFeaturePayload, FeaturesListParams } from "@/types/feature";
+import { getFeature, getFeatures, patchFeature, postFeature } from "@/api/features";
+import type { CreateFeaturePayload, FeaturesListParams, UpdateFeaturePayload } from "@/types/feature";
 
 /** TanStack Query keys for features API. */
 export const featureQueryKeys = {
@@ -16,6 +16,7 @@ export const featureQueryKeys = {
       params.lang ?? null,
       params.isMain ?? null,
     ] as const,
+  detail: (id: string) => [...featureQueryKeys.all, "detail", id] as const,
 };
 
 const FEATURES_STALE_TIME_MS = 2 * 60 * 1000;
@@ -32,6 +33,17 @@ export const useFeatures = (params: FeaturesListParams = {}) =>
   });
 
 /**
+ * Fetch a single feature (`GET /features/:id`).
+ */
+export const useFeature = (id: string | undefined) =>
+  useQuery({
+    queryKey: featureQueryKeys.detail(id ?? ""),
+    queryFn: () => getFeature(id ?? ""),
+    enabled: Boolean(id),
+    staleTime: FEATURES_STALE_TIME_MS,
+  });
+
+/**
  * Create a feature (`POST /features`). On success, invalidates feature list queries.
  */
 export const useCreateFeature = () => {
@@ -39,6 +51,23 @@ export const useCreateFeature = () => {
 
   return useMutation({
     mutationFn: (payload: CreateFeaturePayload) => postFeature(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: featureQueryKeys.all }),
+  });
+};
+
+export type UpdateFeatureVariables = {
+  id: string;
+  payload: UpdateFeaturePayload;
+};
+
+/**
+ * Update a feature (`PATCH /features/:id`). On success, invalidates feature queries.
+ */
+export const useUpdateFeature = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: UpdateFeatureVariables) => patchFeature(id, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: featureQueryKeys.all }),
   });
 };

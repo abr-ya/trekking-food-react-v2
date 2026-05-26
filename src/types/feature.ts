@@ -55,6 +55,9 @@ export type CreateFeaturePayload = {
   lang: FeatureLang;
 };
 
+/** Body for `PATCH /features/:id`. */
+export type UpdateFeaturePayload = CreateFeaturePayload;
+
 /** Query params for `GET /features`. */
 export type FeaturesListParams = {
   page?: number;
