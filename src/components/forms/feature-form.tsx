@@ -1,7 +1,7 @@
-import { FormProvider, useForm, useWatch, type SubmitHandler } from "react-hook-form";
+import { Controller, FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { MarkdownContent } from "@/components/common/markdown-content";
+import { MarkdownEditor } from "@/components/common/markdown-editor";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field-cursor";
 import { inputClassName } from "@/components/ui/input-cursor";
@@ -45,9 +45,9 @@ export const FeatureForm = ({
 
   const {
     formState: { errors, isSubmitting },
+    control,
     register,
   } = form;
-  const fullText = useWatch({ control: form.control, name: "fullText" }) ?? "";
   const isDisabled = isSaving || isSubmitting;
 
   return (
@@ -84,28 +84,27 @@ export const FeatureForm = ({
             </label>
           </div>
 
-          <Field>
-            <FieldLabel htmlFor={`${formId}-full-text`}>Full text</FieldLabel>
-            <textarea
-              id={`${formId}-full-text`}
-              rows={12}
-              {...register("fullText")}
-              className={cn(inputClassName, "min-h-72 py-2 font-mono", errors.fullText && "border-destructive")}
-              placeholder="## Trip packs&#10;&#10;Markdown body..."
-              aria-invalid={Boolean(errors.fullText)}
-            />
-            {!errors.fullText ? <FieldDescription>Markdown body shown on public and admin detail views.</FieldDescription> : null}
-            {errors.fullText?.message ? <FieldError>{errors.fullText.message}</FieldError> : null}
-          </Field>
-
-          <div className="grid gap-2 rounded-md border bg-muted/30 p-3">
-            <p className="text-sm font-medium">Preview</p>
-            {fullText.trim() ? (
-              <MarkdownContent source={fullText} />
-            ) : (
-              <p className="text-muted-foreground text-sm">Markdown preview will appear here.</p>
+          <Controller
+            name="fullText"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Field>
+                <FieldLabel>Full text</FieldLabel>
+                <MarkdownEditor
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  readOnly={isDisabled}
+                  placeholder="Start writing feature details..."
+                  aria-invalid={Boolean(error)}
+                />
+                {!error ? (
+                  <FieldDescription>Markdown body shown on public and admin detail views.</FieldDescription>
+                ) : null}
+                {error?.message ? <FieldError>{error.message}</FieldError> : null}
+              </Field>
             )}
-          </div>
+          />
         </fieldset>
 
         <Button type="submit" disabled={isDisabled} className="w-fit">

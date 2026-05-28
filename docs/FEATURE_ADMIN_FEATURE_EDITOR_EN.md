@@ -86,9 +86,9 @@ After create or update, invalidate feature queries so the list refreshes.
 
 ## Markdown editor
 
-Use a small wrapper around the chosen editor (MDXEditor) instead of coupling editor internals directly to `FeatureForm`.
+Use a small wrapper around MDXEditor (`@mdxeditor/editor`) instead of coupling editor internals directly to `FeatureForm`.
 
-Admin preview should use the existing `MarkdownContent` component so admin preview matches public rendering.
+Read-only feature rendering should use the existing `MarkdownContent` component so admin detail and public views match.
 
 ## Page behavior
 

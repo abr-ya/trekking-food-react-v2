@@ -2,7 +2,7 @@
 
 ## Summary
 
-Added create and edit flows for application features in the admin area. Both flows reuse the shared `FeatureForm`, send camelCase payloads to the feature API, and return to `/admin/features` after a successful save.
+Added create and edit flows for application features in the admin area. Both flows reuse the shared `FeatureForm`, send camelCase payloads to the feature API, and return to `/admin/features` after a successful save. Feature body editing now uses MDXEditor through a local wrapper component.
 
 ## User-facing behavior
 
@@ -18,12 +18,14 @@ Added create and edit flows for application features in the admin area. Both flo
 
 | File | Change |
 |------|--------|
-| `src/components/forms/feature-form.tsx` | Shared validated feature form with Markdown preview |
+| `src/components/forms/feature-form.tsx` | Shared validated feature form wired to the Markdown editor |
+| `src/components/common/markdown-editor.tsx` | MDXEditor wrapper for RHF-controlled Markdown editing |
 | `src/pages/admin/feature-create-page.tsx` | Create page wired to `useCreateFeature()` |
 | `src/pages/admin/feature-edit-page.tsx` | Edit page wired to `useFeature()` and `useUpdateFeature()` |
 | `src/api/features.ts` | Feature detail and update API helpers |
 | `src/hooks/use-features.ts` | Detail query and update mutation hooks |
 | `src/schemas/feature.ts` | Feature form validation schema |
+| `package.json` | Added `@mdxeditor/editor` |
 
 ## Verification
 

@@ -1,0 +1,59 @@
+.markdown-editor.mdxeditor {
+  --baseBase: var(--background);
+  --basePageBg: var(--background);
+  --baseBgSubtle: var(--muted);
+  --baseBg: var(--muted);
+  --baseBgHover: var(--accent);
+  --baseBgActive: var(--accent);
+  --baseLine: var(--border);
+  --baseBorder: var(--border);
+  --baseBorderHover: var(--ring);
+  --baseSolid: var(--muted-foreground);
+  --baseSolidHover: var(--foreground);
+  --baseText: var(--muted-foreground);
+  --baseTextContrast: var(--foreground);
+  --accentBase: var(--background);
+  --accentBgSubtle: var(--muted);
+  --accentBg: var(--accent);
+  --accentBgHover: var(--accent);
+  --accentBgActive: var(--accent);
+  --accentLine: var(--border);
+  --accentBorder: var(--border);
+  --accentBorderHover: var(--ring);
+  --accentSolid: var(--primary);
+  --accentSolidHover: var(--primary);
+  --accentText: var(--primary);
+  --accentTextContrast: var(--primary-foreground);
+  color: var(--foreground);
+}
+
+.markdown-editor .markdown-editor-toolbar {
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.markdown-editor .cm-editor,
+.markdown-editor .cm-gutters,
+.markdown-editor .cm-scroller {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.markdown-editor .cm-line,
+.markdown-editor .cm-content {
+  color: var(--foreground);
+}
+
+.markdown-editor .cm-gutters {
+  border-right-color: var(--border);
+  color: var(--muted-foreground);
+}
+
+.markdown-editor .cm-activeLine,
+.markdown-editor .cm-activeLineGutter {
+  background-color: var(--muted);
+}
+
+.markdown-editor .cm-cursor {
+  border-left-color: var(--foreground);
+}
