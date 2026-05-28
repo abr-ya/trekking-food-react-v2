@@ -119,7 +119,7 @@ Admin preview should use the existing `MarkdownContent` component so admin previ
 - Show loading/error/not-found states.
 - Render the same `FeatureForm` with loaded values.
 - Submit through `useUpdateFeature()`.
-- On success, invalidate feature queries and keep or leave the edit page depending on the UX decision.
+- On success, invalidate feature queries and navigate back to `/admin/features`.
 
 ## Verification
 
