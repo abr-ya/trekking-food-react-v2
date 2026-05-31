@@ -8,6 +8,7 @@ import {
   getHikings,
   patchHikingDayComment,
   patchHikingDayPack,
+  patchHikingMembersTotal,
   patchHikingProduct,
   postAutoDistributePacks,
   postHiking,
@@ -34,6 +35,7 @@ import type {
   TripPackMemberSlotsPayload,
   UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
+  UpdateHikingMembersTotalPayload,
 } from "@/types/hiking";
 import type { UpdateHikingProductPayload } from "@/types/hiking-product";
 import { z } from "zod";
@@ -347,6 +349,29 @@ export const useDeleteHikingDayComment = () => {
       deleteHikingDayComment(hikingId, dayNumber),
     onSuccess: async (_data, { hikingId }) => {
       await queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) });
+    },
+  });
+};
+
+// ─── Members total ─────────────────────────────────────────────────
+
+export type UpdateHikingMembersTotalVariables = {
+  hikingId: string;
+  payload: UpdateHikingMembersTotalPayload;
+};
+
+export const useUpdateHikingMembersTotal = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ hikingId, payload }: UpdateHikingMembersTotalVariables) =>
+      patchHikingMembersTotal(hikingId, payload),
+    onSuccess: async (_data, { hikingId }) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: hikingQueryKeys.detail(hikingId) }),
+        queryClient.invalidateQueries({ queryKey: hikingQueryKeys.all }),
+        queryClient.invalidateQueries({ queryKey: hikingQueryKeys.productTotals(hikingId) }),
+      ]);
     },
   });
 };

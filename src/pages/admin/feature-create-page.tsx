@@ -35,7 +35,8 @@ export const FeatureCreatePage = () => {
 
       {createFeature.error ? (
         <p className="text-destructive text-sm">
-          Failed to create feature: {createFeature.error instanceof Error ? createFeature.error.message : "Unknown error"}
+          Failed to create feature:{" "}
+          {createFeature.error instanceof Error ? createFeature.error.message : "Unknown error"}
         </p>
       ) : null}
 

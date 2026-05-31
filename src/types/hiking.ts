@@ -130,6 +130,11 @@ export type UpdateHikingDayCommentPayload = {
   comment: string;
 };
 
+/** Body for `PATCH /hikings/:id/members-total` — dedicated group size change (only way to update membersTotal). */
+export type UpdateHikingMembersTotalPayload = {
+  membersTotal: number;
+};
+
 /** Body for `POST /hikings/:id/packs/auto-distribute`. */
 export type AutoDistributePacksPayload = {
   dayNumber: number;

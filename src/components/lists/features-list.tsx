@@ -44,12 +44,7 @@ const mainFilterToParam = (value: MainFilter): Pick<FeaturesListParams, "isMain"
 
 const FeaturesListFilters = () => (
   <div className="grid gap-3 sm:grid-cols-3">
-    <RHFSelect<FeaturesFiltersForm>
-      name="status"
-      label="Status"
-      options={STATUS_OPTIONS}
-      placeholder="All statuses"
-    />
+    <RHFSelect<FeaturesFiltersForm> name="status" label="Status" options={STATUS_OPTIONS} placeholder="All statuses" />
     <RHFSelect<FeaturesFiltersForm> name="lang" label="Language" options={LANG_OPTIONS} placeholder="All languages" />
     <RHFSelect<FeaturesFiltersForm>
       name="mainFilter"

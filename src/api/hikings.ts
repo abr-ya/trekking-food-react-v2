@@ -21,6 +21,7 @@ import type {
   TripPackMemberSlotsPayload,
   UpdateHikingDayCommentPayload,
   UpdateHikingDayPackPayload,
+  UpdateHikingMembersTotalPayload,
 } from "@/types/hiking";
 import type { HikingDayPack, HikingProduct, HikingTripPack, UpdateHikingProductPayload } from "@/types/hiking-product";
 
@@ -78,6 +79,16 @@ function unwrapHikingDetailResponse(raw: unknown): HikingDetailApiRow {
     return (raw as { data: HikingDetailApiRow }).data;
   }
   return raw as HikingDetailApiRow;
+}
+
+function normalizeHikingDetailRow(row: HikingDetailApiRow): HikingDetail {
+  const base = normalizeHiking(row);
+  const hiking_products = normalizeHikingProductsList(row.hiking_products);
+  const admins = row.admins as HikingAdmin[];
+  const day_packs = row.day_packs;
+  const day_comments = row.day_comments ?? [];
+  const trip_packs = row.trip_packs ?? [];
+  return { ...base, hiking_products, admins, day_packs, day_comments, trip_packs };
 }
 
 function normalizeHikingProduct(row: unknown): HikingProduct {
@@ -176,14 +187,7 @@ export const getHikings = async (params: HikingsListParams = {}): Promise<Hiking
 export async function getHiking(id: string): Promise<HikingDetail> {
   const path = `/hikings/${encodeURIComponent(id)}`;
   const raw = await apiFetch<unknown>(path, { method: "GET" });
-  const row = unwrapHikingDetailResponse(raw);
-  const base = normalizeHiking(row);
-  const hiking_products = normalizeHikingProductsList(row.hiking_products);
-  const admins = row.admins as HikingAdmin[];
-  const day_packs = row.day_packs;
-  const day_comments = row.day_comments ?? [];
-  const trip_packs = row.trip_packs ?? [];
-  return { ...base, hiking_products, admins, day_packs, day_comments, trip_packs };
+  return normalizeHikingDetailRow(unwrapHikingDetailResponse(raw));
 }
 
 /**
@@ -194,6 +198,21 @@ export async function postHiking(payload: CreateHikingPayload): Promise<unknown>
     method: "POST",
     body: payload,
   });
+}
+
+/**
+ * `PATCH /hikings/:id/members-total` — change group size (recomputes product totals; may delete packs when decreasing).
+ * Returns normalized HikingDetail (same shape as GET /hikings/:id).
+ */
+export async function patchHikingMembersTotal(
+  hikingId: string,
+  payload: UpdateHikingMembersTotalPayload,
+): Promise<HikingDetail> {
+  const raw = await apiFetch<unknown>(`/hikings/${encodeURIComponent(hikingId)}/members-total`, {
+    method: "PATCH",
+    body: payload,
+  });
+  return normalizeHikingDetailRow(unwrapHikingDetailResponse(raw));
 }
 
 /**
@@ -351,14 +370,7 @@ export async function postAutoDistributePacks(
     method: "POST",
     body: payload,
   });
-  const row = unwrapHikingDetailResponse(raw);
-  const base = normalizeHiking(row);
-  const hiking_products = normalizeHikingProductsList(row.hiking_products);
-  const admins = row.admins as HikingAdmin[];
-  const day_packs = row.day_packs;
-  const day_comments = row.day_comments ?? [];
-  const trip_packs = row.trip_packs ?? [];
-  return { ...base, hiking_products, admins, day_packs, day_comments, trip_packs };
+  return normalizeHikingDetailRow(unwrapHikingDetailResponse(raw));
 }
 
 /**

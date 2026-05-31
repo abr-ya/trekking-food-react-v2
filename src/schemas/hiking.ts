@@ -18,3 +18,21 @@ export const createHikingSchema = z
   });
 
 export type CreateHikingFormData = z.infer<typeof createHikingSchema>;
+
+/** Validates group size when editing via PATCH /hikings/:id/members-total. */
+export const createUpdateMembersTotalSchema = (vegetariansTotal: number) =>
+  z
+    .object({
+      membersTotal: z.number().int().min(1, "At least 1 member"),
+    })
+    .superRefine((data, ctx) => {
+      if (data.membersTotal < vegetariansTotal) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Cannot be less than vegetarians count",
+          path: ["membersTotal"],
+        });
+      }
+    });
+
+export type UpdateMembersTotalFormData = z.infer<ReturnType<typeof createUpdateMembersTotalSchema>>;

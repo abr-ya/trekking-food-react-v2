@@ -52,7 +52,8 @@ export const FeatureEditPage = () => {
 
       {updateFeature.error ? (
         <p className="text-destructive text-sm">
-          Failed to update feature: {updateFeature.error instanceof Error ? updateFeature.error.message : "Unknown error"}
+          Failed to update feature:{" "}
+          {updateFeature.error instanceof Error ? updateFeature.error.message : "Unknown error"}
         </p>
       ) : null}
 

@@ -51,6 +51,7 @@ export {
   usePromoteToTripPack,
   useUpdateHikingDayComment,
   useUpdateHikingDayPack,
+  useUpdateHikingMembersTotal,
   useUpdateHikingProduct,
   useSaveHikingPacksSlots,
   useSaveTripPackMemberSlots,
@@ -72,6 +73,7 @@ export type {
   SaveTripPackMemberSlotsVariables,
   UpdateHikingDayCommentVariables,
   UpdateHikingDayPackVariables,
+  UpdateHikingMembersTotalVariables,
   UpdateHikingProductVariables,
 } from "./use-hikings";
 export { useEatingTimes, eatingTimeQueryKeys } from "./use-eating-times";
