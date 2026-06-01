@@ -150,9 +150,12 @@ function Products() {
 
 ### Hikings
 
-- **API (`src/api/hikings.ts`):** `getHikings` / `getHiking` / `postHiking` — list and detail responses are normalized (camelCase vs snake_case). `postHikingProductsFromRecipe(hikingId, payload)` → `POST /hikings/:id/hiking-products/from-recipe`.
-- **Hooks (`@/hooks`):** `useHikings`, `useHiking(id)`, `useCreateHiking`, `useAddHikingProductsFromRecipe`.
-- **Query keys:** `hikingQueryKeys.all`, `hikingQueryKeys.list({ page, limit, search })`, `hikingQueryKeys.detail(id)`.
+- **API (`src/api/hikings.ts`):** `getHikings` / `getHiking` / `postHiking` — list and detail responses are normalized (camelCase vs snake_case). `postHikingProductsFromRecipe(hikingId, payload)` → `POST /hikings/:id/hiking-products/from-recipe`. `patchHikingMembersTotal(hikingId, { membersTotal })` → `PATCH /hikings/:id/members-total` — **the only supported way to change group size after create**; returns normalized `HikingDetail` (same shape as `GET /hikings/:id`).
+- **Hooks (`@/hooks`):** `useHikings`, `useHiking(id)`, `useCreateHiking`, `useAddHikingProductsFromRecipe`, `useUpdateHikingMembersTotal`.
+- **UI:** On the hiking Overview tab, `EditMembersTotalDialog` (button **Change** next to Members total) calls `useUpdateHikingMembersTotal`; decreasing group size requires an explicit confirmation step.
+- **Query keys:** `hikingQueryKeys.all`, `hikingQueryKeys.list({ page, limit, search })`, `hikingQueryKeys.detail(id)`, `hikingQueryKeys.productTotals(id)`.
+
+**TODO:** `vegetariansTotal` can only be set when creating a hiking (`POST /hikings`). A dedicated endpoint to edit vegetarians after create is not implemented yet (frontend or backend).
 
 **Example – list hikings, open one, create a hiking, add products from a recipe:**
 
@@ -211,7 +214,9 @@ function HikingFlow({ hikingId }: { hikingId: string }) {
 }
 ```
 
-After `useCreateHiking` or `useAddHikingProductsFromRecipe` succeeds, hiking list and detail queries are invalidated so the UI can refetch.
+After `useCreateHiking`, `useAddHikingProductsFromRecipe`, or `useUpdateHikingMembersTotal` succeeds, hiking list, detail, and (for members-total) product-totals queries are invalidated so the UI can refetch.
+
+See also [`docs/FEATURE_MEMBERS_TOTAL_API_EN.md`](docs/FEATURE_MEMBERS_TOTAL_API_EN.md) and [`docs/members-total-patch-plan.md`](docs/members-total-patch-plan.md).
 
 ### PacksByUsers: Save Member Slots
 

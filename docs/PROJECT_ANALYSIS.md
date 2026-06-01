@@ -155,6 +155,7 @@ toastInfo("Profile updated");
 | `POST` | `/hikings/:id/hiking-products` | Add product to hiking |
 | `POST` | `/hikings/:id/hiking-products/from-recipe` | Add products from recipe |
 | `PATCH` | `/hikings/:hikingId/hiking-products/:id` | Update product quantity |
+| `PATCH` | `/hikings/:id/members-total` | Change group size (only way to update `membersTotal` after create) |
 | `POST` | `/hikings/:id/admins` | Add hiking admin |
 | `POST` | `/hikings/:id/packs/:packId/hiking-products` | Assign products to pack |
 

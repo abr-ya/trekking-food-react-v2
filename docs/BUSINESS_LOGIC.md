@@ -123,6 +123,14 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 - Hiking must have at least 1 member
 - Hiking creator automatically becomes an administrator
 - Administrators can add/remove products from the plan
+- **`membersTotal` after create:** may only be changed via `PATCH /hikings/:id/members-total` (not via a generic hiking update). Owner or hiking admin only.
+- **`vegetariansTotal` after create:** set only at hiking creation (`POST /hikings`) for now — **TODO:** dedicated update endpoint (see [Future: edit vegetarians count](#future-edit-vegetarians-count)).
+
+**Changing `membersTotal` (server transaction):**
+1. Recomputes every `HikingProduct.total_quantity` as `personal_quantity × membersTotal` (manual totals are overridden).
+2. **When decreasing:** deletes `HikingDayPack` rows with `pack_number > newCount` (their meal lines become unassigned); clears `member_slot` values greater than the new count on day packs and trip packs.
+3. Stores the new `members_total`.
+4. **When increasing:** only step 1 and 3 apply — no new packs are created; re-run auto-distribute per day if needed.
 
 ---
 
@@ -534,6 +542,45 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 ---
 
+### 11. Change Hiking Group Size (members total)
+
+**Participants:** Hiking owner or administrator
+
+**Purpose:** Update how many members are in the group and refresh derived product totals and pack layout constraints.
+
+**Steps:**
+1. User opens the hiking Overview tab and clicks **Change** next to Members total.
+2. User enters a new `membersTotal` (must be ≥ 1 and ≥ current `vegetariansTotal`).
+3. If the new value is **less** than the current value, the UI shows a confirmation dialog describing pack deletion, unassigned meals, and slot clearing before calling the API.
+4. If the new value is **greater**, the API is called immediately; the UI reminds the user that new member packs are not created automatically.
+5. Server applies the transaction (see Hiking business rules above) and returns the full hiking detail.
+
+**Endpoint:**
+- `PATCH /hikings/:id/members-total`
+
+**Request body:**
+```json
+{
+  "membersTotal": 5
+}
+```
+
+**Response:** Full hiking row (same shape as `GET /hikings/:id`).
+
+**Validation errors:** `400` — e.g. not a positive integer, or `membersTotal < vegetariansTotal`.
+
+**Frontend:** `patchHikingMembersTotal`, `useUpdateHikingMembersTotal`, `EditMembersTotalDialog` — see [`FEATURE_MEMBERS_TOTAL_API_EN.md`](FEATURE_MEMBERS_TOTAL_API_EN.md).
+
+---
+
+## Future: edit vegetarians count
+
+**Status:** Not implemented.
+
+`vegetariansTotal` is validated at create time (`≤ membersTotal`) but cannot be updated through the app after the hiking exists. A future `PATCH` (or similar) endpoint should allow owners/admins to change vegetarians without breaking the rule `vegetariansTotal ≤ membersTotal` (possibly requiring `membersTotal` to be raised first via `members-total`).
+
+---
+
 ## 🧮 Calculation Formulas
 
 ### Total Product Quantity
@@ -547,6 +594,8 @@ totalQuantity = personalQuantity × membersTotal
 Where:
 - `personalQuantity` — amount per 1 person (g)
 - `membersTotal` — total number of hiking members
+
+Calling `PATCH /hikings/:id/members-total` recomputes **all** line totals using this formula and overrides any manually edited `total_quantity` values.
 
 ### Total Products per Hiking
 
