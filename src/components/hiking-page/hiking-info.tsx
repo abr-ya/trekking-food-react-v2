@@ -1,5 +1,5 @@
 import { useHiking } from "@/hooks";
-import { AddHikingAdminDialog, LoadingSkeleton } from "@/components";
+import { AddHikingAdminDialog, EditMembersTotalDialog, LoadingSkeleton } from "@/components";
 
 export const HikingInfo = ({ id }: { id: string }) => {
   const { data: hiking, isLoading, error } = useHiking(id);
@@ -24,9 +24,16 @@ export const HikingInfo = ({ id }: { id: string }) => {
       <p>
         <span className="text-foreground font-medium">Days total:</span> {hiking.daysTotal}
       </p>
-      <p>
-        <span className="text-foreground font-medium">Members total:</span> {hiking.membersTotal}
-      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p>
+          <span className="text-foreground font-medium">Members total:</span> {hiking.membersTotal}
+        </p>
+        <EditMembersTotalDialog
+          hikingId={hiking.id}
+          currentMembersTotal={hiking.membersTotal}
+          vegetariansTotal={hiking.vegetariansTotal}
+        />
+      </div>
       <p>
         <span className="text-foreground font-medium">Vegetarians total:</span> {hiking.vegetariansTotal}
       </p>
