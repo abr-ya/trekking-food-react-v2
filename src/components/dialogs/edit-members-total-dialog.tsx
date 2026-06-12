@@ -44,7 +44,9 @@ export const EditMembersTotalDialog = ({
 
   const watchedMembersTotal = form.watch("membersTotal");
   const isUnchanged =
-    typeof watchedMembersTotal === "number" && !Number.isNaN(watchedMembersTotal) && watchedMembersTotal === currentMembersTotal;
+    typeof watchedMembersTotal === "number" &&
+    !Number.isNaN(watchedMembersTotal) &&
+    watchedMembersTotal === currentMembersTotal;
 
   const closeAll = () => {
     setIsOpen(false);
@@ -166,13 +168,13 @@ export const EditMembersTotalDialog = ({
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>This action cannot be undone from the UI. The server will:</p>
                 <ul className="list-disc space-y-1 pl-5">
-                  <li>Recalculate every product total as personal quantity × new group size (manual totals are lost)</li>
+                  <li>
+                    Recalculate every product total as personal quantity × new group size (manual totals are lost)
+                  </li>
                   <li>
                     Delete day packs with pack number greater than {pendingMembersTotal} — their meals become unassigned
                   </li>
-                  <li>
-                    Clear member slots greater than {pendingMembersTotal} on day packs and trip packs
-                  </li>
+                  <li>Clear member slots greater than {pendingMembersTotal} on day packs and trip packs</li>
                 </ul>
               </div>
             </DialogDescription>
