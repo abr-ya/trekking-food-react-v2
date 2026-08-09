@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-import { MAIN_NAV } from "@/config/nav";
+import { MAIN_NAV, routes } from "@/config/nav";
 import { isAppAdmin } from "@/lib/auth-roles";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 
 export const TopMenu = () => {
@@ -12,9 +13,16 @@ export const TopMenu = () => {
   return (
     <div className="flex gap-2">
       {visibleItems.map((item) => (
-        <Link key={item.path} to={item.path} className="hover:underline">
+        <NavLink
+          key={item.path}
+          to={item.path}
+          end={item.path === routes.home}
+          className={({ isActive }) =>
+            cn("hover:underline", isActive ? "font-semibold text-foreground underline" : "text-muted-foreground")
+          }
+        >
           {item.label}
-        </Link>
+        </NavLink>
       ))}
     </div>
   );

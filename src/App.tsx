@@ -12,6 +12,7 @@ import {
   RecipesPage,
 } from "./pages";
 import { FeatureCreatePage, FeatureDetailPage, FeatureEditPage, FeaturesPage } from "@/pages/admin";
+import { routes } from "@/config/nav";
 import { Layout } from "./components/";
 import { AuthProvider } from "./providers/auth-provider";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -28,15 +29,15 @@ const App = () => {
           <ThemeProvider defaultTheme="dark">
             <Layout>
               <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/products/" element={<ProductsPage />} />
-                <Route path="/categories" element={<CategoriesPage />} />
-                <Route path="/recipes/:id" element={<RecipeDetailPage />} />
-                <Route path="/recipes" element={<RecipesPage />} />
-                <Route path="/hikings/:id" element={<HikingDetailPage />} />
-                <Route path="/hikings" element={<HikingsPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/admin" element={<AdminLayout />}>
+                <Route path={routes.home} element={<HomePage />} />
+                <Route path={routes.products} element={<ProductsPage />} />
+                <Route path={routes.categories} element={<CategoriesPage />} />
+                <Route path={routes.recipeDetail} element={<RecipeDetailPage />} />
+                <Route path={routes.recipes} element={<RecipesPage />} />
+                <Route path={routes.hikingDetail} element={<HikingDetailPage />} />
+                <Route path={routes.hikings} element={<HikingsPage />} />
+                <Route path={routes.about} element={<AboutPage />} />
+                <Route path={routes.admin} element={<AdminLayout />}>
                   <Route index element={<AdminIndexRedirect />} />
                   <Route path="features" element={<FeaturesPage />} />
                   <Route path="features/new" element={<FeatureCreatePage />} />
