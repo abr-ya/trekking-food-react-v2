@@ -1,0 +1,46 @@
+schema: spec-driven
+
+# Project context — shown to AI when creating artifacts.
+context: |
+  Product: Trekking Food — a meal-planning app for hiking trips. Users build a
+  product catalog (calories, macros, price, vegetarian flag, category), compose
+  recipes from products, create hikings (days × members × vegetarians), and
+  distribute products/recipes across days and meal times. Products are then
+  organized into day packs / trip packs (per member) and exported as shopping
+  lists. See docs/BUSINESS_LOGIC.md for the authoritative domain model and rules,
+  and openspec/CAPABILITIES.md for the capability map.
+
+  Tech stack (frontend-only repo; backend is a separate REST API):
+  - React 19 + TypeScript (strict), Vite 7
+  - Routing: React Router v7
+  - Server state: TanStack Query v5 (typed query-key factories, staleTime, invalidation after mutations)
+  - Forms: React Hook Form + Zod (schemas in src/schemas, resolvers via @hookform/resolvers)
+  - UI: Tailwind CSS 4 + Radix UI / shadcn-style components (src/components/ui)
+  - Drag & drop: @dnd-kit (pack organization)
+  - Auth: Better Auth (Bearer token; roles: anonymous / authenticated / owner / hiking-admin)
+  - Testing: Vitest. Lint/format: ESLint 9 + Prettier.
+
+  Conventions:
+  - Path alias "@/" → src/. Barrel index.ts files per folder.
+  - API returns snake_case; the API layer (src/api/*) normalizes to camelCase for client types (src/types/*).
+  - All server access goes through src/api/* wrapped in hooks (src/hooks/*); components do not call the API directly.
+  - Centralized request handling in src/lib/api-client.ts (token, errors, toasts).
+  - User-facing UI strings are in English.
+  - Capabilities in openspec/specs/ mirror the domains in openspec/CAPABILITIES.md (kebab-case names).
+
+  Verification commands: npm run tsc, npm run lint, npm run test.
+
+# Per-artifact rules
+rules:
+  proposal:
+    - State which capability (from openspec/CAPABILITIES.md) the change touches.
+    - Include a "Non-goals" section to keep scope tight.
+    - Note whether the change requires backend/API changes (this repo is frontend-only).
+  design:
+    - Reference existing patterns (api/ + hooks/ + Zod schema + query keys) instead of inventing new ones.
+    - Call out data normalization (snake_case → camelCase) and cache invalidation impact.
+  tasks:
+    - Break tasks into small, independently verifiable steps.
+    - "Include a final verification step: npm run tsc && npm run lint && npm run test."
+  specs:
+    - Write requirements as testable statements ("The system SHALL …") with at least one scenario each.
