@@ -36,6 +36,7 @@ rules:
     - State which capability (from openspec/CAPABILITIES.md) the change touches.
     - Include a "Non-goals" section to keep scope tight.
     - Note whether the change requires backend/API changes (this repo is frontend-only).
+    - "Name the change NNNN-<slug> (4-digit build number from openspec/BACKLOG.md Build log + slug). See openspec/BACKLOG.md for the pull/numbering workflow."
   design:
     - Reference existing patterns (api/ + hooks/ + Zod schema + query keys) instead of inventing new ones.
     - Call out data normalization (snake_case → camelCase) and cache invalidation impact.
