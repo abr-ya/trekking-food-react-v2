@@ -1,3 +1,5 @@
+import { routes } from "./app-routes";
+
 export type MainNavItem = {
   label: string;
   path: string;
@@ -6,11 +8,11 @@ export type MainNavItem = {
 };
 
 export const MAIN_NAV: MainNavItem[] = [
-  { label: "Home", path: "/" },
-  { label: "Products", path: "/products" },
-  { label: "Recipes", path: "/recipes" },
-  { label: "Categories", path: "/categories" },
-  { label: "Hikings", path: "/hikings" },
-  { label: "About", path: "/about" },
-  { label: "Admin", path: "/admin", requiresAppAdmin: true },
+  { label: "Home", path: routes.home },
+  { label: "Products", path: routes.products },
+  { label: "Recipes", path: routes.recipes },
+  { label: "Categories", path: routes.categories },
+  { label: "Hikings", path: routes.hikings },
+  { label: "About", path: routes.about },
+  { label: "Admin", path: routes.admin, requiresAppAdmin: true },
 ];

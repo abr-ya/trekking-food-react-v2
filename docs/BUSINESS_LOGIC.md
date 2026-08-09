@@ -220,21 +220,34 @@ A meal planning system for hiking trips. Allows creating a product catalog, buil
 
 | Role | Permissions |
 |------|-------------|
-| **Anonymous** | View public products, recipes, categories |
-| **Authenticated** | Create personal products, recipes, hikings |
+| **Anonymous** | View About; other top-menu destinations show an authentication prompt (`ProtectedPage`) |
+| **Authenticated** | Access Home, Products, Recipes, Categories, Hikings; create personal products, recipes, hikings |
 | **Owner** | Full control over own entities |
 | **Hiking Admin** | Edit specific hiking plan |
+| **App Admin** | Access Admin area |
+
+### UI route access (top menu destinations)
+
+| Destination | Access | Notes |
+|-------------|--------|-------|
+| Home (`/`) | Authenticated | Menu item stays visible to anonymous users; page shows auth prompt |
+| Products | Authenticated | Same |
+| Recipes | Authenticated | Same |
+| Categories | Authenticated | Same |
+| Hikings | Authenticated | Same |
+| About | Public | No auth guard |
+| Admin | App admin | Menu item hidden unless `isAppAdmin`; route guarded by `AdminLayout` |
 
 ### Entity Access Rights
 
-| Entity | Read | Create | Edit | Delete |
-|--------|------|--------|------|--------|
-| **Product (personal)** | All | Authenticated | Owner | Owner |
-| **Product (shared)** | All | Authenticated | System only | System only |
-| **Recipe (personal)** | All | Authenticated | Owner | Owner |
-| **Recipe (shared)** | All | Authenticated | System only | System only |
-| **Hiking** | All + admins | Authenticated | Owner + admins | Owner |
-| **Category** | All | System | System | System |
+| Entity | Read (UI) | Create | Edit | Delete |
+|--------|-----------|--------|------|--------|
+| **Product (personal)** | Authenticated | Authenticated | Owner | Owner |
+| **Product (shared)** | Authenticated | Authenticated | System only | System only |
+| **Recipe (personal)** | Authenticated | Authenticated | Owner | Owner |
+| **Recipe (shared)** | Authenticated | Authenticated | System only | System only |
+| **Hiking** | Authenticated | Authenticated | Owner + admins | Owner |
+| **Category** | Authenticated | System | System | System |
 
 ---
 
