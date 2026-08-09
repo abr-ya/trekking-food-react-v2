@@ -22,4 +22,4 @@ Scope confirmed: menu visibility for anonymous users stays unchanged; page guard
 
 - [x] 4.1 Add/adjust a Vitest unit test asserting menu-to-route consistency (every `MAIN_NAV` path matches a declared route) and that the admin item is admin-only.
 - [x] 4.2 Run `npm run tsc && npm run lint && npm run test`.
-- [ ] 4.3 Manual check: anonymous sees all non-admin items; protected pages show the auth prompt; active item highlights correctly; `/products` resolves.
+- [x] 4.3 Manual check: anonymous sees all non-admin items; protected pages show the auth prompt; active item highlights correctly; `/products` resolves.

@@ -59,7 +59,7 @@ Candidates, no numbers. Pick by meaning.
 
 | Slug                    | Feature                                   | Capability      | Prio | Ready? | Depends (slug) | Notes |
 |-------------------------|-------------------------------------------|-----------------|------|--------|----------------|-------|
-| switch-language         | UI language switcher (i18n)               | i18n            | P1   | no     | top-menu-audit | Choose approach in proposal (react-i18next vs react-intl vs lightweight custom); add locale state + switcher control; extract strings. First surface to localize = top menu. Blocked until nav is clean. |
+| switch-language         | UI language switcher (i18n)               | i18n            | P1   | no     | —              | Choose approach in proposal (react-i18next vs react-intl vs lightweight custom); add locale state + switcher control; extract strings. First surface to localize = top menu. Nav audit done; Ready? still no until i18n approach is chosen. |
 | edit-vegetarians-count  | Edit vegetarians count after create       | hikings         | P1   | yes    | —              | TODO in `docs/BUSINESS_LOGIC.md` ("Future: edit vegetarians count") |
 | global-error-boundary   | Global React error boundary               | (infra)         | P2   | yes    | —              | Gap noted in `docs/PROJECT_ANALYSIS.md` |
 | apifetch-retry          | Retry logic in `apiFetch` for network errs| (infra)         | P2   | yes    | —              | Gap noted in `docs/PROJECT_ANALYSIS.md` |
@@ -70,8 +70,8 @@ Candidates, no numbers. Pick by meaning.
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0001**.
+Append-only. Number = order implementation started. Next number = **0002**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
-| 0001 | top-menu-audit | navigation | 2026-08-09           | in-progress (feat-0001-top-menu-audit) |
+| 0001 | top-menu-audit | navigation | 2026-08-09           | archived (feat-0001-top-menu-audit) |

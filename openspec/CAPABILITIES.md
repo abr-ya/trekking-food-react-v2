@@ -22,7 +22,7 @@ touch each area through OpenSpec changes.
 | `shopping-list` | ✅ | ⬜ | Aggregate product totals across the trip; export | `src/components/hiking-page/shopping-list.tsx`, `src/lib/download.ts` |
 | `auth` | ✅ | ⬜ | Better Auth sessions; roles (anonymous / authenticated / owner / hiking-admin); protected routes; hiking admins management | `src/lib/auth-*.ts`, `src/providers/auth-provider.tsx`, `src/hooks/use-is-admin.ts`, `src/components/layout/protected-page.tsx` |
 | `admin-features` | 🟡 | ⬜ | Admin CRUD for marketing/roadmap "features" (status DRAFT→DONE, lang EN/RU, isMain), shown on the home/landing page | `src/api/features.ts`, `src/pages/admin/feature-*.tsx`, `src/components/features/features-accordion.tsx` |
-| `navigation` | ✅ | ⬜ | Top menu + admin nav: config-driven items (`MAIN_NAV` / `routes`), active-link highlight, admin-only Admin item; menu stays visible to anonymous users (auth prompt on protected pages) | `src/config/nav/*`, `src/components/layout/top-menu.tsx`, `src/components/layout/header.tsx` |
+| `navigation` | ✅ | ✅ | Top menu + admin nav: config-driven items (`MAIN_NAV` / `routes`), active-link highlight, admin-only Admin item; menu stays visible to anonymous users (auth prompt on protected pages) | `src/config/nav/*`, `src/components/layout/top-menu.tsx`, `src/components/layout/header.tsx` |
 | `i18n` | ⬜ | ⬜ | UI localization / language switching (approach TBD) | — (planned) |
 
 ## Known planned / gaps
