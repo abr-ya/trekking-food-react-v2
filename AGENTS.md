@@ -29,7 +29,11 @@ Key points (see `BACKLOG.md` for the full ritual):
   `feat-NNNN-<slug>` (OpenSpec names must start with a letter).
 - Commit scopes use the short project area / capability, not the build number:
   `docs(i18n): propose top-menu localization`, `feat(hikings): …`.
-- Run each change through `propose → apply → archive`.
+- Run each change through `propose → apply → sync accepted specs → archive`.
+- Before archiving, always check delta spec synchronization against
+  `openspec/specs/<capability>/spec.md`. If the OpenSpec CLI is unavailable,
+  perform the sync check manually and update accepted specs before moving the
+  change into `openspec/changes/archive/`.
 
 ## Checkpoints — pause and hand back to the human
 

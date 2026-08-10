@@ -7,7 +7,7 @@ Two separate registers:
 - **Build log** — append-only, **numbered**. A feature gets its number the moment
   you *start* implementing it. The number is the build order (not the order ideas
   were added) and is the through-line: `#0042` → change dir `0042-<slug>` →
-  archive `YYYY-MM-DD-0042-<slug>` → commits `feat(#0042): …`.
+  accepted-spec sync → archive `YYYY-MM-DD-0042-<slug>`.
 
 Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.md).
 
@@ -34,7 +34,8 @@ Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.
 - Naming: `<type>/<NNNN>-<slug>` where `type` is `feat` / `fix` / `chore`,
   `NNNN` is the build number, `slug` matches the change/idea slug.
   Example: `feat/0001-top-menu-audit`.
-- Commits reference the number: `feat(#0001): …`.
+- Commits use the short project area / capability as scope, not the build number:
+  `feat(navigation): …`, `docs(i18n): …`.
 - Creating the branch is the "pull" moment — it's when the number is assigned.
 
 **Pulling a task (start implementing)**
@@ -46,8 +47,12 @@ Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.
 5. Append a row to the Build log: `#`, `slug`, `capability`, today's date,
    `in-progress`.
 6. Remove the idea from the Idea pool.
-7. Run the change through `propose → apply → archive`, then set the Build log row
-   to `archived`.
+7. Run the change through `propose → apply`.
+8. Before archive, always check whether delta specs are synced into
+   `openspec/specs/<capability>/spec.md`; if the CLI is unavailable, do the sync
+   check manually.
+9. Archive only after accepted specs are synced or an explicit decision is made
+   to archive without syncing, then set the Build log row to `archived`.
 
 **Priorities:** `P0` (urgent) · `P1` (next up) · `P2` (later) · `P3` (nice to have).
 
@@ -76,4 +81,4 @@ Append-only. Number = order implementation started. Next number = **0003**.
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
 | 0001 | top-menu-audit | navigation | 2026-08-09           | archived (feat-0001-top-menu-audit) |
-| 0002 | switch-language | i18n       | 2026-08-09           | in-progress (feat-0002-switch-language) |
+| 0002 | switch-language | i18n       | 2026-08-09           | archived (feat-0002-switch-language) |
