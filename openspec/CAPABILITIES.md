@@ -13,7 +13,7 @@ touch each area through OpenSpec changes.
 
 | Capability | Status | Spec | What it covers | Key code |
 |---|---|---|---|---|
-| `products` | ✅ | ⬜ | Product catalog: nutrition (kkal/proteins/fats/carbs), price, vegetarian flag, category, personal vs. shared (`isCommon`); list with pagination + search + category filter | `src/api/products.ts`, `src/hooks/use-products.ts`, `src/components/forms/product-form.tsx`, `src/components/lists/products-list.tsx` |
+| `products` | ✅ | ✅ | Product catalog: nutrition (kkal/proteins/fats/carbs), price, vegetarian flag, category, personal vs. shared (`isCommon`); list with pagination + search + category filter | `src/api/products.ts`, `src/hooks/use-products.ts`, `src/components/forms/product-form.tsx`, `src/components/lists/products-list.tsx` |
 | `recipes` | ✅ | ⬜ | Recipes as sets of ingredients (product + grams/serving); create, list (paginated), detail; edit metadata; add/edit ingredients | `src/api/recipes.ts`, `src/hooks/use-recipes.ts`, `src/components/recipe-page/*`, `src/pages/recipe-detail-page.tsx` |
 | `categories` | ✅ | ⬜ | Product/recipe categories: list, create, edit, delete; multi-category filtering | `src/api/categories.ts`, `src/hooks/use-category-mutations.ts`, `src/components/lists/categories-list.tsx` |
 | `hikings` | ✅ | ⬜ | Trip entity: days/members/vegetarians, create, list (paginated + search), detail, group-size (`membersTotal`) change with pack recompute | `src/api/hikings.ts`, `src/hooks/use-hikings.ts`, `src/components/forms/create-hiking-form.tsx`, `src/components/hiking-page/hiking-info.tsx` |

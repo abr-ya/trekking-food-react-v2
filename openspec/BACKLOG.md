@@ -85,6 +85,9 @@ Candidates, no numbers. Pick by meaning.
 | critical-hooks-tests    | Tests for critical hooks (`use-*`)        | (infra)         | P1   | yes    | —              | Vitest set up, coverage thin |
 | react-testing-library-setup | Add React Testing Library for component behavior tests | (infra) | P2 | yes | — | Add `@testing-library/react`, `@testing-library/user-event`, and `@testing-library/jest-dom` only when we want DOM-level behavior tests; examples: render `TopMenu` in `MemoryRouter` and assert EN/RU labels, click the language switcher and assert menu labels update without reload, verify Admin visibility still follows auth role, verify active `NavLink` styling remains correct after locale changes. |
 | loading-skeletons       | Loading skeletons across pages            | (infra)         | P3   | yes    | —              | Skeleton exists, not used everywhere |
+| products-list-i18n      | Localize Products list/card surface       | i18n            | P2   | yes    | products-page-audit | Includes list heading, search/filter UI, pagination copy, card nutrition labels, empty/loading/error/page-empty states. |
+| products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
+| products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
 
 ---
 

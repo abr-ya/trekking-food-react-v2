@@ -10,6 +10,11 @@ export const resources = {
         about: "About",
         admin: "Admin",
       },
+      pages: {
+        products: {
+          title: "Products Page",
+        },
+      },
     },
   },
   ru: {
@@ -23,9 +28,15 @@ export const resources = {
         about: "О проекте",
         admin: "Админ",
       },
+      pages: {
+        products: {
+          title: "Страница продуктов",
+        },
+      },
     },
   },
 } as const;
 
-export type TranslationKey = keyof typeof resources.en.translation.nav;
-export type NavLabelKey = `nav.${TranslationKey}`;
+export type NavTranslationKey = keyof typeof resources.en.translation.nav;
+export type NavLabelKey = `nav.${NavTranslationKey}`;
+export type ProductsPageTitleKey = "pages.products.title";
