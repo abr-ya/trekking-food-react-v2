@@ -26,8 +26,9 @@ Key points (see `BACKLOG.md` for the full ritual):
   dependencies), not by number.
 - A feature gets its **build number** (`NNNN`) the moment work starts. That
   number is the through-line: branch `feat/NNNN-<slug>` → change
-  `feat-NNNN-<slug>` (OpenSpec names must start with a letter) → commits
-  `feat(#NNNN): …`.
+  `feat-NNNN-<slug>` (OpenSpec names must start with a letter).
+- Commit scopes use the short project area / capability, not the build number:
+  `docs(i18n): propose top-menu localization`, `feat(hikings): …`.
 - Run each change through `propose → apply → archive`.
 
 ## Checkpoints — pause and hand back to the human

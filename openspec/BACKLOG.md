@@ -59,19 +59,21 @@ Candidates, no numbers. Pick by meaning.
 
 | Slug                    | Feature                                   | Capability      | Prio | Ready? | Depends (slug) | Notes |
 |-------------------------|-------------------------------------------|-----------------|------|--------|----------------|-------|
-| switch-language         | UI language switcher (i18n)               | i18n            | P1   | no     | —              | Choose approach in proposal (react-i18next vs react-intl vs lightweight custom); add locale state + switcher control; extract strings. First surface to localize = top menu. Nav audit done; Ready? still no until i18n approach is chosen. |
 | edit-vegetarians-count  | Edit vegetarians count after create       | hikings         | P1   | yes    | —              | TODO in `docs/BUSINESS_LOGIC.md` ("Future: edit vegetarians count") |
 | global-error-boundary   | Global React error boundary               | (infra)         | P2   | yes    | —              | Gap noted in `docs/PROJECT_ANALYSIS.md` |
 | apifetch-retry          | Retry logic in `apiFetch` for network errs| (infra)         | P2   | yes    | —              | Gap noted in `docs/PROJECT_ANALYSIS.md` |
+| dependency-audit-followup | Review npm audit vulnerabilities        | (infra)         | P2   | yes    | —              | Follow up on `esbuild` Windows dev-server advisory (fix available via `npm audit fix`) and transitive `js-yaml` via `@mdxeditor/editor` (no fix available at report time); avoid `npm audit fix --force` without review. |
 | critical-hooks-tests    | Tests for critical hooks (`use-*`)        | (infra)         | P1   | yes    | —              | Vitest set up, coverage thin |
+| react-testing-library-setup | Add React Testing Library for component behavior tests | (infra) | P2 | yes | — | Add `@testing-library/react`, `@testing-library/user-event`, and `@testing-library/jest-dom` only when we want DOM-level behavior tests; examples: render `TopMenu` in `MemoryRouter` and assert EN/RU labels, click the language switcher and assert menu labels update without reload, verify Admin visibility still follows auth role, verify active `NavLink` styling remains correct after locale changes. |
 | loading-skeletons       | Loading skeletons across pages            | (infra)         | P3   | yes    | —              | Skeleton exists, not used everywhere |
 
 ---
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0002**.
+Append-only. Number = order implementation started. Next number = **0003**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
 | 0001 | top-menu-audit | navigation | 2026-08-09           | archived (feat-0001-top-menu-audit) |
+| 0002 | switch-language | i18n       | 2026-08-09           | in-progress (feat-0002-switch-language) |

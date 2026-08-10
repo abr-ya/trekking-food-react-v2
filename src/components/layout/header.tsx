@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 // import { useTheme } from "@/hooks/use-theme";
 import { HeaderAuth } from "./header-auth";
+import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
 import { TopMenu } from "./top-menu";
 
@@ -22,6 +23,7 @@ export const Header = () => {
         <TopMenu />
 
         <div className="flex items-center gap-4">
+          <LanguageSwitcher />
           <HeaderAuth />
           <ThemeToggle />
         </div>

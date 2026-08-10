@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { MAIN_NAV, routes } from "@/config/nav";
 import { isAppAdmin } from "@/lib/auth-roles";
@@ -7,6 +8,7 @@ import { useAuth } from "@/providers/auth-provider";
 
 export const TopMenu = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const visibleItems = MAIN_NAV.filter((item) => !item.requiresAppAdmin || isAppAdmin(user));
 
@@ -21,7 +23,7 @@ export const TopMenu = () => {
             cn("hover:underline", isActive ? "font-semibold text-foreground underline" : "text-muted-foreground")
           }
         >
-          {item.label}
+          {t(item.labelKey)}
         </NavLink>
       ))}
     </div>
