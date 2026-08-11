@@ -54,6 +54,20 @@ Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.
 9. Archive only after accepted specs are synced or an explicit decision is made
    to archive without syncing, then set the Build log row to `archived`.
 
+**Temporary docs archive flow**
+- This is a temporary migration rule while OpenSpec specs are being backfilled
+  screen-by-screen.
+- When a change audits or extends a screen, review only the `docs/` plans/reports
+  that are directly relevant to that screen or capability.
+- After their current behavior or decisions are represented in OpenSpec
+  (`openspec/changes/.../specs/**` and later accepted specs), move those processed
+  source docs to `docs/archive/`.
+- Do not archive unrelated docs as part of the same change.
+- Keep `docs/BUSINESS_LOGIC.md` and other intentionally authoritative docs active
+  unless a later change explicitly replaces their role.
+- This flow can be removed or relaxed after all screens, or at least most screens
+  and legacy `docs/` plans/reports, have been reviewed and folded into OpenSpec.
+
 **Priorities:** `P0` (urgent) · `P1` (next up) · `P2` (later) · `P3` (nice to have).
 
 ---
@@ -71,14 +85,18 @@ Candidates, no numbers. Pick by meaning.
 | critical-hooks-tests    | Tests for critical hooks (`use-*`)        | (infra)         | P1   | yes    | —              | Vitest set up, coverage thin |
 | react-testing-library-setup | Add React Testing Library for component behavior tests | (infra) | P2 | yes | — | Add `@testing-library/react`, `@testing-library/user-event`, and `@testing-library/jest-dom` only when we want DOM-level behavior tests; examples: render `TopMenu` in `MemoryRouter` and assert EN/RU labels, click the language switcher and assert menu labels update without reload, verify Admin visibility still follows auth role, verify active `NavLink` styling remains correct after locale changes. |
 | loading-skeletons       | Loading skeletons across pages            | (infra)         | P3   | yes    | —              | Skeleton exists, not used everywhere |
+| products-list-i18n      | Localize Products list/card surface       | i18n            | P2   | yes    | products-page-audit | Includes list heading, search/filter UI, pagination copy, card nutrition labels, empty/loading/error/page-empty states. |
+| products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
+| products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
 
 ---
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0003**.
+Append-only. Number = order implementation started. Next number = **0004**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
 | 0001 | top-menu-audit | navigation | 2026-08-09           | archived (feat-0001-top-menu-audit) |
 | 0002 | switch-language | i18n       | 2026-08-09           | archived (feat-0002-switch-language) |
+| 0003 | products-page-audit | products | 2026-08-10           | archived (feat-0003-products-page-audit) |
