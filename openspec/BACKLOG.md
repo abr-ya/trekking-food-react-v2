@@ -99,4 +99,4 @@ Append-only. Number = order implementation started. Next number = **0004**.
 |------|----------------|------------|----------------------|-----------------------------|
 | 0001 | top-menu-audit | navigation | 2026-08-09           | archived (feat-0001-top-menu-audit) |
 | 0002 | switch-language | i18n       | 2026-08-09           | archived (feat-0002-switch-language) |
-| 0003 | products-page-audit | products | 2026-08-10           | in-progress (feat-0003-products-page-audit) |
+| 0003 | products-page-audit | products | 2026-08-10           | archived (feat-0003-products-page-audit) |
