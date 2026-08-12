@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CategoryDialog, ColumnsWrapper, CreateRecipeForm, PageColumn, ProtectedPage, RecipesList } from "@/components";
 import { Button } from "@/components/ui/button";
 
 export const RecipesPage = () => {
+  const { t } = useTranslation();
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
 
   return (
-    <ProtectedPage title="Recipes">
+    <ProtectedPage title={t("pages.recipes.title")}>
       <ColumnsWrapper>
         <PageColumn title="Recipes list">
           <RecipesList />

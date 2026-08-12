@@ -14,6 +14,9 @@ export const resources = {
         products: {
           title: "Products Page",
         },
+        recipes: {
+          title: "Recipes",
+        },
       },
     },
   },
@@ -32,6 +35,9 @@ export const resources = {
         products: {
           title: "Страница продуктов",
         },
+        recipes: {
+          title: "Рецепты",
+        },
       },
     },
   },
@@ -39,4 +45,4 @@ export const resources = {
 
 export type NavTranslationKey = keyof typeof resources.en.translation.nav;
 export type NavLabelKey = `nav.${NavTranslationKey}`;
-export type ProductsPageTitleKey = "pages.products.title";
+export type PageTitleKey = `pages.${keyof typeof resources.en.translation.pages}.title`;

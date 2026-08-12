@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_LANGUAGE, getInitialLanguage, isSupportedLanguage } from "./locales";
-import { resources, type NavLabelKey, type ProductsPageTitleKey } from "./resources";
+import { resources, type NavLabelKey, type PageTitleKey } from "./resources";
 
 const navLabelKeys = [
   "nav.home",
@@ -13,7 +13,7 @@ const navLabelKeys = [
   "nav.admin",
 ] satisfies NavLabelKey[];
 
-const productsPageTitleKey = "pages.products.title" satisfies ProductsPageTitleKey;
+const pageTitleKeys = ["pages.products.title", "pages.recipes.title"] satisfies PageTitleKey[];
 
 describe("i18n resources", () => {
   it("supports only declared app languages", () => {
@@ -37,14 +37,17 @@ describe("i18n resources", () => {
     }
   });
 
-  it("defines English and Russian Products page title labels", () => {
-    const [, , titleKey] = productsPageTitleKey.split(".") as [
-      "pages",
-      "products",
-      keyof typeof resources.en.translation.pages.products,
-    ];
+  it("defines English and Russian page title labels", () => {
+    for (const key of pageTitleKeys) {
+      const [, pageKey, titleKey] = key.split(".") as ["pages", keyof typeof resources.en.translation.pages, "title"];
 
-    expect(resources.en.translation.pages.products[titleKey]).toBe("Products Page");
-    expect(resources.ru.translation.pages.products[titleKey]).toBe("Страница продуктов");
+      expect(resources.en.translation.pages[pageKey][titleKey]).toBeTruthy();
+      expect(resources.ru.translation.pages[pageKey][titleKey]).toBeTruthy();
+    }
+
+    expect(resources.en.translation.pages.products.title).toBe("Products Page");
+    expect(resources.ru.translation.pages.products.title).toBe("Страница продуктов");
+    expect(resources.en.translation.pages.recipes.title).toBe("Recipes");
+    expect(resources.ru.translation.pages.recipes.title).toBe("Рецепты");
   });
 });
