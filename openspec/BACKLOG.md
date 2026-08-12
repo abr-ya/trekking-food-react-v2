@@ -94,11 +94,11 @@ Candidates, no numbers. Pick by meaning.
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0004**.
+Append-only. Number = order implementation started. Next number = **0005**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
 | 0001 | top-menu-audit | navigation | 2026-08-09           | archived (feat-0001-top-menu-audit) |
 | 0002 | switch-language | i18n       | 2026-08-09           | archived (feat-0002-switch-language) |
 | 0003 | products-page-audit | products | 2026-08-10           | archived (feat-0003-products-page-audit) |
-| 0004 | recipes-page-audit | recipes | 2026-08-12           | in-progress (feat-0004-recipes-page-audit) |
+| 0004 | recipes-page-audit | recipes | 2026-08-12           | archived (feat-0004-recipes-page-audit) |
