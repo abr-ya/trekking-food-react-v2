@@ -13,7 +13,11 @@ const navLabelKeys = [
   "nav.admin",
 ] satisfies NavLabelKey[];
 
-const pageTitleKeys = ["pages.products.title", "pages.recipes.title"] satisfies PageTitleKey[];
+const pageTitleKeys = [
+  "pages.products.title",
+  "pages.recipes.title",
+  "pages.categories.title",
+] satisfies PageTitleKey[];
 
 describe("i18n resources", () => {
   it("supports only declared app languages", () => {
@@ -49,5 +53,7 @@ describe("i18n resources", () => {
     expect(resources.ru.translation.pages.products.title).toBe("Страница продуктов");
     expect(resources.en.translation.pages.recipes.title).toBe("Recipes");
     expect(resources.ru.translation.pages.recipes.title).toBe("Рецепты");
+    expect(resources.en.translation.pages.categories.title).toBe("Categories");
+    expect(resources.ru.translation.pages.categories.title).toBe("Категории");
   });
 });
