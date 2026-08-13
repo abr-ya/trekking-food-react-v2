@@ -17,6 +17,9 @@ export const resources = {
         recipes: {
           title: "Recipes",
         },
+        categories: {
+          title: "Categories",
+        },
       },
     },
   },
@@ -37,6 +40,9 @@ export const resources = {
         },
         recipes: {
           title: "Рецепты",
+        },
+        categories: {
+          title: "Категории",
         },
       },
     },

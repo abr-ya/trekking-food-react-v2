@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CategoriesList, ColumnsWrapper, PageColumn, ProtectedPage, type CategoryListEditPayload } from "@/components";
 import { Button } from "@/components/ui/button";
 import { CategoryDialog } from "@/components/dialogs/category-dialog";
 import type { CategoryKind } from "@/types/category";
 
 export const CategoriesPage = () => {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogKind, setDialogKind] = useState<CategoryKind>("product");
   const [editing, setEditing] = useState<CategoryListEditPayload | null>(null);
@@ -29,7 +31,7 @@ export const CategoriesPage = () => {
   };
 
   return (
-    <ProtectedPage title="Categories">
+    <ProtectedPage title={t("pages.categories.title")}>
       <ColumnsWrapper>
         <PageColumn title="Product categories" description="Categories from the API (GET /product-categories).">
           <div className="flex flex-wrap items-center gap-2">
