@@ -86,6 +86,7 @@ Candidates, no numbers. Pick by meaning.
 | react-testing-library-setup | Add React Testing Library for component behavior tests | (infra) | P2 | yes | — | Add `@testing-library/react`, `@testing-library/user-event`, and `@testing-library/jest-dom` only when we want DOM-level behavior tests; examples: render `TopMenu` in `MemoryRouter` and assert EN/RU labels, click the language switcher and assert menu labels update without reload, verify Admin visibility still follows auth role, verify active `NavLink` styling remains correct after locale changes. |
 | loading-skeletons       | Loading skeletons across pages            | (infra)         | P3   | yes    | —              | Skeleton exists, not used everywhere |
 | recipe-detail-page-audit | Backfill Recipe detail page spec         | recipes         | P2   | yes    | recipes-page-audit | Separate `/recipes/:id` feature; cover detail composition, metadata/category edit flows, ingredient actions, permissions, and archive directly represented detail-page docs such as `edit-recipe-metadata-*`. |
+| categories-table-pagination | Redesign Categories lists as paginated tables | categories | P2 | no | categories-page-audit | Clarify backend readiness first: whether product/recipe category list endpoints support pagination metadata and page/limit parameters. |
 | products-list-i18n      | Localize Products list/card surface       | i18n            | P2   | yes    | products-page-audit | Includes list heading, search/filter UI, pagination copy, card nutrition labels, empty/loading/error/page-empty states. |
 | products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
 | products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
@@ -94,7 +95,7 @@ Candidates, no numbers. Pick by meaning.
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0005**.
+Append-only. Number = order implementation started. Next number = **0006**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
@@ -102,3 +103,4 @@ Append-only. Number = order implementation started. Next number = **0005**.
 | 0002 | switch-language | i18n       | 2026-08-09           | archived (feat-0002-switch-language) |
 | 0003 | products-page-audit | products | 2026-08-10           | archived (feat-0003-products-page-audit) |
 | 0004 | recipes-page-audit | recipes | 2026-08-12           | archived (feat-0004-recipes-page-audit) |
+| 0005 | categories-page-audit | categories | 2026-08-13           | in-progress (feat-0005-categories-page-audit) |
