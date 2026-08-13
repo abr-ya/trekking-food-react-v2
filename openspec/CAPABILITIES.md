@@ -14,7 +14,7 @@ touch each area through OpenSpec changes.
 | Capability | Status | Spec | What it covers | Key code |
 |---|---|---|---|---|
 | `products` | ✅ | ✅ | Product catalog: nutrition (kkal/proteins/fats/carbs), price, vegetarian flag, category, personal vs. shared (`isCommon`); list with pagination + search + category filter | `src/api/products.ts`, `src/hooks/use-products.ts`, `src/components/forms/product-form.tsx`, `src/components/lists/products-list.tsx` |
-| `recipes` | ✅ | ⬜ | Recipes as sets of ingredients (product + grams/serving); create, list (paginated), detail; edit metadata; add/edit ingredients | `src/api/recipes.ts`, `src/hooks/use-recipes.ts`, `src/components/recipe-page/*`, `src/pages/recipe-detail-page.tsx` |
+| `recipes` | ✅ | ✅ | Recipes as sets of ingredients (product + grams/serving); create, list (paginated), detail; edit metadata; add/edit ingredients | `src/api/recipes.ts`, `src/hooks/use-recipes.ts`, `src/components/recipe-page/*`, `src/pages/recipe-detail-page.tsx` |
 | `categories` | ✅ | ⬜ | Product/recipe categories: list, create, edit, delete; multi-category filtering | `src/api/categories.ts`, `src/hooks/use-category-mutations.ts`, `src/components/lists/categories-list.tsx` |
 | `hikings` | ✅ | ⬜ | Trip entity: days/members/vegetarians, create, list (paginated + search), detail, group-size (`membersTotal`) change with pack recompute | `src/api/hikings.ts`, `src/hooks/use-hikings.ts`, `src/components/forms/create-hiking-form.tsx`, `src/components/hiking-page/hiking-info.tsx` |
 | `food-planning` | ✅ | ⬜ | Distribute products/recipes across days × meal times; per-person and total quantities; auto-calc totals; day comments | `src/components/hiking-page/food-plan.tsx`, `day-eatings.tsx`, `recipes-by-days.tsx`, `day-comment.tsx`, `src/api/eatings.ts` |
@@ -23,7 +23,7 @@ touch each area through OpenSpec changes.
 | `auth` | ✅ | ⬜ | Better Auth sessions; roles (anonymous / authenticated / owner / hiking-admin); protected routes; hiking admins management | `src/lib/auth-*.ts`, `src/providers/auth-provider.tsx`, `src/hooks/use-is-admin.ts`, `src/components/layout/protected-page.tsx` |
 | `admin-features` | 🟡 | ⬜ | Admin CRUD for marketing/roadmap "features" (status DRAFT→DONE, lang EN/RU, isMain), shown on the home/landing page | `src/api/features.ts`, `src/pages/admin/feature-*.tsx`, `src/components/features/features-accordion.tsx` |
 | `navigation` | ✅ | ✅ | Top menu + admin nav: config-driven items (`MAIN_NAV` / `routes`), active-link highlight, admin-only Admin item; menu stays visible to anonymous users (auth prompt on protected pages) | `src/config/nav/*`, `src/components/layout/top-menu.tsx`, `src/components/layout/header.tsx` |
-| `i18n` | 🟡 | ✅ | UI language switching foundation (`en`/`ru`) with persisted locale; first localized surface is the top menu only | `src/i18n/*`, `src/components/layout/language-switcher.tsx`, `src/components/layout/top-menu.tsx` |
+| `i18n` | 🟡 | ✅ | UI language switching foundation (`en`/`ru`) with persisted locale; localized surfaces include the top menu and selected page titles | `src/i18n/*`, `src/components/layout/language-switcher.tsx`, `src/components/layout/top-menu.tsx` |
 
 ## Known planned / gaps
 
