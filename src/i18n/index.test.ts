@@ -17,6 +17,7 @@ const pageTitleKeys = [
   "pages.products.title",
   "pages.recipes.title",
   "pages.categories.title",
+  "pages.hikings.title",
 ] satisfies PageTitleKey[];
 
 describe("i18n resources", () => {
@@ -55,5 +56,7 @@ describe("i18n resources", () => {
     expect(resources.ru.translation.pages.recipes.title).toBe("Рецепты");
     expect(resources.en.translation.pages.categories.title).toBe("Categories");
     expect(resources.ru.translation.pages.categories.title).toBe("Категории");
+    expect(resources.en.translation.pages.hikings.title).toBe("Hikings");
+    expect(resources.ru.translation.pages.hikings.title).toBe("Походы");
   });
 });
