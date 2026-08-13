@@ -15,11 +15,11 @@
 
 - [x] 3.1 Review directly related `docs/` files and identify which, if any, are fully represented by this `/hikings` list/create screen spec.
 - [x] 3.2 Move only fully represented `/hikings` list/create docs to `docs/archive/`; leave hiking detail/tab docs active for later audit features.
-- [ ] 3.3 Sync the `hikings` and `i18n` delta specs into accepted specs before archive.
-- [ ] 3.4 Update the Build log status during closeout.
+- [x] 3.3 Sync the `hikings` and `i18n` delta specs into accepted specs before archive.
+- [x] 3.4 Update the Build log status during closeout.
 
 ## 4. Verification
 
 - [x] 4.1 Run `openspec validate --changes --strict`.
-- [ ] 4.2 Run `openspec validate --specs --strict` after accepted-spec sync.
+- [x] 4.2 Run `openspec validate --specs --strict` after accepted-spec sync.
 - [x] 4.3 Run `npm run tsc && npm run lint && npm run test`.
