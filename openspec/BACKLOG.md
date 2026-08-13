@@ -93,12 +93,15 @@ Candidates, no numbers. Pick by meaning.
 | products-list-i18n      | Localize Products list/card surface       | i18n            | P2   | yes    | products-page-audit | Includes list heading, search/filter UI, pagination copy, card nutrition labels, empty/loading/error/page-empty states. |
 | products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
 | products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
+| hiking-detail-page-audit | Backfill Hiking detail page spec          | hikings         | P2   | yes    | hikings-page-audit | Separate `/hikings/:id` feature; cover detail page composition, tab navigation, shared permissions, and split deeper tab audits for food plan, packing, shopping list, admins, day comments, and group-size behavior as needed. |
+| hikings-list-i18n       | Localize Hikings list/card surface        | i18n            | P2   | yes    | hikings-page-audit | Includes list column title, loading/error/empty states, pagination metadata copy, card summary labels/plurals, and detail navigation text. |
+| hikings-create-form-i18n | Localize Hikings create form             | i18n            | P2   | yes    | hikings-page-audit | Includes create column title/description, form labels/help text/placeholders, validation-facing copy where local, submit pending button, and success/reset-adjacent copy if present. |
 
 ---
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0006**.
+Append-only. Number = order implementation started. Next number = **0007**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
@@ -107,3 +110,4 @@ Append-only. Number = order implementation started. Next number = **0006**.
 | 0003 | products-page-audit | products | 2026-08-10           | archived (feat-0003-products-page-audit) |
 | 0004 | recipes-page-audit | recipes | 2026-08-12           | archived (feat-0004-recipes-page-audit) |
 | 0005 | categories-page-audit | categories | 2026-08-13           | archived (feat-0005-categories-page-audit) |
+| 0006 | hikings-page-audit | hikings | 2026-08-13           | in-progress (feat-0006-hikings-page-audit) |
