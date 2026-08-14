@@ -20,6 +20,9 @@ export const resources = {
         categories: {
           title: "Categories",
         },
+        hikings: {
+          title: "Hikings",
+        },
       },
     },
   },
@@ -43,6 +46,9 @@ export const resources = {
         },
         categories: {
           title: "Категории",
+        },
+        hikings: {
+          title: "Походы",
         },
       },
     },
