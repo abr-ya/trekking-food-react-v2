@@ -41,6 +41,12 @@ Stop and tell the user (do not proceed automatically) at these points:
 
 - **After the feature spec/proposal is created, before implementation.** Present
   what will be built and wait for approval to start coding.
+- **After implementation/validation, before accepted-spec sync.** Do not update
+  `openspec/specs/<capability>/spec.md` until the user explicitly approves spec
+  sync for the change.
+- **After accepted-spec sync, before archive.** Do not move the change into
+  `openspec/changes/archive/` or mark it archived until the user explicitly
+  approves archiving.
 
 ## Commands: who runs what
 

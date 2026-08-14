@@ -59,4 +59,16 @@ describe("i18n resources", () => {
     expect(resources.en.translation.pages.hikings.title).toBe("Hikings");
     expect(resources.ru.translation.pages.hikings.title).toBe("Походы");
   });
+
+  it("defines English and Russian Hiking detail page chrome labels", () => {
+    expect(resources.en.translation.pages.hikingDetail.title).toBe("Hiking");
+    expect(resources.ru.translation.pages.hikingDetail.title).toBe("Поход");
+    expect(resources.en.translation.pages.hikingDetail.backToHikings).toBe("← Back to hikings");
+    expect(resources.ru.translation.pages.hikingDetail.backToHikings).toBe("← Назад к походам");
+
+    for (const tabKey of ["overview", "foodPlan", "shoppingList", "packsByDays", "packsByUsers"] as const) {
+      expect(resources.en.translation.pages.hikingDetail.tabs[tabKey]).toBeTruthy();
+      expect(resources.ru.translation.pages.hikingDetail.tabs[tabKey]).toBeTruthy();
+    }
+  });
 });
