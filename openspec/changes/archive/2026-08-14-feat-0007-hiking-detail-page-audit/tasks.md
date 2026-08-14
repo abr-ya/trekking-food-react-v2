@@ -12,9 +12,9 @@
 
 ## 3. Spec Sync And Closeout
 
-- [ ] 3.1 Sync the `hikings` delta spec into `openspec/specs/hikings/spec.md`.
-- [ ] 3.2 Sync the `i18n` delta spec into `openspec/specs/i18n/spec.md`.
-- [ ] 3.3 Update capability/backlog status as needed before archive.
-- [ ] 3.4 Run `npm run tsc && npm run lint && npm run test`.
-- [ ] 3.5 Validate OpenSpec specs and changes in strict mode.
-- [ ] 3.6 Archive the change only after accepted specs are synced.
+- [x] 3.1 Sync the `hikings` delta spec into `openspec/specs/hikings/spec.md`.
+- [x] 3.2 Sync the `i18n` delta spec into `openspec/specs/i18n/spec.md`.
+- [x] 3.3 Update capability/backlog status as needed before archive.
+- [x] 3.4 Run `npm run tsc && npm run lint && npm run test`.
+- [x] 3.5 Validate OpenSpec specs and changes in strict mode.
+- [x] 3.6 Archive the change only after accepted specs are synced.

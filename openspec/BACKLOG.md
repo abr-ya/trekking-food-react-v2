@@ -120,4 +120,4 @@ Append-only. Number = order implementation started. Next number = **0008**.
 | 0004 | recipes-page-audit | recipes | 2026-08-12           | archived (feat-0004-recipes-page-audit) |
 | 0005 | categories-page-audit | categories | 2026-08-13           | archived (feat-0005-categories-page-audit) |
 | 0006 | hikings-page-audit | hikings | 2026-08-13           | archived (feat-0006-hikings-page-audit) |
-| 0007 | hiking-detail-page-audit | hikings | 2026-08-14           | in-progress (feat-0007-hiking-detail-page-audit) |
+| 0007 | hiking-detail-page-audit | hikings | 2026-08-14           | archived (feat-0007-hiking-detail-page-audit) |
