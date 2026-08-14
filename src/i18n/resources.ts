@@ -23,6 +23,17 @@ export const resources = {
         hikings: {
           title: "Hikings",
         },
+        hikingDetail: {
+          title: "Hiking",
+          backToHikings: "← Back to hikings",
+          tabs: {
+            overview: "Overview",
+            foodPlan: "Food plan",
+            shoppingList: "Shopping List",
+            packsByDays: "Packs by Days",
+            packsByUsers: "Packs by Users",
+          },
+        },
       },
     },
   },
@@ -50,6 +61,17 @@ export const resources = {
         hikings: {
           title: "Походы",
         },
+        hikingDetail: {
+          title: "Поход",
+          backToHikings: "← Назад к походам",
+          tabs: {
+            overview: "Обзор",
+            foodPlan: "План питания",
+            shoppingList: "Список покупок",
+            packsByDays: "Рюкзаки по дням",
+            packsByUsers: "Рюкзаки по участникам",
+          },
+        },
       },
     },
   },
@@ -57,4 +79,10 @@ export const resources = {
 
 export type NavTranslationKey = keyof typeof resources.en.translation.nav;
 export type NavLabelKey = `nav.${NavTranslationKey}`;
-export type PageTitleKey = `pages.${keyof typeof resources.en.translation.pages}.title`;
+export type PageTitleKey = {
+  [PageKey in keyof typeof resources.en.translation.pages]: (typeof resources.en.translation.pages)[PageKey] extends {
+    title: string;
+  }
+    ? `pages.${PageKey}.title`
+    : never;
+}[keyof typeof resources.en.translation.pages];

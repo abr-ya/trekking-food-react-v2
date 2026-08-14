@@ -1,14 +1,14 @@
 ## 1. Page Chrome Localization
 
-- [ ] 1.1 Add Hiking detail page i18n keys for the generic title fallback, back link, and top-level tab labels.
-- [ ] 1.2 Update `src/pages/hiking-detail-page.tsx` to render only those page-chrome strings through `useTranslation()`.
-- [ ] 1.3 Extend i18n resource tests to cover the new Hiking detail page chrome keys.
+- [x] 1.1 Add Hiking detail page i18n keys for the generic title fallback, back link, and top-level tab labels.
+- [x] 1.2 Update `src/pages/hiking-detail-page.tsx` to render only those page-chrome strings through `useTranslation()`.
+- [x] 1.3 Extend i18n resource tests to cover the new Hiking detail page chrome keys.
 
 ## 2. Docs And Follow-Up Planning
 
-- [ ] 2.1 Review directly related `docs/` files for Hiking detail behavior and identify which are fully represented by accepted specs after this change.
-- [ ] 2.2 Move only fully represented docs into `docs/archive/`; leave partial tab-specific docs active for follow-up stories.
-- [ ] 2.3 Confirm `openspec/BACKLOG.md` includes separate follow-up audit and i18n stories for Overview, Food plan, Shopping List, Packs by Days, and Packs by Users.
+- [x] 2.1 Review directly related `docs/` files for Hiking detail behavior and identify which are fully represented by accepted specs after this change.
+- [x] 2.2 Move only fully represented docs into `docs/archive/`; leave partial tab-specific docs active for follow-up stories.
+- [x] 2.3 Confirm `openspec/BACKLOG.md` includes separate follow-up audit and i18n stories for Overview, Food plan, Shopping List, Packs by Days, and Packs by Users.
 
 ## 3. Spec Sync And Closeout
 
