@@ -96,6 +96,18 @@ Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.
 
 Candidates, no numbers. Pick by meaning.
 
+### Hiking detail remaining tab audits
+
+High-priority block for the remaining `/hikings/:id` tab audit/backfill work.
+
+| Slug                    | Feature                                   | Capability      | Prio | Ready? | Depends (slug) | Notes |
+|-------------------------|-------------------------------------------|-----------------|------|--------|----------------|-------|
+| hiking-shopping-list-tab-audit | Backfill Hiking shopping list tab spec | shopping-list   | P1   | yes    | hiking-detail-page-audit | Cover product totals loading/empty/populated states, table columns/totals, pack-kind display, and promote-to-trip-pack action boundary. |
+| hiking-packs-by-days-tab-audit | Backfill Hiking Packs by Days tab spec | packing         | P1   | yes    | hiking-detail-page-audit | Cover per-day nested tabs, unassigned/day-pack columns, drag-and-drop assignment, auto-distribute, trip-pack display, and related pack docs. |
+| hiking-packs-by-users-tab-audit | Backfill Hiking Packs by Users tab spec | packing        | P1   | yes    | hiking-detail-page-audit | Cover member-oriented pack layout, trip-pack row, drag-and-drop member slots, save mutations, unsaved state, per-column TXT export, and related pack docs. |
+
+### Other candidates
+
 | Slug                    | Feature                                   | Capability      | Prio | Ready? | Depends (slug) | Notes |
 |-------------------------|-------------------------------------------|-----------------|------|--------|----------------|-------|
 | edit-vegetarians-count  | Edit vegetarians count after create       | hikings         | P1   | yes    | —              | TODO in `docs/BUSINESS_LOGIC.md` ("Future: edit vegetarians count") |
@@ -113,13 +125,9 @@ Candidates, no numbers. Pick by meaning.
 | products-list-i18n      | Localize Products list/card surface       | i18n            | P2   | yes    | products-page-audit | Includes list heading, search/filter UI, pagination copy, card nutrition labels, empty/loading/error/page-empty states. |
 | products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
 | products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
-| hiking-overview-tab-i18n | Localize Hiking overview tab surface      | i18n            | P2   | yes    | hiking-overview-tab-audit | Includes overview labels, admins copy, loading/error/not-found states, Add admin dialog, and Edit members total dialog copy. |
 | hiking-food-plan-tab-i18n | Localize Hiking food plan tab surface    | i18n            | P2   | yes    | hiking-food-plan-tab-audit | Includes add recipe form copy, recipes-by-days copy, nested day tabs, day comments, day eating labels/states, and related dialogs. |
-| hiking-shopping-list-tab-audit | Backfill Hiking shopping list tab spec | shopping-list   | P2   | yes    | hiking-detail-page-audit | Cover product totals loading/empty/populated states, table columns/totals, pack-kind display, and promote-to-trip-pack action boundary. |
 | hiking-shopping-list-tab-i18n | Localize Hiking shopping list tab surface | i18n          | P2   | yes    | hiking-shopping-list-tab-audit | Includes empty/loading copy, table headings, totals copy, pack-kind labels, and promote-to-trip-pack dialog copy. |
-| hiking-packs-by-days-tab-audit | Backfill Hiking Packs by Days tab spec | packing         | P2   | yes    | hiking-detail-page-audit | Cover per-day nested tabs, unassigned/day-pack columns, drag-and-drop assignment, auto-distribute, trip-pack display, and related pack docs. |
 | hiking-packs-by-days-tab-i18n | Localize Hiking Packs by Days tab surface | i18n          | P2   | yes    | hiking-packs-by-days-tab-audit | Includes day/pack labels, unassigned copy, auto-distribute copy, loading/error states, and day-pack card text. |
-| hiking-packs-by-users-tab-audit | Backfill Hiking Packs by Users tab spec | packing        | P2   | yes    | hiking-detail-page-audit | Cover member-oriented pack layout, trip-pack row, drag-and-drop member slots, save mutations, unsaved state, per-column TXT export, and related pack docs. |
 | hiking-packs-by-users-tab-i18n | Localize Hiking Packs by Users tab surface | i18n         | P2   | yes    | hiking-packs-by-users-tab-audit | Includes headers, row/cell labels, save/export buttons, unsaved/pending/error states, empty states, and trip-pack row copy. |
 | hikings-list-i18n       | Localize Hikings list/card surface        | i18n            | P2   | yes    | hikings-page-audit | Includes list column title, loading/error/empty states, pagination metadata copy, card summary labels/plurals, and detail navigation text. |
 | hikings-create-form-i18n | Localize Hikings create form             | i18n            | P2   | yes    | hikings-page-audit | Includes create column title/description, form labels/help text/placeholders, validation-facing copy where local, submit pending button, and success/reset-adjacent copy if present. |
@@ -128,7 +136,7 @@ Candidates, no numbers. Pick by meaning.
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0009**.
+Append-only. Number = order implementation started. Next number = **0011**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
@@ -140,4 +148,5 @@ Append-only. Number = order implementation started. Next number = **0009**.
 | 0006 | hikings-page-audit | hikings | 2026-08-13           | archived (feat-0006-hikings-page-audit) |
 | 0007 | hiking-detail-page-audit | hikings | 2026-08-14           | archived (feat-0007-hiking-detail-page-audit) |
 | 0008 | hiking-overview-tab-audit | hikings | 2026-08-14           | archived (feat-0008-hiking-overview-tab-audit) |
-| 0009 | hiking-food-plan-tab-audit | food-planning | 2026-08-15           | in-progress (feat-0009-hiking-food-plan-tab-audit) |
+| 0009 | hiking-food-plan-tab-audit | food-planning | 2026-08-15           | archived (feat-0009-hiking-food-plan-tab-audit) |
+| 0010 | hiking-overview-tab-i18n | i18n | 2026-08-15           | proposed (feat-0010-hiking-overview-tab-i18n) |
