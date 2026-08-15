@@ -68,6 +68,26 @@ Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.
 - This flow can be removed or relaxed after all screens, or at least most screens
   and legacy `docs/` plans/reports, have been reviewed and folded into OpenSpec.
 
+**Living reference docs**
+- Use `docs/reference/` for active technical references that complement accepted
+  OpenSpec specs instead of replacing them: endpoint contracts, payload/response
+  examples, hook/API/schema mappings, cache invalidation notes, and other
+  implementation-facing lookup material.
+- When processing an old `docs/` feature document, decide whether it is a
+  historical plan/report or a living reference:
+  - Move historical plans/reports to `docs/archive/` after the represented
+    behavior is captured in accepted specs.
+  - Move living references to `docs/reference/` with a stable, capability-scoped
+    kebab-case name, for example
+    `docs/reference/hikings-members-total-api.md`.
+- Accepted specs may include a short `Reference:` line to a relevant
+  `docs/reference/` file when the technical details are useful but too detailed
+  for requirement scenarios. Keep OpenSpec as the product/behavior source of
+  truth; keep reference docs as technical supplements.
+- Do not move `docs/BUSINESS_LOGIC.md` into `docs/reference/`; it remains the
+  authoritative domain model unless a separate change explicitly replaces that
+  role.
+
 **Priorities:** `P0` (urgent) · `P1` (next up) · `P2` (later) · `P3` (nice to have).
 
 ---

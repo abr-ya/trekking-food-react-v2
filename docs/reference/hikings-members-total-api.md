@@ -6,8 +6,9 @@ Dedicated backend endpoint and frontend flow to change `membersTotal` for an exi
 
 Related docs:
 
-- Implementation plan: [`members-total-patch-plan.md`](members-total-patch-plan.md)
-- Business rules: [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md) — Hiking entity, use case §11, calculation formulas
+- Business rules: [`BUSINESS_LOGIC.md`](../BUSINESS_LOGIC.md) — Hiking entity, use case §11, calculation formulas
+- Archived implementation notes: [`members-total-patch-plan.md`](../archive/members-total-patch-plan.md) and
+  [`members-total-patch-implementation-report.md`](../archive/members-total-patch-implementation-report.md)
 
 ---
 
@@ -64,12 +65,12 @@ In one transaction:
 
 | Layer | Symbol | Location |
 |-------|--------|----------|
-| Type | `UpdateHikingMembersTotalPayload` | [`src/types/hiking.ts`](../src/types/hiking.ts) |
-| API | `patchHikingMembersTotal` | [`src/api/hikings.ts`](../src/api/hikings.ts) |
-| Schema | `createUpdateMembersTotalSchema(vegetariansTotal)` | [`src/schemas/hiking.ts`](../src/schemas/hiking.ts) |
-| Hook | `useUpdateHikingMembersTotal` | [`src/hooks/use-hikings.ts`](../src/hooks/use-hikings.ts) |
-| UI | `EditMembersTotalDialog` | [`src/components/dialogs/edit-members-total-dialog.tsx`](../src/components/dialogs/edit-members-total-dialog.tsx) |
-| Page | Overview tab — `HikingInfo` | [`src/components/hiking-page/hiking-info.tsx`](../src/components/hiking-page/hiking-info.tsx) |
+| Type | `UpdateHikingMembersTotalPayload` | [`src/types/hiking.ts`](../../src/types/hiking.ts) |
+| API | `patchHikingMembersTotal` | [`src/api/hikings.ts`](../../src/api/hikings.ts) |
+| Schema | `createUpdateMembersTotalSchema(vegetariansTotal)` | [`src/schemas/hiking.ts`](../../src/schemas/hiking.ts) |
+| Hook | `useUpdateHikingMembersTotal` | [`src/hooks/use-hikings.ts`](../../src/hooks/use-hikings.ts) |
+| UI | `EditMembersTotalDialog` | [`src/components/dialogs/edit-members-total-dialog.tsx`](../../src/components/dialogs/edit-members-total-dialog.tsx) |
+| Page | Overview tab — `HikingInfo` | [`src/components/hiking-page/hiking-info.tsx`](../../src/components/hiking-page/hiking-info.tsx) |
 
 ### Query invalidation (`useUpdateHikingMembersTotal`)
 
@@ -93,8 +94,8 @@ On success:
 
 **Not implemented** in this feature.
 
-- **Create:** `vegetariansTotal` is set in `POST /hikings` (see [`create-hiking-form.tsx`](../src/components/forms/create-hiking-form.tsx)).
-- **After create:** no API or UI to change vegetarians; README and [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md) document this gap.
+- **Create:** `vegetariansTotal` is set in `POST /hikings` (see [`create-hiking-form.tsx`](../../src/components/forms/create-hiking-form.tsx)).
+- **After create:** no API or UI to change vegetarians; README and [`BUSINESS_LOGIC.md`](../BUSINESS_LOGIC.md) document this gap.
 - **Future:** a dedicated endpoint should enforce `vegetariansTotal ≤ membersTotal` (user may need to increase group size first via `members-total`).
 
 ---

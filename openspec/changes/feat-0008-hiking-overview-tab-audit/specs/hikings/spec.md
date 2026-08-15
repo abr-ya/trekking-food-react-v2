@@ -47,6 +47,9 @@ when hiking detail data is available.
 The system SHALL expose the existing group-size edit action from the Overview
 tab next to the members total value.
 
+Reference: `docs/reference/hikings-members-total-api.md` covers the endpoint,
+payload, response, authorization, and frontend hook/API/schema mapping.
+
 #### Scenario: User opens group-size edit
 
 - **WHEN** the Overview tab has hiking detail data
