@@ -131,6 +131,8 @@ High-priority block for the remaining `/hikings/:id` tab audit/backfill work.
 | hiking-packs-by-users-tab-i18n | Localize Hiking Packs by Users tab surface | i18n         | P2   | yes    | hiking-packs-by-users-tab-audit | Includes headers, row/cell labels, save/export buttons, unsaved/pending/error states, empty states, and trip-pack row copy. |
 | hikings-list-i18n       | Localize Hikings list/card surface        | i18n            | P2   | yes    | hikings-page-audit | Includes list column title, loading/error/empty states, pagination metadata copy, card summary labels/plurals, and detail navigation text. |
 | hikings-create-form-i18n | Localize Hikings create form             | i18n            | P2   | yes    | hikings-page-audit | Includes create column title/description, form labels/help text/placeholders, validation-facing copy where local, submit pending button, and success/reset-adjacent copy if present. |
+| hiking-add-admin-by-identity | Add hiking admin by email (and/or name) instead of raw user id | hikings | P2 | no | hiking-overview-tab-audit | Replace `AddHikingAdminDialog` user-id field with a safer identity lookup. Prefer exact email match first; optional name search only with strict limits (min query length, result cap, no broad directory dump). Confirm backend user-lookup contract before coding. Do not invent free-text fuzzy search that leaks user lists. Invitations for unknown emails are out of scope here — see `hiking-admin-invitations`. |
+| hiking-admin-invitations | Invite non-existing users as hiking admins by email | hikings | P3 | no | hiking-add-admin-by-identity | Later layer: if email is not an existing account, send/create an invitation instead of failing. Needs product rules (expiry, accept flow, permissions) and backend support — design carefully before Ready=yes. |
 
 ---
 
@@ -149,4 +151,4 @@ Append-only. Number = order implementation started. Next number = **0011**.
 | 0007 | hiking-detail-page-audit | hikings | 2026-08-14           | archived (feat-0007-hiking-detail-page-audit) |
 | 0008 | hiking-overview-tab-audit | hikings | 2026-08-14           | archived (feat-0008-hiking-overview-tab-audit) |
 | 0009 | hiking-food-plan-tab-audit | food-planning | 2026-08-15           | archived (feat-0009-hiking-food-plan-tab-audit) |
-| 0010 | hiking-overview-tab-i18n | i18n | 2026-08-15           | proposed (feat-0010-hiking-overview-tab-i18n) |
+| 0010 | hiking-overview-tab-i18n | i18n | 2026-08-15           | archived (feat-0010-hiking-overview-tab-i18n) |
