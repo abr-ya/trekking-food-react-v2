@@ -582,7 +582,7 @@ if (totalQuantity !== 0 && totalQuantity <= personalQuantity) {
 
 **Validation errors:** `400` — e.g. not a positive integer, or `membersTotal < vegetariansTotal`.
 
-**Frontend:** `patchHikingMembersTotal`, `useUpdateHikingMembersTotal`, `EditMembersTotalDialog` — see [`FEATURE_MEMBERS_TOTAL_API_EN.md`](FEATURE_MEMBERS_TOTAL_API_EN.md).
+**Frontend:** `patchHikingMembersTotal`, `useUpdateHikingMembersTotal`, `EditMembersTotalDialog` — see [`hikings-members-total-api.md`](reference/hikings-members-total-api.md).
 
 ---
 

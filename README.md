@@ -216,7 +216,7 @@ function HikingFlow({ hikingId }: { hikingId: string }) {
 
 After `useCreateHiking`, `useAddHikingProductsFromRecipe`, or `useUpdateHikingMembersTotal` succeeds, hiking list, detail, and (for members-total) product-totals queries are invalidated so the UI can refetch.
 
-See also [`docs/FEATURE_MEMBERS_TOTAL_API_EN.md`](docs/FEATURE_MEMBERS_TOTAL_API_EN.md) and [`docs/members-total-patch-plan.md`](docs/members-total-patch-plan.md).
+See also [`docs/reference/hikings-members-total-api.md`](docs/reference/hikings-members-total-api.md).
 
 ### PacksByUsers: Save Member Slots
 

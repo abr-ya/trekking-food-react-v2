@@ -68,6 +68,26 @@ Capabilities referenced below are defined in [`CAPABILITIES.md`](./CAPABILITIES.
 - This flow can be removed or relaxed after all screens, or at least most screens
   and legacy `docs/` plans/reports, have been reviewed and folded into OpenSpec.
 
+**Living reference docs**
+- Use `docs/reference/` for active technical references that complement accepted
+  OpenSpec specs instead of replacing them: endpoint contracts, payload/response
+  examples, hook/API/schema mappings, cache invalidation notes, and other
+  implementation-facing lookup material.
+- When processing an old `docs/` feature document, decide whether it is a
+  historical plan/report or a living reference:
+  - Move historical plans/reports to `docs/archive/` after the represented
+    behavior is captured in accepted specs.
+  - Move living references to `docs/reference/` with a stable, capability-scoped
+    kebab-case name, for example
+    `docs/reference/hikings-members-total-api.md`.
+- Accepted specs may include a short `Reference:` line to a relevant
+  `docs/reference/` file when the technical details are useful but too detailed
+  for requirement scenarios. Keep OpenSpec as the product/behavior source of
+  truth; keep reference docs as technical supplements.
+- Do not move `docs/BUSINESS_LOGIC.md` into `docs/reference/`; it remains the
+  authoritative domain model unless a separate change explicitly replaces that
+  role.
+
 **Priorities:** `P0` (urgent) · `P1` (next up) · `P2` (later) · `P3` (nice to have).
 
 ---
@@ -93,7 +113,6 @@ Candidates, no numbers. Pick by meaning.
 | products-list-i18n      | Localize Products list/card surface       | i18n            | P2   | yes    | products-page-audit | Includes list heading, search/filter UI, pagination copy, card nutrition labels, empty/loading/error/page-empty states. |
 | products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
 | products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
-| hiking-overview-tab-audit | Backfill Hiking overview tab spec        | hikings         | P2   | yes    | hiking-detail-page-audit | Cover overview info fields, group-size edit entry point, hiking admins display/add action, loading/error/not-found states, and docs directly represented by this tab such as members-total/admin docs. |
 | hiking-overview-tab-i18n | Localize Hiking overview tab surface      | i18n            | P2   | yes    | hiking-overview-tab-audit | Includes overview labels, admins copy, loading/error/not-found states, Add admin dialog, and Edit members total dialog copy. |
 | hiking-food-plan-tab-audit | Backfill Hiking food plan tab spec      | food-planning   | P2   | yes    | hiking-detail-page-audit | Cover add-recipe-to-hiking flow, recipes-by-days summary, per-day nested tabs, day comments, day eating entries, and docs such as `recipes-by-days-*` and day-comments docs. |
 | hiking-food-plan-tab-i18n | Localize Hiking food plan tab surface    | i18n            | P2   | yes    | hiking-food-plan-tab-audit | Includes add recipe form copy, recipes-by-days copy, nested day tabs, day comments, day eating labels/states, and related dialogs. |
@@ -110,7 +129,7 @@ Candidates, no numbers. Pick by meaning.
 
 ## Build log
 
-Append-only. Number = order implementation started. Next number = **0008**.
+Append-only. Number = order implementation started. Next number = **0009**.
 
 | #    | Slug           | Capability | Started (YYYY-MM-DD) | Change / Status              |
 |------|----------------|------------|----------------------|-----------------------------|
@@ -121,3 +140,4 @@ Append-only. Number = order implementation started. Next number = **0008**.
 | 0005 | categories-page-audit | categories | 2026-08-13           | archived (feat-0005-categories-page-audit) |
 | 0006 | hikings-page-audit | hikings | 2026-08-13           | archived (feat-0006-hikings-page-audit) |
 | 0007 | hiking-detail-page-audit | hikings | 2026-08-14           | archived (feat-0007-hiking-detail-page-audit) |
+| 0008 | hiking-overview-tab-audit | hikings | 2026-08-14           | archived (feat-0008-hiking-overview-tab-audit) |
