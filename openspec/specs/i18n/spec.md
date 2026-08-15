@@ -155,15 +155,45 @@ top-level tab labels through the i18n system.
 - **THEN** the route, hiking data loading, loaded hiking-name title, selected tab
   values, and tab contents remain otherwise unchanged
 
+### Requirement: Hiking Overview tab localization
+
+The Hiking Overview tab SHALL render its state messages, field labels, admins
+copy, action labels, dialogs, validation-adjacent text, fallback errors, and
+success toasts through the i18n system.
+
+#### Scenario: English Overview tab copy
+
+- **WHEN** the selected language is English
+- **AND** the user views or interacts with the Hiking Overview tab
+- **THEN** Overview state messages, summary labels, admins copy, Edit members
+  total copy, Add admin copy, fallback errors, and success toasts are shown in
+  English
+
+#### Scenario: Russian Overview tab copy
+
+- **WHEN** the selected language is Russian
+- **AND** the user views or interacts with the Hiking Overview tab
+- **THEN** Overview state messages, summary labels, admins copy, Edit members
+  total copy, Add admin copy, fallback errors, and success toasts are shown in
+  Russian
+
+#### Scenario: Overview behavior is preserved
+
+- **WHEN** the selected language changes
+- **THEN** hiking detail loading, displayed data values, dialog open/close
+  behavior, form validation, mutation payloads, disabled states, cache
+  invalidation, and backend authorization behavior remain unchanged
+
 ### Requirement: Localization scope boundary
 
 The app SHALL localize only the top navigation menu, Products page title,
-Recipes page title, Categories page title, Hikings page title, and Hiking detail
-page chrome until later OpenSpec changes expand the localization scope.
+Recipes page title, Categories page title, Hikings page title, Hiking detail
+page chrome, and Hiking Overview tab until later OpenSpec changes expand the
+localization scope.
 
 #### Scenario: Other non-menu strings are unchanged
 
 - **WHEN** the selected language changes
 - **THEN** labels outside the top navigation menu, Products page title, Recipes
-  page title, Categories page title, Hikings page title, and Hiking detail page
-  chrome remain outside the current localization scope
+  page title, Categories page title, Hikings page title, Hiking detail page
+  chrome, and Hiking Overview tab remain outside the current localization scope

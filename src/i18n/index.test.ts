@@ -71,4 +71,104 @@ describe("i18n resources", () => {
       expect(resources.ru.translation.pages.hikingDetail.tabs[tabKey]).toBeTruthy();
     }
   });
+
+  it("defines English and Russian Hiking Overview tab labels", () => {
+    const enOverview = resources.en.translation.pages.hikingDetail.overview;
+    const ruOverview = resources.ru.translation.pages.hikingDetail.overview;
+
+    for (const key of [
+      "invalidId",
+      "loadError",
+      "unknownError",
+      "notFound",
+      "daysTotal",
+      "membersTotal",
+      "vegetariansTotal",
+      "created",
+      "createdBy",
+      "updated",
+      "admins",
+      "noAdmins",
+    ] as const) {
+      expect(enOverview[key]).toBeTruthy();
+      expect(ruOverview[key]).toBeTruthy();
+    }
+
+    for (const key of [
+      "changeButton",
+      "title",
+      "description",
+      "vegetarianSingular",
+      "vegetarianPlural",
+      "membersTotalLabel",
+      "requestFailed",
+      "cancel",
+      "continue",
+      "saving",
+      "confirmTitle",
+      "confirmIntro",
+      "confirmBulletRecalc",
+      "confirmBulletDeletePacks",
+      "confirmBulletClearSlots",
+      "confirmDecrease",
+      "toastIncreased",
+      "toastDecreased",
+      "toastUpdated",
+    ] as const) {
+      expect(enOverview.editMembers[key]).toBeTruthy();
+      expect(ruOverview.editMembers[key]).toBeTruthy();
+    }
+
+    for (const key of [
+      "addButton",
+      "title",
+      "description",
+      "userIdLabel",
+      "userIdPlaceholder",
+      "requestFailed",
+      "cancel",
+      "submit",
+      "adding",
+    ] as const) {
+      expect(enOverview.addAdmin[key]).toBeTruthy();
+      expect(ruOverview.addAdmin[key]).toBeTruthy();
+    }
+  });
+
+  it("interpolates dynamic Overview strings for English and Russian", () => {
+    const enLoad = resources.en.translation.pages.hikingDetail.overview.loadError.replace(
+      "{{message}}",
+      "Network error",
+    );
+    const ruLoad = resources.ru.translation.pages.hikingDetail.overview.loadError.replace(
+      "{{message}}",
+      "Сетевая ошибка",
+    );
+    expect(enLoad).toBe("Failed to load hiking: Network error");
+    expect(ruLoad).toBe("Не удалось загрузить поход: Сетевая ошибка");
+
+    const enConfirm = resources.en.translation.pages.hikingDetail.overview.editMembers.confirmTitle.replace(
+      "{{count}}",
+      "3",
+    );
+    const ruConfirm = resources.ru.translation.pages.hikingDetail.overview.editMembers.confirmTitle.replace(
+      "{{count}}",
+      "3",
+    );
+    expect(enConfirm).toBe("Decrease group size to 3?");
+    expect(ruConfirm).toBe("Уменьшить размер группы до 3?");
+
+    const enToast = resources.en.translation.pages.hikingDetail.overview.editMembers.toastDecreased.replaceAll(
+      "{{count}}",
+      "4",
+    );
+    const ruToast = resources.ru.translation.pages.hikingDetail.overview.editMembers.toastDecreased.replaceAll(
+      "{{count}}",
+      "4",
+    );
+    expect(enToast).toContain("decreased to 4");
+    expect(enToast).toContain("above 4");
+    expect(ruToast).toContain("до 4");
+    expect(ruToast).toContain("выше 4");
+  });
 });
