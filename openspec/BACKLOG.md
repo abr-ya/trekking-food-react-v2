@@ -114,7 +114,6 @@ Candidates, no numbers. Pick by meaning.
 | products-create-form-i18n | Localize Products create form           | i18n            | P2   | yes    | products-page-audit | Includes create column title/description, field labels/help text, category loading/error/empty states, checkbox labels, submit pending/success copy. |
 | products-dialogs-i18n   | Localize Products edit/delete dialogs     | i18n            | P2   | yes    | products-page-audit | Includes edit product dialog, category edit dialog, delete confirmation, action aria labels, and pending button labels. |
 | hiking-overview-tab-i18n | Localize Hiking overview tab surface      | i18n            | P2   | yes    | hiking-overview-tab-audit | Includes overview labels, admins copy, loading/error/not-found states, Add admin dialog, and Edit members total dialog copy. |
-| hiking-food-plan-tab-audit | Backfill Hiking food plan tab spec      | food-planning   | P2   | yes    | hiking-detail-page-audit | Cover add-recipe-to-hiking flow, recipes-by-days summary, per-day nested tabs, day comments, day eating entries, and docs such as `recipes-by-days-*` and day-comments docs. |
 | hiking-food-plan-tab-i18n | Localize Hiking food plan tab surface    | i18n            | P2   | yes    | hiking-food-plan-tab-audit | Includes add recipe form copy, recipes-by-days copy, nested day tabs, day comments, day eating labels/states, and related dialogs. |
 | hiking-shopping-list-tab-audit | Backfill Hiking shopping list tab spec | shopping-list   | P2   | yes    | hiking-detail-page-audit | Cover product totals loading/empty/populated states, table columns/totals, pack-kind display, and promote-to-trip-pack action boundary. |
 | hiking-shopping-list-tab-i18n | Localize Hiking shopping list tab surface | i18n          | P2   | yes    | hiking-shopping-list-tab-audit | Includes empty/loading copy, table headings, totals copy, pack-kind labels, and promote-to-trip-pack dialog copy. |
@@ -141,3 +140,4 @@ Append-only. Number = order implementation started. Next number = **0009**.
 | 0006 | hikings-page-audit | hikings | 2026-08-13           | archived (feat-0006-hikings-page-audit) |
 | 0007 | hiking-detail-page-audit | hikings | 2026-08-14           | archived (feat-0007-hiking-detail-page-audit) |
 | 0008 | hiking-overview-tab-audit | hikings | 2026-08-14           | archived (feat-0008-hiking-overview-tab-audit) |
+| 0009 | hiking-food-plan-tab-audit | food-planning | 2026-08-15           | in-progress (feat-0009-hiking-food-plan-tab-audit) |
