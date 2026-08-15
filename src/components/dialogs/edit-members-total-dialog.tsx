@@ -2,6 +2,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Loader2, Users } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +29,7 @@ export const EditMembersTotalDialog = ({
   currentMembersTotal,
   vegetariansTotal,
 }: EditMembersTotalDialogProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingMembersTotal, setPendingMembersTotal] = useState<number | null>(null);
@@ -73,15 +75,11 @@ export const EditMembersTotalDialog = ({
         onSuccess: () => {
           closeAll();
           if (membersTotal > currentMembersTotal) {
-            toastSuccess(
-              "Group size increased. Product totals were updated. Run Auto-distribute on each day if you need new member packs.",
-            );
+            toastSuccess(t("pages.hikingDetail.overview.editMembers.toastIncreased"));
           } else if (membersTotal < currentMembersTotal) {
-            toastSuccess(
-              `Group size decreased to ${membersTotal}. Extra day packs were removed and member slots above ${membersTotal} were cleared.`,
-            );
+            toastSuccess(t("pages.hikingDetail.overview.editMembers.toastDecreased", { count: membersTotal }));
           } else {
-            toastSuccess("Group size updated.");
+            toastSuccess(t("pages.hikingDetail.overview.editMembers.toastUpdated"));
           }
         },
       },
@@ -103,21 +101,27 @@ export const EditMembersTotalDialog = ({
     submitMembersTotal(pendingMembersTotal);
   };
 
+  const vegetarianLabel =
+    vegetariansTotal === 1
+      ? t("pages.hikingDetail.overview.editMembers.vegetarianSingular")
+      : t("pages.hikingDetail.overview.editMembers.vegetarianPlural");
+
   return (
     <>
       <Button type="button" variant="outline" size="sm" onClick={() => handleMainOpenChange(true)}>
         <Users className="mr-1.5 size-3.5" />
-        Change
+        {t("pages.hikingDetail.overview.editMembers.changeButton")}
       </Button>
 
       <Dialog open={isOpen} onOpenChange={handleMainOpenChange}>
         <DialogContent showCloseButton>
           <DialogHeader>
-            <DialogTitle>Change group size</DialogTitle>
+            <DialogTitle>{t("pages.hikingDetail.overview.editMembers.title")}</DialogTitle>
             <DialogDescription>
-              Update the number of members in this hiking plan. Minimum group size: {vegetariansTotal}{" "}
-              {vegetariansTotal === 1 ? "(vegetarian)" : "(vegetarians)"}. Editing vegetarians count is not available
-              yet.
+              {t("pages.hikingDetail.overview.editMembers.description", {
+                count: vegetariansTotal,
+                vegetarianLabel,
+              })}
             </DialogDescription>
           </DialogHeader>
 
@@ -125,7 +129,7 @@ export const EditMembersTotalDialog = ({
             <form id="edit-members-total-form" onSubmit={onFormSubmit} className="flex flex-col gap-4">
               <RHFInput<UpdateMembersTotalFormData>
                 name="membersTotal"
-                label="Members total"
+                label={t("pages.hikingDetail.overview.editMembers.membersTotalLabel")}
                 type="number"
                 step={1}
                 min={minMembers}
@@ -133,17 +137,21 @@ export const EditMembersTotalDialog = ({
                 valueAsNumber
               />
               {isError ? (
-                <p className="text-destructive text-sm">{error instanceof Error ? error.message : "Request failed."}</p>
+                <p className="text-destructive text-sm">
+                  {error instanceof Error ? error.message : t("pages.hikingDetail.overview.editMembers.requestFailed")}
+                </p>
               ) : null}
             </form>
           </FormProvider>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => handleMainOpenChange(false)} disabled={isPending}>
-              Cancel
+              {t("pages.hikingDetail.overview.editMembers.cancel")}
             </Button>
             <Button type="submit" form="edit-members-total-form" disabled={isPending || isUnchanged}>
-              {isPending ? "Saving…" : "Continue"}
+              {isPending
+                ? t("pages.hikingDetail.overview.editMembers.saving")
+                : t("pages.hikingDetail.overview.editMembers.continue")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -162,19 +170,23 @@ export const EditMembersTotalDialog = ({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
-              Decrease group size to {pendingMembersTotal}?
+              {t("pages.hikingDetail.overview.editMembers.confirmTitle", { count: pendingMembersTotal })}
             </DialogTitle>
             <DialogDescription asChild>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>This action cannot be undone from the UI. The server will:</p>
+                <p>{t("pages.hikingDetail.overview.editMembers.confirmIntro")}</p>
                 <ul className="list-disc space-y-1 pl-5">
+                  <li>{t("pages.hikingDetail.overview.editMembers.confirmBulletRecalc")}</li>
                   <li>
-                    Recalculate every product total as personal quantity × new group size (manual totals are lost)
+                    {t("pages.hikingDetail.overview.editMembers.confirmBulletDeletePacks", {
+                      count: pendingMembersTotal,
+                    })}
                   </li>
                   <li>
-                    Delete day packs with pack number greater than {pendingMembersTotal} — their meals become unassigned
+                    {t("pages.hikingDetail.overview.editMembers.confirmBulletClearSlots", {
+                      count: pendingMembersTotal,
+                    })}
                   </li>
-                  <li>Clear member slots greater than {pendingMembersTotal} on day packs and trip packs</li>
                 </ul>
               </div>
             </DialogDescription>
@@ -189,16 +201,16 @@ export const EditMembersTotalDialog = ({
               }}
               disabled={isPending}
             >
-              Cancel
+              {t("pages.hikingDetail.overview.editMembers.cancel")}
             </Button>
             <Button type="button" onClick={handleConfirmDecrease} disabled={isPending}>
               {isPending ? (
                 <>
                   <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  Saving…
+                  {t("pages.hikingDetail.overview.editMembers.saving")}
                 </>
               ) : (
-                "Yes, decrease"
+                t("pages.hikingDetail.overview.editMembers.confirmDecrease")
               )}
             </Button>
           </DialogFooter>

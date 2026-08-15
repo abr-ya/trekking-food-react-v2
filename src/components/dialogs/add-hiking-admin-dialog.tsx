@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { UserPlus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { useAddHikingAdmin } from "@/hooks";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export const AddHikingAdminDialog = ({ hikingId }: Props) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const { mutate, isPending, isError, error, reset: resetMutation } = useAddHikingAdmin();
 
@@ -44,36 +46,40 @@ export const AddHikingAdminDialog = ({ hikingId }: Props) => {
     <>
       <Button type="button" variant="outline" size="sm" onClick={() => setIsOpen(true)}>
         <UserPlus className="mr-1.5 size-3.5" />
-        Add admin
+        {t("pages.hikingDetail.overview.addAdmin.addButton")}
       </Button>
 
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent showCloseButton>
           <DialogHeader>
-            <DialogTitle>Add admin</DialogTitle>
-            <DialogDescription>Enter the user ID to grant admin access to this hiking plan.</DialogDescription>
+            <DialogTitle>{t("pages.hikingDetail.overview.addAdmin.title")}</DialogTitle>
+            <DialogDescription>{t("pages.hikingDetail.overview.addAdmin.description")}</DialogDescription>
           </DialogHeader>
 
           <FormProvider {...form}>
             <form id="add-hiking-admin-form" onSubmit={onSubmit} className="flex flex-col gap-4">
               <RHFInput<FormData>
                 name="userId"
-                label="User ID"
-                placeholder="e.g. a1b2c3d4-e5f6-4789-a012-345678901234"
+                label={t("pages.hikingDetail.overview.addAdmin.userIdLabel")}
+                placeholder={t("pages.hikingDetail.overview.addAdmin.userIdPlaceholder")}
                 autoComplete="off"
               />
               {isError ? (
-                <p className="text-destructive text-sm">{error instanceof Error ? error.message : "Request failed."}</p>
+                <p className="text-destructive text-sm">
+                  {error instanceof Error ? error.message : t("pages.hikingDetail.overview.addAdmin.requestFailed")}
+                </p>
               ) : null}
             </form>
           </FormProvider>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
-              Cancel
+              {t("pages.hikingDetail.overview.addAdmin.cancel")}
             </Button>
             <Button type="submit" form="add-hiking-admin-form" disabled={isPending}>
-              {isPending ? "Adding…" : "Add admin"}
+              {isPending
+                ? t("pages.hikingDetail.overview.addAdmin.adding")
+                : t("pages.hikingDetail.overview.addAdmin.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>
